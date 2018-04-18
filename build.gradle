@@ -1,0 +1,46 @@
+buildscript {
+    ext.kotlin_version = '1.2.30'
+    ext.okHttpVersion = "3.8.1"
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    //id 'com.adarshr.test-logger' version '1.2.0'
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'com.nhaarman:mockito-kotlin:1.5.0'
+    testImplementation 'org.amshove.kluent:kluent:1.34'
+}
+
+//testlogger {
+//    showStandardStreams true
+//}
+
+test {
+    //ignoreFailures true
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
