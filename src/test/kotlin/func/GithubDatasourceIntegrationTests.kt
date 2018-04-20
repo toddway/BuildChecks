@@ -1,20 +1,20 @@
 package func
 
 import core.BuildStatusDatasource
-import data.BitBucketDatasource
-import data.createBitBucketService
+import data.GithubDatasource
+import data.createGithubService
 import org.amshove.kluent.shouldBe
 import org.junit.Ignore
 import org.junit.Test
 
-class BitBucketDatasourceIntegrationTests {
+class GithubDatasourceIntegrationTests {
 
     @Ignore
     @Test
     fun `asdf`() {
-        val datasource : BuildStatusDatasource = BitBucketDatasource(
-                createBitBucketService("https://bitbucket.uhub.biz", ""),
-                "547b9f82420bb7c56b590d34abd84cf95cb538a3",
+        val datasource : BuildStatusDatasource = GithubDatasource(
+                createGithubService("https://api.github.com", ""),
+                "4aa5558ccb1e002970e1835621d6e9ab56c29458",
                 "http://localhost"
         )
         val result = datasource.postPendingStatus("test", "some-key").blockingFirst()
