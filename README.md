@@ -3,14 +3,14 @@ Gradle plugin to log build status details.  Output can go to the console or post
 ## Installation
 From the root of your project, add as a submodule in a directory called `buildSrc`
 
-    git submodule add git@github.com:toddway/buildStatus.git buildSrc
+    git submodule add https://github.com/toddway/buildStatusPlugin.git buildSrc
 
 Add the following to your root build.gradle file:
 
     apply plugin: BuildStatusPlugin
 
     buildstatus {
-        postBaseUrl = "https://bitbucket.uhub.biz" //tested with https://bitbucket.uhub.biz and http://github.com
+        postBaseUrl = "https://github.com" //tested with https://bitbucket.example.com and http://github.com
         postAuthorization = "Bearer <your repo token>"
         buildUrl = System.getenv('BITRISE_BUILD_URL') ? System.getenv('BITRISE_BUILD_URL') : "http://localhost"
         lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your lint xml reports
@@ -45,7 +45,7 @@ To log details on the HTTP POST commands add -i
 License
 -------
 
-    Copyright 2016-Present Todd Way
+    Copyright 2018-Present Todd Way
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
