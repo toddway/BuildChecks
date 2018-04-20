@@ -3,7 +3,7 @@ Gradle plugin to log build status details.  Output can go to the console or post
 ## Installation
 From the root of your project, add as a submodule in a directory called `buildSrc`
 
-    git submodule add ssh://git@bitbucket-ssh.uhub.biz:7999/vmlnavmlmob/buildsrc.git buildSrc
+    git submodule add git@github.com:toddway/buildStatus.git buildSrc
 
 Add the following to your root build.gradle file:
 
