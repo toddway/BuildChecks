@@ -1,8 +1,5 @@
 package core
 
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import java.io.File
 
 class GetJacocoSummaryUseCase(val file : File) {
@@ -34,14 +31,3 @@ class GetJacocoSummaryUseCase(val file : File) {
 
 
 
-fun NodeList.children() = object : Iterable<Node> {
-    override fun iterator() = object : Iterator<Node> {
-        var index = 0
-        override fun hasNext() = index < length
-        override fun next() = item(index++)
-    }
-}
-
-fun Node.attr(name : String): String? {
-    return (this as Element).getAttribute(name)
-}

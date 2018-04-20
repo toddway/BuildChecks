@@ -38,7 +38,7 @@ To make sure you're not using data from old reports, add clean to your gradle co
 
     ./gradlew clean ci -PpostStatus
 
-To print details on the HTTP POST commands add -i
+To log details on the HTTP POST commands add -i
 
     ./gradlew clean ci -PpostStatus -i
 
