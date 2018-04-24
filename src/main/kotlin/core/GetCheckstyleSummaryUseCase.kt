@@ -1,15 +1,11 @@
 package core
 
-import java.io.File
+import org.w3c.dom.Document
 
-class GetCheckstyleSummaryUseCase(private val file: File) {
-    fun execute(): String {
-        val document = GetDocumentUseCase(file).execute()
-        val nodeList = document.getElementsByTagName("error")
+open class GetCheckstyleSummaryUseCase(documents: List<Document>) : GetLintSummaryUseCase(documents) {
 
-        val counterMap = nodeList.children().groupBy { it.attr("severity") }
-        val countsList = counterMap.flatMap { entry -> listOf("${entry.value.count()} ${entry.key}s") }
-        return countsList.joinToString(", ")
+    init {
+        var suffix = " Checkstyle issues "
+        var tagName = "error"
     }
-
 }

@@ -11,19 +11,10 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class GetDocumentUseCase(val file: File) {
     fun execute() : Document {
-        val dbf = DocumentBuilderFactory.newInstance()
-        val db = dbf.newDocumentBuilder()
-        db.setEntityResolver { _, systemId ->
-            if (systemId.contains("report.dtd")) {
-                InputSource(StringReader(""))
-            } else {
-                null
-            }
-        }
-
-        return db.parse(file)
+        return file.toDocument()
     }
 }
+
 
 fun NodeList.children() = object : Iterable<Node> {
     override fun iterator() = object : Iterator<Node> {

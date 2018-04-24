@@ -1,6 +1,7 @@
 package core
 
-class SetBuildStatusUseCase(val datasources: List<BuildStatusDatasource>) {
+
+open class SetBuildStatusUseCase(val datasources: List<BuildStatusDatasource>) {
     fun pending(message: String, key: String) {
         datasources.forEach {
             it.postPendingStatus(message, key).subscribe()
