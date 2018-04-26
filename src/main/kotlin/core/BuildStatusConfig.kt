@@ -1,17 +1,20 @@
 package core
 
-import java.io.File
 import java.util.*
 
 open class BuildStatusConfig {
-    var buildUrl : String = ""
-    var lintReports : String = ""
-    var jacocoReports : String = ""
-    var detektReports : String = ""
-    var checkStyleReports : String = ""
-    var postBaseUrl : String = ""
-    var postAuthorization : String = ""
+    var buildUrl  = ""
+    var lintReports  = ""
+    var jacocoReports  = ""
+    var detektReports  = ""
+    var checkStyleReports  = ""
+    var postBaseUrl  = ""
+    var postAuthorization  = ""
     var buildStartTime = Date()
-    val hash = "git rev-parse HEAD".runCommand(File("."))?.trim() ?: ""
+    val hash = "git rev-parse HEAD".run() ?: ""
+    val commitDate : Long = "git show -s --format=%ct".run()?.toLong() ?: 0
+    val commitBranch = "git rev-parse --abbrev-ref HEAD".run() ?: ""
+    var statsBaseUrl = ""
     fun duration() = ((Date().time - buildStartTime.time) / 1000.0).round(2)
+
 }

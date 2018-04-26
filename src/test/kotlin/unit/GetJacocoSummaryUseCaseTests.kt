@@ -12,7 +12,7 @@ class GetJacocoSummaryUseCaseTests {
     fun `when there is a valid report document, a summary is returned`() {
         val document = File("./src/test/testFiles/coverage.xml").toDocument()
         val usecase = GetJacocoSummaryUseCase(listOf(document))
-        val v = usecase.asString()
+        val v = usecase.percentAsString()
         println(v)
         v shouldNotBe ""
     }

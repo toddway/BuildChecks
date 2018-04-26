@@ -4,38 +4,50 @@ import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 
 class GetJacocoSummaryUseCase(val documents: List<Document>) {
-    fun asString(): String? {
-        return asNumber()?.let { "$it% test coverage" }
+    fun percentAsString(): String? {
+        return percent()?.let { "$it% test coverage" }
     }
 
-    fun asNumber(): Double? {
-        if (documents.isEmpty()) return null
-        else return documents.let {
+    fun percent(): Double? {
+        return if (documents.isEmpty()) null
+        else documents.let {
             val list = it.map { it.toJacocoMap() }.map { it["LINE + BRANCH"] }
             val sums = Pair(
-                    list.sumByDouble { it?.first ?: 0.0},
-                    list.sumByDouble { it?.second ?: 0.0 }
+                    list.sumBy { it?.first ?: 0},
+                    list.sumBy { it?.second ?: 0 }
             )
             sums.percentage().round(2)
         }
     }
+
+    fun lines(): Int? {
+        return if (documents.isEmpty()) null
+        else documents.let {
+            val list = it.map { it.toJacocoMap() }.map { it["LINE"] }
+            val sums = Pair(
+                    list.sumBy { it?.first ?: 0 },
+                    list.sumBy { it?.second ?: 0 }
+            )
+            sums.first + sums.second
+        }
+    }
 }
 
-fun Document.toJacocoMap(): Map<String?, Pair<Double, Double>> {
+fun Document.toJacocoMap(): Map<String?, Pair<Int, Int>> {
     val nodeList : NodeList = getElementsByTagName("method") ?: return mapOf()
 
     val counterMap = nodeList.children().flatMap { it.childNodes.children() }.groupBy { it.attr("type") }
 
-    val metricMap = counterMap.mapValues {entry ->
-        val covered = entry.value.sumByDouble { it.attr("covered")?.toDouble() ?: 0.0}
-        val missed = entry.value.sumByDouble { it.attr("missed")?.toDouble()  ?: 0.0 }
+    val statsMap = counterMap.mapValues {entry ->
+        val covered = entry.value.sumBy { it.attr("covered")?.toInt() ?: 0 }
+        val missed = entry.value.sumBy { it.attr("missed")?.toInt()  ?: 0 }
         Pair(covered, missed)
     }
 
-    val linePlusBranchMap = metricMap.filter { entry -> entry.key == "LINE" || entry.key == "BRANCH" }
-    val linePlusBranchPair = Pair(linePlusBranchMap.values.sumByDouble { it.first }, linePlusBranchMap.values.sumByDouble { it.second })
+    val linePlusBranchMap = statsMap.filter { entry -> entry.key == "LINE" || entry.key == "BRANCH" }
+    val linePlusBranchPair = Pair(linePlusBranchMap.values.sumBy { it.first }, linePlusBranchMap.values.sumBy { it.second })
 
-    val reportMap = metricMap.toMutableMap()
+    val reportMap = statsMap.toMutableMap()
     reportMap.put("LINE + BRANCH", linePlusBranchPair)
     return reportMap
 }

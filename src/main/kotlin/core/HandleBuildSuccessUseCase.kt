@@ -1,18 +1,32 @@
 package core
 
-import org.w3c.dom.Document
-
 class HandleBuildSuccessUseCase(
-        val buildStatus: SetBuildStatusUseCase? = null,
-        val jacocoDocs: List<Document>,
-        val lintDocs: List<Document>,
-        val detektDocs: List<Document>,
-        val checkstyleDocs: List<Document>
+        val setBuildStatusUseCase: SetBuildStatusUseCase? = null,
+        val postBuildStatsUseCase: PostBuildStatsUseCase,
+        val buildStatusConfig: BuildStatusConfig,
+        val getJacocoSummaryUseCase: GetJacocoSummaryUseCase,
+        val getLintSummaryUseCase: GetLintSummaryUseCase,
+        val getDetektSummaryUseCase: GetDetektSummaryUseCase,
+        val getCheckstyleSummaryUseCase: GetCheckstyleSummaryUseCase
 ) {
     fun invoke() {
-        GetJacocoSummaryUseCase(jacocoDocs).asString()?.let { buildStatus?.success(it, "j") }
-        GetLintSummaryUseCase(lintDocs).asString()?.let { buildStatus?.success(it, "l")}
-        GetDetektSummaryUseCase(detektDocs).asString()?.let { buildStatus?.success(it, "d") }
-        GetCheckstyleSummaryUseCase(checkstyleDocs).asString()?.let { buildStatus?.success(it, "c") }
+        getJacocoSummaryUseCase.percentAsString()?.let { setBuildStatusUseCase?.success(it, "j") }
+        getLintSummaryUseCase.asString()?.let { setBuildStatusUseCase?.success(it, "l")}
+        getDetektSummaryUseCase.asString()?.let { setBuildStatusUseCase?.success(it, "d") }
+        getCheckstyleSummaryUseCase.asString()?.let { setBuildStatusUseCase?.success(it, "c") }
+
+        val issueCount = (getLintSummaryUseCase.asTotal() ?: 0)
+                + (getDetektSummaryUseCase.asTotal() ?: 0)
+                + (getCheckstyleSummaryUseCase.asTotal() ?: 0)
+
+        postBuildStatsUseCase.invoke(BuildStats(
+                getJacocoSummaryUseCase.percent() ?: 0.0,
+                issueCount,
+                buildStatusConfig.duration(),
+                getJacocoSummaryUseCase.lines() ?: 0,
+                buildStatusConfig.commitDate,
+                buildStatusConfig.hash,
+                buildStatusConfig.commitBranch
+        ))
     }
 }

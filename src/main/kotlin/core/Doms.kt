@@ -9,12 +9,23 @@ import java.io.File
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
-class GetDocumentUseCase(val file: File) {
-    fun execute() : Document {
-        return file.toDocument()
+fun File.toDocument() : Document {
+    val dbf = DocumentBuilderFactory.newInstance()
+    val db = dbf.newDocumentBuilder()
+    db.setEntityResolver { _, systemId ->
+        if (systemId.contains("report.dtd")) {
+            InputSource(StringReader(""))
+        } else {
+            null
+        }
     }
+
+    return db.parse(this)
 }
 
+fun String.toDocumentList(): List<Document> {
+    return toFileList().map { it.toDocument() }
+}
 
 fun NodeList.children() = object : Iterable<Node> {
     override fun iterator() = object : Iterator<Node> {

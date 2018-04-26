@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import org.amshove.kluent.*
 import org.junit.Test
 
-class BuildStatusTests {
+class PostBuildStatusTests {
 
     val key = "ADfds"
 
@@ -13,7 +13,7 @@ class BuildStatusTests {
     fun `when the status is pending, post the status`() {
         val datasource : BuildStatusDatasource = mock()
         val usecase = SetBuildStatusUseCase(listOf(datasource))
-        val message = "build in progreess"
+        val message = "build in progress"
         When calling datasource.postPendingStatus(message, key) itReturns Observable.just(true)
         usecase.pending(message, key)
         Verify on datasource that datasource.postPendingStatus(message, key) was called

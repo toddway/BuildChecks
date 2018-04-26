@@ -21,7 +21,7 @@ Now on any gradle task, you should see build status info printed to the console.
 
 
 ## Usage
-To post the status to github or bitbucket, append `-PpostStatus` to your gradle task.  For example if you had a gradle task like:
+To postStats the status to github or bitbucket, append `-PpostStatus` to your gradle task.  For example if you had a gradle task like:
 
     task ci {
         dependsOn 'app:lintProdRelease'
@@ -30,7 +30,7 @@ To post the status to github or bitbucket, append `-PpostStatus` to your gradle 
         dependsOn 'app:assembleRelease'
     }
 
-You would run the following to post status details to BitBucket
+You would run the following to postStats status details to BitBucket
 
     ./gradlew ci -PpostStatus
 

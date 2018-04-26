@@ -1,37 +1,37 @@
 
-import core.BuildStatusConfig
-import core.HandleBuildSuccessUseCase
-import core.SetBuildStatusUseCase
-import core.toDocumentList
-import data.provideBuildStatusDatasources
+import core.*
+import di.provideBuildStatsDatasources
+import di.provideBuildStatusDatasources
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 
 open class BuildStatusPlugin : Plugin<Project> {
 
-    var buildStatus: SetBuildStatusUseCase? = null
+    var setBuildStatus: SetBuildStatusUseCase? = null
 
     override fun apply(project: Project) {
         val config = project.extensions.create("buildstatus", BuildStatusConfig::class.java)
 
         project.gradle.taskGraph.whenReady {
-            buildStatus = SetBuildStatusUseCase(provideBuildStatusDatasources(config, project.hasProperty("postStatus")))
-            buildStatus?.pending(startedMessage(project), "g")
+            setBuildStatus = SetBuildStatusUseCase(provideBuildStatusDatasources(config, project.hasProperty("postStatus")))
+            setBuildStatus?.pending(startedMessage(project), "g")
         }
 
         project.gradle.buildFinished {
             if (it.failure == null) {
                 HandleBuildSuccessUseCase(
-                        buildStatus,
-                        jacocoDocs = config.jacocoReports.toDocumentList(),
-                        lintDocs = config.lintReports.toDocumentList(),
-                        detektDocs = config.detektReports.toDocumentList(),
-                        checkstyleDocs = config.checkStyleReports.toDocumentList()
+                        setBuildStatus,
+                        PostBuildStatsUseCase(provideBuildStatsDatasources(config, project.hasProperty("postStatus"))),
+                        config,
+                        GetJacocoSummaryUseCase(config.jacocoReports.toDocumentList()),
+                        GetLintSummaryUseCase(config.lintReports.toDocumentList()),
+                        GetDetektSummaryUseCase(config.detektReports.toDocumentList()),
+                        GetCheckstyleSummaryUseCase(config.checkStyleReports.toDocumentList())
                 ).invoke()
-                buildStatus?.success(completedMessage(config, project), "g")
+                setBuildStatus?.success(completedMessage(config, project), "g")
             } else {
-                buildStatus?.failure(completedMessage(config, project), "g")
+                setBuildStatus?.failure(completedMessage(config, project), "g")
             }
         }
     }
