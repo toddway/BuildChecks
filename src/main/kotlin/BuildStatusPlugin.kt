@@ -14,7 +14,7 @@ open class BuildStatusPlugin : Plugin<Project> {
         val config = project.extensions.create("buildstatus", BuildStatusConfig::class.java)
 
         project.gradle.taskGraph.whenReady {
-            setBuildStatus = SetBuildStatusUseCase(provideBuildStatusDatasources(config, project.hasProperty("postStatus")))
+            setBuildStatus = SetBuildStatusUseCase(provideBuildStatusDatasources(config, project.isPost()))
             setBuildStatus?.pending(startedMessage(project), "g")
         }
 
@@ -22,7 +22,7 @@ open class BuildStatusPlugin : Plugin<Project> {
             if (it.failure == null) {
                 HandleBuildSuccessUseCase(
                         setBuildStatus,
-                        PostBuildStatsUseCase(provideBuildStatsDatasources(config, project.hasProperty("postStatus"))),
+                        PostBuildStatsUseCase(provideBuildStatsDatasources(config, project.isPost())),
                         config,
                         GetJacocoSummaryUseCase(config.jacocoReports.toDocumentList()),
                         GetLintSummaryUseCase(config.lintReports.toDocumentList()),
@@ -42,5 +42,7 @@ open class BuildStatusPlugin : Plugin<Project> {
     private fun completedMessage(config : BuildStatusConfig, project: Project)
             = "${config.duration()}s for gradle ${project.taskNameString()}"
 }
+
+fun Project.isPost() = hasProperty("postStatus") || hasProperty("post")
 
 fun Project.taskNameString() = gradle.startParameter.taskNames.joinToString(" ")

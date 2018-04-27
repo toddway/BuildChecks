@@ -8,12 +8,13 @@ open class BuildStatusConfig {
     var jacocoReports  = ""
     var detektReports  = ""
     var checkStyleReports  = ""
-    var postBaseUrl  = ""
-    var postAuthorization  = ""
+    var statusBaseUrl  = ""
+    var statusAuthorization  = ""
     var buildStartTime = Date()
     val hash = "git rev-parse HEAD".run() ?: ""
+    val shortHash = "git rev-parse --short HEAD".run() ?: ""
     val commitDate : Long = "git show -s --format=%ct".run()?.toLong() ?: 0
-    val commitBranch = "git rev-parse --abbrev-ref HEAD".run() ?: ""
+    val commitBranch = "git symbolic-ref -q --short HEAD".run() ?: ""
     var statsBaseUrl = ""
     fun duration() = ((Date().time - buildStartTime.time) / 1000.0).round(2)
 
