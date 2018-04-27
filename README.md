@@ -10,8 +10,8 @@ Add the following to your root build.gradle file:
     apply plugin: BuildStatusPlugin
 
     buildstatus {
-        postBaseUrl = "https://github.com" //tested with https://bitbucket.example.com and http://github.com
-        postAuthorization = "Bearer <your repo token>"
+        statusBaseUrl = "https://github.com" //tested with https://bitbucket.example.com and http://github.com
+        statusAuthorization = "Bearer <your repo token>"
         buildUrl = System.getenv('BITRISE_BUILD_URL') ? System.getenv('BITRISE_BUILD_URL') : "http://localhost"
         lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your lint xml reports
         jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your jacoco xml reports
@@ -32,15 +32,15 @@ To postStats the status to github or bitbucket, append `-PpostStatus` to your gr
 
 You would run the following to postStats status details to BitBucket
 
-    ./gradlew ci -PpostStatus
+    ./gradlew ci -Ppost
 
 To make sure you're not using data from old reports, add clean to your gradle command:
 
-    ./gradlew clean ci -PpostStatus
+    ./gradlew clean ci -Ppost
 
-To log details on the HTTP POST commands add -i
+To log details on the HTTP requests add -i
 
-    ./gradlew clean ci -PpostStatus -i
+    ./gradlew clean ci -Ppost -i
 
 License
 -------
