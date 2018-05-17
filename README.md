@@ -1,11 +1,11 @@
 Gradle plugin to log build status details.  Output can go to the console or post directly to BitBucket and GitHub build status APIs.
 
 ## Installation
-From the root of your project, add as a submodule in a directory called `buildSrc`
-
-    git submodule add https://github.com/toddway/buildStatusPlugin.git buildSrc
-
 Add the following to your root build.gradle file:
+
+    plugins {
+        id "com.toddway.buildstatusplugin" version "1.0"
+    }
 
     apply plugin: BuildStatusPlugin
 
@@ -15,13 +15,14 @@ Add the following to your root build.gradle file:
         buildUrl = System.getenv('BITRISE_BUILD_URL') ? System.getenv('BITRISE_BUILD_URL') : "http://localhost"
         lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your lint xml reports
         jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your jacoco xml reports
+        detektReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to detekt xml reports
     }
 
 Now on any gradle task, you should see build status info printed to the console.
 
 
 ## Usage
-To postStats the status to github or bitbucket, append `-PpostStatus` to your gradle task.  For example if you had a gradle task like:
+To post the status to github or bitbucket, append `-Ppost` to your gradle task.  For example if you had a gradle task like:
 
     task ci {
         dependsOn 'app:lintProdRelease'
