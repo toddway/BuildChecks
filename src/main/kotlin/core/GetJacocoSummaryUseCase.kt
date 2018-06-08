@@ -3,33 +3,13 @@ package core
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 
-class GetJacocoSummaryUseCase(val documents: List<Document>) {
-    fun percentAsString(): String? {
-        return percent()?.let { "$it% test coverage" }
+class GetJacocoSummaryUseCase(documents: List<Document>) : GetCoverageSummaryUseCase(documents) {
+    override fun toReportMap(d: Document): Map<String?, Pair<Int, Int>> {
+        return d.toJacocoMap()
     }
 
-    fun percent(): Double? {
-        return if (documents.isEmpty()) null
-        else documents.let {
-            val list = it.map { it.toJacocoMap() }.map { it["LINE + BRANCH"] }
-            val sums = Pair(
-                    list.sumBy { it?.first ?: 0},
-                    list.sumBy { it?.second ?: 0 }
-            )
-            sums.percentage().round(2)
-        }
-    }
-
-    fun lines(): Int? {
-        return if (documents.isEmpty()) null
-        else documents.let {
-            val list = it.map { it.toJacocoMap() }.map { it["LINE"] }
-            val sums = Pair(
-                    list.sumBy { it?.first ?: 0 },
-                    list.sumBy { it?.second ?: 0 }
-            )
-            sums.first + sums.second
-        }
+    override fun keyString(): String {
+        return "j"
     }
 }
 

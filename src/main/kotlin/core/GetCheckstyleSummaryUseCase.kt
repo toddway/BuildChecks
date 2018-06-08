@@ -8,4 +8,8 @@ open class GetCheckstyleSummaryUseCase(documents: List<Document>) : GetLintSumma
         var suffix = " Checkstyle issues "
         var tagName = "error"
     }
+
+    override fun keyString(): String {
+        return "ch"
+    }
 }

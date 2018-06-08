@@ -23,7 +23,10 @@ fun String.runCommand(workingDir: File): String? {
                 .start()
 
         proc.waitFor(60, TimeUnit.MINUTES)
-        proc.inputStream.bufferedReader().readText()
+        val v = proc.inputStream.bufferedReader().readText()
+        proc.inputStream.bufferedReader().close()
+        //println("${this} exit value: ${proc.exitValue()}")
+        v
     } catch(e: IOException) {
         e.printStackTrace()
         null

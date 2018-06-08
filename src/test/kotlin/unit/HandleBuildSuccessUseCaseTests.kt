@@ -16,14 +16,17 @@ class HandleBuildSuccessUseCaseTests {
         val setBuildStatus = SetBuildStatusUseCase(listOf(datasource))
         val buildStatsDatasource : BuildStatsDatasource = mock()
         val postBuildMetricsUseCase = PostBuildStatsUseCase(listOf(buildStatsDatasource))
-        val usecase = HandleBuildSuccessUseCase(
-                setBuildStatus,
-                postBuildMetricsUseCase,
-                BuildStatusConfig(),
+        val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf()) ,
                 GetLintSummaryUseCase(listOf()),
                 GetDetektSummaryUseCase(listOf()),
                 GetCheckstyleSummaryUseCase(listOf())
+        )
+        val usecase = HandleBuildSuccessUseCase(
+                setBuildStatus,
+                postBuildMetricsUseCase,
+                BuildStatusExtension(),
+                summaries
         )
         When calling datasource.postSuccessStatus(any(), any()) itReturns Observable.just(true)
         When calling buildStatsDatasource.postStats(any()) itReturns Observable.just(true)
@@ -39,14 +42,17 @@ class HandleBuildSuccessUseCaseTests {
         val setBuildStatus = SetBuildStatusUseCase(listOf(buildStatusDatasource))
         val buildStatsDatasource : BuildStatsDatasource = mock()
         val postBuildMetricsUseCase = PostBuildStatsUseCase(listOf(buildStatsDatasource))
-        val usecase = HandleBuildSuccessUseCase(
-                setBuildStatus,
-                postBuildMetricsUseCase,
-                BuildStatusConfig(),
+        val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf(mock(), mock())),
                 GetLintSummaryUseCase(listOf(mock())),
                 GetDetektSummaryUseCase("".toDocumentList()),
                 GetCheckstyleSummaryUseCase("".toDocumentList())
+        )
+        val usecase = HandleBuildSuccessUseCase(
+                setBuildStatus,
+                postBuildMetricsUseCase,
+                BuildStatusExtension(),
+                summaries
         )
         When calling buildStatusDatasource.postSuccessStatus(any(), any()) itReturns Observable.just(true)
         When calling buildStatsDatasource.postStats(any()) itReturns Observable.just(true)

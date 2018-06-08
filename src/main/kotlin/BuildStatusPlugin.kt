@@ -1,48 +1,39 @@
 
-import core.*
-import di.provideBuildStatsDatasources
-import di.provideBuildStatusDatasources
+import core.BuildStatusExtension
+import di.DI
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-
 open class BuildStatusPlugin : Plugin<Project> {
 
-    var setBuildStatus: SetBuildStatusUseCase? = null
-
     override fun apply(project: Project) {
-        val config = project.extensions.create("buildstatus", BuildStatusConfig::class.java)
+        val config = project.extensions.create("buildstatus", BuildStatusExtension::class.java)
+        val di = DI(config)
+
+        project.tasks.create("postStatus", HelloWorldTask::class.java).config = config
+        project.tasks.create("postPending", PostStatusTask::class.java).status = "pending"
+        project.tasks.create("postSuccess", PostStatusTask::class.java).status = "success"
+        project.tasks.create("postFailed", PostStatusTask::class.java).status = "success"
+
 
         project.gradle.taskGraph.whenReady {
-            setBuildStatus = SetBuildStatusUseCase(provideBuildStatusDatasources(config, project.isPost()))
-            setBuildStatus?.pending(startedMessage(project), "g")
+            config.taskName = project.taskNameString()
+            config.isPostStatus = project.isPost()
+            di.setBuildStatusUseCase().pending(config.startedMessage(), "g")
         }
 
         project.gradle.buildFinished {
             if (it.failure == null) {
-                HandleBuildSuccessUseCase(
-                        setBuildStatus,
-                        PostBuildStatsUseCase(provideBuildStatsDatasources(config, project.isPost())),
-                        config,
-                        GetJacocoSummaryUseCase(config.jacocoReports.toDocumentList()),
-                        GetLintSummaryUseCase(config.lintReports.toDocumentList()),
-                        GetDetektSummaryUseCase(config.detektReports.toDocumentList()),
-                        GetCheckstyleSummaryUseCase(config.checkStyleReports.toDocumentList())
-                ).invoke()
-                setBuildStatus?.success(completedMessage(config, project), "g")
+                di.handleBuildSuccessUseCase().invoke()
+                di.setBuildStatusUseCase().success(config.completedMessage(), "g")
             } else {
-                setBuildStatus?.failure(completedMessage(config, project), "g")
+                di.setBuildStatusUseCase().failure(config.completedMessage(), "g")
             }
         }
     }
-
-    private fun startedMessage(project: Project)
-            = "gradle ${project.taskNameString()} - in progress"
-
-    private fun completedMessage(config : BuildStatusConfig, project: Project)
-            = "${config.duration()}s for gradle ${project.taskNameString()}"
 }
 
-fun Project.isPost() = hasProperty("postStatus") || hasProperty("post")
-
+fun Project.isPost() = hasProperty("postStatus")
+        || hasProperty("post")
+        || gradle.taskGraph.allTasks.find { it is HelloWorldTask } != null
 fun Project.taskNameString() = gradle.startParameter.taskNames.joinToString(" ")

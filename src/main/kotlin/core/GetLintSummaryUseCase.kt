@@ -4,7 +4,15 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 
-open class GetLintSummaryUseCase(val documents: List<Document>) {
+open class GetLintSummaryUseCase(val documents: List<Document>) : SummaryUseCase {
+    override fun keyString(): String {
+        return "l"
+    }
+
+    override fun summaryString(): String? {
+        return asString()
+    }
+
     var suffix = " Lint issues "
     var tagName = "issue"
 

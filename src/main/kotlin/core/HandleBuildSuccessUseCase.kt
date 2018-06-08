@@ -3,30 +3,29 @@ package core
 class HandleBuildSuccessUseCase(
         val setBuildStatusUseCase: SetBuildStatusUseCase? = null,
         val postBuildStatsUseCase: PostBuildStatsUseCase,
-        val buildStatusConfig: BuildStatusConfig,
-        val getJacocoSummaryUseCase: GetJacocoSummaryUseCase,
-        val getLintSummaryUseCase: GetLintSummaryUseCase,
-        val getDetektSummaryUseCase: GetDetektSummaryUseCase,
-        val getCheckstyleSummaryUseCase: GetCheckstyleSummaryUseCase
+        val buildStatusConfig: BuildStatusProperties,
+        val summaries : List<SummaryUseCase>
 ) {
     fun invoke() {
-        getJacocoSummaryUseCase.percentAsString()?.let { setBuildStatusUseCase?.success(it, "j") }
-        getLintSummaryUseCase.asString()?.let { setBuildStatusUseCase?.success(it, "l")}
-        getDetektSummaryUseCase.asString()?.let { setBuildStatusUseCase?.success(it, "d") }
-        getCheckstyleSummaryUseCase.asString()?.let { setBuildStatusUseCase?.success(it, "c") }
+        summaries.forEach { summary ->
+            summary.summaryString()?.let { setBuildStatusUseCase?.success(it, summary.keyString()) }
+        }
 
-        val issueCount = (getLintSummaryUseCase.asTotal() ?: 0)
-                + (getDetektSummaryUseCase.asTotal() ?: 0)
-                + (getCheckstyleSummaryUseCase.asTotal() ?: 0)
+        val count = summaries
+                .filter { it is GetLintSummaryUseCase }
+                .map { it as GetLintSummaryUseCase }
+                .sumBy { it.asTotal() ?: 0 }
+
+        val coverageUseCase = summaries.find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase
 
         postBuildStatsUseCase.invoke(BuildStats(
-                getJacocoSummaryUseCase.percent() ?: 0.0,
-                issueCount,
+                coverageUseCase.percent() ?: 0.0,
+                count,
                 buildStatusConfig.duration(),
-                getJacocoSummaryUseCase.lines() ?: 0,
-                buildStatusConfig.commitDate,
-                buildStatusConfig.hash,
-                buildStatusConfig.commitBranch
+                coverageUseCase.lines() ?: 0,
+                buildStatusConfig.commitDate(),
+                buildStatusConfig.hash(),
+                buildStatusConfig.commitBranch()
         ))
     }
 }

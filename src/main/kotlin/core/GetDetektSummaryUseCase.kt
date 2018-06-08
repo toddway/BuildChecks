@@ -9,4 +9,8 @@ class GetDetektSummaryUseCase(documents: List<Document>) : GetLintSummaryUseCase
         suffix = " Detekt issues "
         tagName = "error"
     }
+
+    override fun keyString(): String {
+        return "d"
+    }
 }

@@ -43,6 +43,12 @@ To log details on the HTTP requests add -i
 
     ./gradlew clean ci -Ppost -i
 
+
+
+## Install Gradle
+Detailed instruction are [here](https://docs.gradle.org/current/userguide/installation.html).
+You should have Java 7 or newer installed.  You can
+
 License
 -------
 
