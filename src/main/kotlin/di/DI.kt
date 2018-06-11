@@ -39,7 +39,8 @@ class DI(val config : BuildStatusProperties = BuildStatusExtension()) {
                 GetJacocoSummaryUseCase(config.jacocoReports.toDocumentList()),
                 GetLintSummaryUseCase(config.lintReports.toDocumentList()),
                 GetDetektSummaryUseCase(config.detektReports.toDocumentList()),
-                GetCheckstyleSummaryUseCase(config.checkStyleReports.toDocumentList())
+                GetCheckstyleSummaryUseCase(config.checkStyleReports.toDocumentList()),
+                GetCoberturaSummaryUseCase(config.coberturaReports.toDocumentList())
         )
 
         return HandleBuildSuccessUseCase(

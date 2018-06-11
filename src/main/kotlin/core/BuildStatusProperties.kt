@@ -8,6 +8,7 @@ interface BuildStatusProperties {
     var jacocoReports : String
     var detektReports : String
     var checkStyleReports : String
+    var coberturaReports : String
     var statusBaseUrl : String
     var statusAuthorization : String
     var buildStartTime : Date

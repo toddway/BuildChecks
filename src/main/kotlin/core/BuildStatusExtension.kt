@@ -8,6 +8,7 @@ open class BuildStatusExtension : BuildStatusProperties {
     override var jacocoReports  = ""
     override var detektReports  = ""
     override var checkStyleReports  = ""
+    override var coberturaReports = ""
     override var statusBaseUrl  = ""
     override var statusAuthorization  = ""
     override var buildStartTime = Date()

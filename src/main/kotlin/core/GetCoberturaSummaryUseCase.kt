@@ -3,7 +3,7 @@ package core
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
-class GetCoburturaSummaryUseCase(documents: List<Document>) : GetCoverageSummaryUseCase(documents) {
+class GetCoberturaSummaryUseCase(documents: List<Document>) : GetCoverageSummaryUseCase(documents) {
     override fun toReportMap(d : Document): Map<String?, Pair<Int, Int>> {
         return d.toCoburturaMap()
     }

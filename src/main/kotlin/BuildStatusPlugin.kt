@@ -11,9 +11,9 @@ open class BuildStatusPlugin : Plugin<Project> {
         val di = DI(config)
 
         project.tasks.create("postStatus", HelloWorldTask::class.java).config = config
-        project.tasks.create("postPending", PostStatusTask::class.java).status = "pending"
-        project.tasks.create("postSuccess", PostStatusTask::class.java).status = "success"
-        project.tasks.create("postFailed", PostStatusTask::class.java).status = "success"
+//        project.tasks.create("postPending", PostStatusTask::class.java).status = "pending"
+//        project.tasks.create("postSuccess", PostStatusTask::class.java).status = "success"
+//        project.tasks.create("postFailed", PostStatusTask::class.java).status = "success"
 
 
         project.gradle.taskGraph.whenReady {
