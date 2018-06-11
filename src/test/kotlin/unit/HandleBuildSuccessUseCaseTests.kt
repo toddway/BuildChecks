@@ -2,7 +2,11 @@ package unit
 
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
-import core.*
+import core.datasource.StatsDatasource
+import core.datasource.StatusDatasource
+import core.entity.ConfigEntityDefault
+import core.toDocumentList
+import core.usecase.*
 import io.reactivex.Observable
 import org.amshove.kluent.*
 import org.junit.Test
@@ -12,12 +16,12 @@ class HandleBuildSuccessUseCaseTests {
 
     @Test
     fun `when there are no report docs, there are no calls and no errors`() {
-        val datasource : BuildStatusDatasource = mock()
-        val setBuildStatus = SetBuildStatusUseCase(listOf(datasource))
-        val buildStatsDatasource : BuildStatsDatasource = mock()
-        val postBuildMetricsUseCase = PostBuildStatsUseCase(listOf(buildStatsDatasource))
+        val datasource : StatusDatasource = mock()
+        val setBuildStatus = SetStatusUseCase(listOf(datasource))
+        val statsDatasource : StatsDatasource = mock()
+        val postBuildMetricsUseCase = PostStatsUseCase(listOf(statsDatasource))
         val summaries = listOf(
-                GetJacocoSummaryUseCase(listOf()) ,
+                GetJacocoSummaryUseCase(listOf()),
                 GetLintSummaryUseCase(listOf()),
                 GetDetektSummaryUseCase(listOf()),
                 GetCheckstyleSummaryUseCase(listOf())
@@ -25,11 +29,11 @@ class HandleBuildSuccessUseCaseTests {
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,
                 postBuildMetricsUseCase,
-                BuildStatusExtension(),
+                ConfigEntityDefault(),
                 summaries
         )
         When calling datasource.postSuccessStatus(any(), any()) itReturns Observable.just(true)
-        When calling buildStatsDatasource.postStats(any()) itReturns Observable.just(true)
+        When calling statsDatasource.postStats(any()) itReturns Observable.just(true)
 
         usecase.invoke()
 
@@ -38,10 +42,10 @@ class HandleBuildSuccessUseCaseTests {
 
     @Test
     fun `when there are one or more report docs, post success status for each type and build metrics`() {
-        val buildStatusDatasource : BuildStatusDatasource = mock()
-        val setBuildStatus = SetBuildStatusUseCase(listOf(buildStatusDatasource))
-        val buildStatsDatasource : BuildStatsDatasource = mock()
-        val postBuildMetricsUseCase = PostBuildStatsUseCase(listOf(buildStatsDatasource))
+        val statusDatasource : StatusDatasource = mock()
+        val setBuildStatus = SetStatusUseCase(listOf(statusDatasource))
+        val statsDatasource : StatsDatasource = mock()
+        val postBuildMetricsUseCase = PostStatsUseCase(listOf(statsDatasource))
         val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf(mock(), mock())),
                 GetLintSummaryUseCase(listOf(mock())),
@@ -51,16 +55,16 @@ class HandleBuildSuccessUseCaseTests {
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,
                 postBuildMetricsUseCase,
-                BuildStatusExtension(),
+                ConfigEntityDefault(),
                 summaries
         )
-        When calling buildStatusDatasource.postSuccessStatus(any(), any()) itReturns Observable.just(true)
-        When calling buildStatsDatasource.postStats(any()) itReturns Observable.just(true)
+        When calling statusDatasource.postSuccessStatus(any(), any()) itReturns Observable.just(true)
+        When calling statsDatasource.postStats(any()) itReturns Observable.just(true)
 
         usecase.invoke()
 
-        verify(buildStatusDatasource, times(2)).postSuccessStatus(any(), any())
-        Verify on buildStatsDatasource that buildStatsDatasource.postStats(any()) was called
+        verify(statusDatasource, times(2)).postSuccessStatus(any(), any())
+        Verify on statsDatasource that statsDatasource.postStats(any()) was called
     }
 }
 

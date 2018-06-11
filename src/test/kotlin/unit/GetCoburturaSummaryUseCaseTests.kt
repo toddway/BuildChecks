@@ -1,6 +1,6 @@
 package unit
 
-import core.GetCoberturaSummaryUseCase
+import core.usecase.GetCoberturaSummaryUseCase
 import core.toDocument
 import org.amshove.kluent.shouldNotBe
 import org.junit.Test

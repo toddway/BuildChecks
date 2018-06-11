@@ -1,6 +1,6 @@
 package unit
 
-import core.GetJacocoSummaryUseCase
+import core.usecase.GetJacocoSummaryUseCase
 import core.toDocument
 import org.amshove.kluent.shouldNotBe
 import org.junit.Test

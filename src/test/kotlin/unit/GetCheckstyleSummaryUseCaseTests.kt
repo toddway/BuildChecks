@@ -1,6 +1,6 @@
 package unit
 
-import core.GetCheckstyleSummaryUseCase
+import core.usecase.GetCheckstyleSummaryUseCase
 import core.toDocument
 import org.amshove.kluent.shouldNotBe
 import org.junit.Test

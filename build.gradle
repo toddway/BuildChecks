@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
-        classpath "com.toddway:buildStatusPlugin:1.1"
+        classpath "com.toddway:buildChecks:1.4"
 
         //these are here because they're dependencies of the buildStatusPlugin jar file
         classpath 'io.reactivex.rxjava2:rxjava:2.1.14'
@@ -25,9 +25,13 @@ buildscript {
     }
 }
 
-apply plugin: BuildStatusPlugin
-buildstatus {
-    statusBaseUrl = "https://api.github.com/repos/toddway/buildStatusPlugin/"
+//plugins {
+//    id "com.toddway.buildchecks" version "1.3"
+//}
+
+apply plugin: gradle.BuildChecksPlugin
+buildChecks {
+    //statusBaseUrl = "https://api.github.com/repos/toddway/buildStatusPlugin/"
     statusAuthorization = System.properties["githubAuth"]
     buildUrl = System.properties["buildUrl"]
     jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
@@ -67,19 +71,20 @@ test {
     }
 }
 
-version = "1.2"
+version = "1.4"
 group = "com.toddway"
+jar.baseName = "buildChecks"
 
 pluginBundle {
     website = "https://github.com/toddway/buildStatusPlugin"
     vcsUrl = "https://github.com/toddway/buildStatusPlugin.git"
-    description = "post summaries from code analyzers (jacoco, lint, detekt, and checkstyle) to VCS (GitHub & BitBucket)"
-    tags = ["build status"]
+    description = "post summaries of code analyzer output to GitHub or BitBucket"
+    tags = ["build checks"]
 
     plugins {
-        buildStatusPlugin {
-            id = "com.toddway.buildstatusplugin"
-            displayName = "Build Status plugin"
+        buildChecks {
+            id = "com.toddway.buildchecks"
+            displayName = "Build Checks"
         }
     }
 }
@@ -122,4 +127,6 @@ task coverage(type: JacocoReport, dependsOn: "test") {
     executionData = files("$buildDir/jacoco/test.exec")
 }
 
-build.dependsOn(coverage)
+
+postChecks.dependsOn(coverage)
+build.dependsOn(test)
