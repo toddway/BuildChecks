@@ -1,53 +1,71 @@
-Gradle plugin to log build status details.  Output can go to the console or post directly to BitBucket and GitHub build status APIs.
+Gradle plugin to post summaries from code analyzers (Jacoco, Android Lint, Detekt, Checkstyle, Cobertura)
+to VCS APIS ([GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/))
 
 ## Installation
-Add the following to your root build.gradle file:
+If you're not already using Gradle on your project,
+you should [install it](https://docs.gradle.org/current/userguide/installation.html)
+and [initialize it for your project](https://guides.gradle.org/creating-new-gradle-builds/).
+
+Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildstatusplugin" version "1.0"
+        id "com.toddway.buildchecks" version "1.4"
     }
 
-    apply plugin: BuildStatusPlugin
+    buildChecks {
+        baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
+        authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
+        buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
+        lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
+        jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
+        detektReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to Detekt xml reports
+        checkstyleReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
+        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
 
-    buildstatus {
-        statusBaseUrl = "https://github.com" //tested with https://bitbucket.example.com and http://github.com
-        statusAuthorization = "Bearer <your repo token>"
-        buildUrl = System.getenv('BITRISE_BUILD_URL') ? System.getenv('BITRISE_BUILD_URL') : "http://localhost"
-        lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your lint xml reports
-        jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your jacoco xml reports
-        detektReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to detekt xml reports
     }
 
-Now on any gradle task, you should see build status info printed to the console.
+The buildChecks block lets you configure the details of your build outputs and your source control system.  All examples above are optional.
+
 
 
 ## Usage
-To post the status to github or bitbucket, append `-Ppost` to your gradle task.  For example if you had a gradle task like:
+To print build checks only to the console, run the `printChecks` Gradle task
 
-    task ci {
-        dependsOn 'app:lintProdRelease'
-        dependsOn ':detektCheck'
-        dependsOn 'core:coverage'
-        dependsOn 'app:assembleRelease'
+    ./gradlew printChecks
+
+To post build checks to your remote source control system, run the `postChecks` Gradle task
+
+    ./gradlew postChecks
+
+You will most likely want to attach the `postChecks` task to some other command that builds your project.
+If you're already using a Gradle task for this (e.g. `build`, `assemble`, `mySpecialBuildTask`),
+you can make your task depend on `postChecks` in your build.gradle:
+
+    mySpecialBuildTask.dependsOn(postChecks)
+
+Now simply running your task activates `postChecks`.
+
+    ./gradlew mySpecialBuildTask
+
+If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
+you can attach postChecks by letting Gradle execute your command.
+Gradle has a built in task type for external commands.  Here's an example build.gradle implementation:
+
+    task mySpecialBuildTask(type: Exec) {
+        workingDir 'path/to/optional/subdirectory'
+        commandLine 'npm', 'deploy'
     }
 
-You would run the following to postStats status details to BitBucket
-
-    ./gradlew ci -Ppost
-
-To make sure you're not using data from old reports, add clean to your gradle command:
-
-    ./gradlew clean ci -Ppost
-
-To log details on the HTTP requests add -i
-
-    ./gradlew clean ci -Ppost -i
+    mySpecialBuildTask.dependsOn(postChecks)
 
 
+Then run
 
-## Install Gradle
-Detailed instruction are [here](https://docs.gradle.org/current/userguide/installation.html).
-You should have Java 7 or newer installed.  You can
+    ./gradlew mySpecialBuildTask
+
+The exit value of command (0 or 1) will determine if success or failure is posted.
+
+
 
 License
 -------

@@ -3,6 +3,7 @@ package func
 import core.datasource.StatusDatasource
 import data.GithubDatasource
 import data.createGithubService
+import org.amshove.kluent.shouldBe
 import org.junit.Ignore
 import org.junit.Test
 
@@ -19,9 +20,7 @@ class GithubDatasourceIntegrationTests {
 
         val result = datasource.postPendingStatus("test", "some-key").blockingFirst()
 
-        val i = 0
-
-        //result shouldBe true
+        result shouldBe true
     }
 }
 

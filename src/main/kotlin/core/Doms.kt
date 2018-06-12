@@ -13,7 +13,7 @@ fun File.toDocument() : Document {
     val dbf = DocumentBuilderFactory.newInstance()
     val db = dbf.newDocumentBuilder()
     db.setEntityResolver { _, systemId ->
-        if (systemId.contains("report.dtd")) {
+        if (systemId.contains(".dtd")) {
             InputSource(StringReader(""))
         } else {
             null
@@ -36,5 +36,6 @@ fun NodeList.children() = object : Iterable<Node> {
 }
 
 fun Node.attr(name : String): String? {
+    if (this.nodeType != Node.ELEMENT_NODE) return null
     return (this as Element).getAttribute(name)
 }

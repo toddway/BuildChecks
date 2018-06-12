@@ -13,16 +13,29 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
 
     fun statusDatasources() : List<StatusDatasource> {
         val datasources = mutableListOf<StatusDatasource>(ConsoleDatasource())
-        if (config.statusBaseUrl.contains("bitbucket")) {
-            val service = createBitBucketService(config.statusBaseUrl, config.statusAuthorization)
-            datasources.add(BitBucketDatasource(service, config.hash(), config.buildUrl))
-        } else if (config.statusBaseUrl.contains("github")) {
-            val service = createGithubService(config.statusBaseUrl, config.statusAuthorization)
-            datasources.add(GithubDatasource(service, config.hash(), config.buildUrl))
+
+        //TODO this block should be moved so it can be tested
+        if (config.isPostActivated) {
+            if (config.baseUrl.contains("bitbucket")) {
+                datasources.add(bitbucketDatasource())
+            } else if (config.baseUrl.contains("github")) {
+                datasources.add(githubDatasource())
+            }
         }
 
         return datasources
     }
+
+    fun bitbucketDatasource() : BitBucketDatasource {
+        val service = createBitBucketService(config.baseUrl, config.authorization)
+        return BitBucketDatasource(service, config.hash(), config.buildUrl)
+    }
+
+    fun githubDatasource() : GithubDatasource {
+        val service = createGithubService(config.baseUrl, config.authorization)
+        return GithubDatasource(service, config.hash(), config.buildUrl)
+    }
+
 
     fun statsDatasources(): List<StatsDatasource> {
         val datasources = mutableListOf<StatsDatasource>()
@@ -33,21 +46,26 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
         return datasources
     }
 
-    fun setStatusUseCase() : SetStatusUseCase {
-        return SetStatusUseCase(statusDatasources())
+    fun postStatusUseCase() : PostStatusUseCase {
+        return PostStatusUseCase(statusDatasources(), ShowMessageUseCase())
     }
 
     fun handleBuildSuccessUseCase() : HandleBuildSuccessUseCase {
         return HandleBuildSuccessUseCase(
-                setStatusUseCase(),
+                postStatusUseCase(),
                 PostStatsUseCase(statsDatasources()),
                 config,
-                summariesList()
+                summariesUseCases()
         )
     }
 
-    fun summariesList(): List<GetSummaryUseCase> {
+    fun handleBuildFailedUseCase() : HandleBuildFailedUseCase {
+        return HandleBuildFailedUseCase(postStatusUseCase(), summariesUseCases())
+    }
+
+    fun summariesUseCases(): List<GetSummaryUseCase> {
         return listOf(
+                GetDurationSummaryUseCase(config),
                 GetJacocoSummaryUseCase(config.jacocoReports.toDocumentList()),
                 GetLintSummaryUseCase(config.lintReports.toDocumentList()),
                 GetDetektSummaryUseCase(config.detektReports.toDocumentList()),
@@ -57,11 +75,11 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
     }
 
     fun handleBuildStartedUseCase() : HandleBuildStartedUseCase {
-        return HandleBuildStartedUseCase(setStatusUseCase(), config)
+        return HandleBuildStartedUseCase(postStatusUseCase(), config, ShowMessageUseCase())
     }
 
     fun handleBuildFinishedUseCase() : HandleBuildFinishedUseCase {
-        return HandleBuildFinishedUseCase(setStatusUseCase(), handleBuildSuccessUseCase(), config)
+        return HandleBuildFinishedUseCase(handleBuildFailedUseCase(), handleBuildSuccessUseCase(), config)
     }
 }
 
