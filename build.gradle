@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
-        //classpath "com.toddway:buildChecks:1.4"
+        classpath "com.toddway:buildChecks:1.4"
 
         //these are here because they're dependencies of the buildStatusPlugin jar file
         classpath 'io.reactivex.rxjava2:rxjava:2.1.14'
@@ -29,13 +29,13 @@ buildscript {
 //    id "com.toddway.buildchecks" version "1.3"
 //}
 
-//apply plugin: gradle.BuildChecksPlugin
-//buildChecks {
-//    baseUrl = "https://api.github.com/repos/toddway/buildStatusPlugin/"
-//    authorization = System.properties["githubAuth"]
-//    buildUrl = System.properties["buildUrl"]
-//    jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
-//}
+apply plugin: gradle.BuildChecksPlugin
+buildChecks {
+    baseUrl = "https://api.github.com/repos/toddway/buildStatusPlugin/"
+    authorization = System.properties["githubAuth"]
+    buildUrl = System.properties["buildUrl"]
+    jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
+}
 
 apply plugin: "com.gradle.plugin-publish"
 apply plugin: 'kotlin'
@@ -128,5 +128,5 @@ task coverage(type: JacocoReport, dependsOn: "test") {
 }
 
 
-
+postChecks.dependsOn(coverage)
 build.dependsOn(test)

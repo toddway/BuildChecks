@@ -1,0 +1,16 @@
+package core.usecase
+
+import org.w3c.dom.Document
+
+
+class GetDetektSummaryUseCase(documents: List<Document>) : GetLintSummaryUseCase(documents) {
+
+    init{
+        suffix = " Detekt issues "
+        tagName = "error"
+    }
+
+    override fun keyString(): String {
+        return "d"
+    }
+}
