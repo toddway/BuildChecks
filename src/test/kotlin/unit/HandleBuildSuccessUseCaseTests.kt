@@ -23,8 +23,7 @@ class HandleBuildSuccessUseCaseTests {
         val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf()),
                 GetLintSummaryUseCase(listOf()),
-                GetDetektSummaryUseCase(listOf()),
-                GetCheckstyleSummaryUseCase(listOf())
+                GetCoberturaSummaryUseCase(listOf())
         )
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,
@@ -50,8 +49,7 @@ class HandleBuildSuccessUseCaseTests {
         val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf(mock(), mock())),
                 GetLintSummaryUseCase(listOf(mock())),
-                GetDetektSummaryUseCase("".toDocumentList()),
-                GetCheckstyleSummaryUseCase("".toDocumentList())
+                GetCoberturaSummaryUseCase("".toDocumentList())
         )
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,

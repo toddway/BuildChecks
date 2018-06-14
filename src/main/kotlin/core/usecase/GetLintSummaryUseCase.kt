@@ -4,30 +4,26 @@ import core.attr
 import core.children
 import org.w3c.dom.Document
 import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 
 open class GetLintSummaryUseCase(val documents: List<Document>) : GetSummaryUseCase {
     override fun keyString(): String {
-        return "l"
+        return "lint"
     }
 
     override fun summaryString(): String? {
         return asString()
     }
 
-    var suffix = " Lint issues "
-    var tagName = "issue"
-
     fun asString(): String? {
         return severityMap?.let {
             val countsList = it.flatMap { entry -> listOf("${entry.value.count()} ${entry.key?.toLowerCase()}s") }
-            return "" + asTotal() + suffix + "(" + countsList.joinToString(", ") + ")"
+            return "" + asTotal() + " issues " + "(" + countsList.joinToString(", ") + ")"
         }
     }
 
     val severityMap: Map<String?, List<Node>>? by lazy {
         if (documents.isEmpty()) null
-        else documents.toSeverityMap(tagName)
+        else documents.children(listOf("issue", "error")).toSeverityMap()
     }
 
     fun asTotal(): Int? {
@@ -35,17 +31,29 @@ open class GetLintSummaryUseCase(val documents: List<Document>) : GetSummaryUseC
     }
 }
 
-fun Document.toSeverityMap(tagName : String): Map<String?, List<Node>> {
-    val nodeList : NodeList? = getElementsByTagName(tagName)
-    return nodeList?.children()?.groupBy { it.attr("severity") } ?: mapOf()
+fun String.normalizeLabels() : String {
+    return when (this.toLowerCase()) {
+        "fatal" -> "error"
+        "informational" -> "info"
+        else -> this.toLowerCase()
+    }
 }
 
-fun List<Document>.toSeverityMap(tagName : String): Map<String?, List<Node>> {
-    val m = mutableMapOf<String?, List<Node>>()
-    map { it.toSeverityMap(tagName) }.forEach { m.putAll(it) }
-    return m
+fun List<Document>.children(childNames: List<String>) : Iterable<Node> {
+    return flatMap { it.children(childNames) }
 }
 
+fun Document.children(childNames : List<String>) : Iterable<Node> {
+    var nodes = mutableListOf<Node>().asIterable()
+    childNames.forEach {
+        getElementsByTagName(it)?.let { nodes += it.children() }
+    }
+    return nodes
+}
+
+fun Iterable<Node>.toSeverityMap(): Map<String?, List<Node>> {
+    return groupBy { it.attr("severity")?.normalizeLabels() }
+}
 
 fun <T, V> Map<V?, List<T>>.totalListItemsInMap(): Int {
     return flatMap { entry -> listOf(entry.value.count()) }.sum()

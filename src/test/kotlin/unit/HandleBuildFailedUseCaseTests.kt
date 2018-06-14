@@ -18,8 +18,7 @@ class HandleBuildFailedUseCaseTests {
         val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf()),
                 GetLintSummaryUseCase(listOf()),
-                GetDetektSummaryUseCase(listOf()),
-                GetCheckstyleSummaryUseCase(listOf())
+                GetCoberturaSummaryUseCase(listOf())
         )
         val usecase = HandleBuildFailedUseCase(setBuildStatus, summaries)
         When calling datasource.name() itReturns "asdf"
@@ -37,8 +36,7 @@ class HandleBuildFailedUseCaseTests {
         val summaries = listOf(
                 GetJacocoSummaryUseCase(listOf(mock(), mock())),
                 GetLintSummaryUseCase(listOf(mock())),
-                GetDetektSummaryUseCase("".toDocumentList()),
-                GetCheckstyleSummaryUseCase("".toDocumentList())
+                GetCoberturaSummaryUseCase("".toDocumentList())
         )
         val usecase = HandleBuildFailedUseCase(setBuildStatus, summaries)
         When calling statusDatasource.name() itReturns "asdf"

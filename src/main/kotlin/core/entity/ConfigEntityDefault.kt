@@ -4,10 +4,9 @@ import java.util.*
 
 open class ConfigEntityDefault : ConfigEntity {
     override var buildUrl  = ""
-    override var lintReports  = ""
+    override var androidLintReports  = ""
     override var jacocoReports  = ""
-    override var detektReports  = ""
-    override var checkStyleReports  = ""
+    override var checkstyleReports  = ""
     override var coberturaReports = ""
     override var baseUrl  = ""
     override var authorization  = ""
@@ -17,4 +16,3 @@ open class ConfigEntityDefault : ConfigEntity {
     override var isPostActivated = false
     override var isPluginActivated = false
 }
-

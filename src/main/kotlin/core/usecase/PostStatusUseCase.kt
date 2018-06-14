@@ -28,5 +28,4 @@ open class PostStatusUseCase(open val datasources: List<StatusDatasource>, val s
             showMessageUseCase.invoke(message)
         }
     }
-
 }

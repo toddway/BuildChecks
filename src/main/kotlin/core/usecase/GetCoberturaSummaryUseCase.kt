@@ -6,7 +6,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 
 class GetCoberturaSummaryUseCase(documents: List<Document>) : GetCoverageSummaryUseCase(documents) {
-    override fun toReportMap(d : Document): Map<String?, Pair<Int, Int>> {
+    override fun toCoverageMap(d : Document): Map<String?, Pair<Int, Int>> {
         return d.toCoburturaMap()
     }
 }

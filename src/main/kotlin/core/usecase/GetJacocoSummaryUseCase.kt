@@ -6,12 +6,8 @@ import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 
 class GetJacocoSummaryUseCase(documents: List<Document>) : GetCoverageSummaryUseCase(documents) {
-    override fun toReportMap(d: Document): Map<String?, Pair<Int, Int>> {
+    override fun toCoverageMap(d: Document): Map<String?, Pair<Int, Int>> {
         return d.toJacocoMap()
-    }
-
-    override fun keyString(): String {
-        return "j"
     }
 }
 
@@ -27,7 +23,10 @@ fun Document.toJacocoMap(): Map<String?, Pair<Int, Int>> {
     }
 
     val linePlusBranchMap = statsMap.filter { entry -> entry.key == "LINE" || entry.key == "BRANCH" }
-    val linePlusBranchPair = Pair(linePlusBranchMap.values.sumBy { it.first }, linePlusBranchMap.values.sumBy { it.second })
+    val linePlusBranchPair = Pair(
+            linePlusBranchMap.values.sumBy { it.first },
+            linePlusBranchMap.values.sumBy { it.second }
+    )
 
     val reportMap = statsMap.toMutableMap()
     reportMap.put("LINE + BRANCH", linePlusBranchPair)
