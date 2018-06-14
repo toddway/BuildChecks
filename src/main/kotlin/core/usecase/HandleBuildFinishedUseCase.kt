@@ -7,9 +7,9 @@ class HandleBuildFinishedUseCase(
         private val handleBuildSuccessUseCase: HandleBuildSuccessUseCase,
         private val config: ConfigEntity
 ) {
-    fun invoke(isSuccess: Boolean) {
+    fun invoke() {
         if (config.isPluginActivated) {
-            if (isSuccess) {
+            if (config.isSuccess) {
                 handleBuildSuccessUseCase.invoke()
             } else {
                 handleBuildFailedUseCase.invoke()

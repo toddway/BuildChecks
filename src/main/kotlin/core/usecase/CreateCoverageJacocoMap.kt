@@ -5,9 +5,9 @@ import core.children
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 
-class GetJacocoSummaryUseCase(documents: List<Document>) : GetCoverageSummaryUseCase(documents) {
-    override fun toCoverageMap(d: Document): Map<String?, Pair<Int, Int>> {
-        return d.toJacocoMap()
+class CreateJacocoMap : CreateCoverageMap {
+    override fun from(document: Document): Map<String?, Pair<Int, Int>> {
+        return document.toJacocoMap()
     }
 }
 
@@ -32,6 +32,3 @@ fun Document.toJacocoMap(): Map<String?, Pair<Int, Int>> {
     reportMap.put("LINE + BRANCH", linePlusBranchPair)
     return reportMap
 }
-
-
-

@@ -16,12 +16,10 @@ Then add the following to the build.gradle file at the root of your project:
         baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
         authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
         buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
-        lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
-        jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
-        detektReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to Detekt xml reports
+        androidLintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
         checkstyleReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
+        jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
         coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
-
     }
 
 The buildChecks block lets you configure the details of your build outputs and your source control system.  All examples above are optional.
@@ -33,7 +31,7 @@ To print build checks only to the console, run the `printChecks` Gradle task
 
     ./gradlew printChecks
 
-To post build checks to your remote source control system, run the `postChecks` Gradle task
+To postAll build checks to your remote source control system, run the `postChecks` Gradle task
 
     ./gradlew postChecks
 

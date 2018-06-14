@@ -5,7 +5,7 @@ package gradle
 //    var message = ""
 //    var status = ""
 //
-//    @Option(option="m", description="Message to post along with status", order=1)
+//    @Option(option="m", description="Message to postAll along with status", order=1)
 //    fun setTheMessage(v : String) {
 //        this.message = v
 //    }

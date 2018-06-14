@@ -10,20 +10,13 @@ open class HandleBuildSuccessUseCase(
         val summaries : List<GetSummaryUseCase>
 ) {
     open fun invoke() {
-        summaries.forEach { summary ->
-            summary.summaryString()?.let { postStatusUseCase.success(it, summary.keyString()) }
-        }
+        summaries.postAll(postStatusUseCase)
 
-        val count = summaries
-                .filter { it is GetLintSummaryUseCase }
-                .map { it as GetLintSummaryUseCase }
-                .sumBy { it.asTotal() ?: 0 }
-
+        val lintUseCase = summaries.find { it is GetLintSummaryUseCase } as GetLintSummaryUseCase
         val coverageUseCase = summaries.find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase
-
         postStatsUseCase.invoke(StatsEntity(
                 coverageUseCase.percent() ?: 0.0,
-                count,
+                lintUseCase.asTotal() ?: 0,
                 config.duration(),
                 coverageUseCase.lines() ?: 0,
                 config.commitDate(),

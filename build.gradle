@@ -38,6 +38,8 @@ buildChecks {
     buildUrl = System.properties["buildUrl"]
     jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
     checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml"
+    minCoveragePercent = 60
+    maxLintViolations = 5
 }
 
 detekt {
@@ -93,7 +95,7 @@ jar.baseName = "buildChecks"
 pluginBundle {
     website = "https://github.com/toddway/buildStatusPlugin"
     vcsUrl = "https://github.com/toddway/buildStatusPlugin.git"
-    description = "post summaries of code analyzer output to GitHub or BitBucket"
+    description = "postAll summaries of code analyzer output to GitHub or BitBucket"
     tags = ["build checks"]
 
     plugins {
@@ -138,7 +140,7 @@ task coverage(type: JacocoReport, dependsOn: "test") {
             dir: "$buildDir/classes/kotlin", excludes: excludes
     )
 
-    sourceDirectories = files(["src/main/java"])
+    sourceDirectories = files(["src/main/kotlin"])
     executionData = files("$buildDir/jacoco/test.exec")
 }
 

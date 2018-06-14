@@ -2,22 +2,31 @@ package core.usecase
 
 import core.attr
 import core.children
+import core.isNotLessThan
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
-open class GetLintSummaryUseCase(val documents: List<Document>) : GetSummaryUseCase {
-    override fun keyString(): String {
+open class GetLintSummaryUseCase(
+        val documents: List<Document>,
+        val maxLintViolations : Int? = null) : GetSummaryUseCase {
+    override fun isSuccessful(): Boolean {
+        return maxLintViolations?.isNotLessThan(asTotal()) ?: true
+    }
+
+    override fun key(): String {
         return "lint"
     }
 
-    override fun summaryString(): String? {
+    override fun summary(): String? {
         return asString()
     }
 
     fun asString(): String? {
         return severityMap?.let {
-            val countsList = it.flatMap { entry -> listOf("${entry.value.count()} ${entry.key?.toLowerCase()}s") }
-            return "" + asTotal() + " issues " + "(" + countsList.joinToString(", ") + ")"
+            val detailList = it.flatMap { entry -> listOf("${entry.value.count()} ${entry.key?.toLowerCase()}") }.toMutableList()
+            var summary = "" + asTotal() + " lint violations " + "(" + detailList.joinToString(", ") + ")"
+            maxLintViolations?.let { summary += ", threshold is $maxLintViolations" }
+            return summary
         }
     }
 

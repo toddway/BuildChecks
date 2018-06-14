@@ -10,6 +10,8 @@ interface ConfigEntity {
     var checkstyleReports : String
     var jacocoReports : String
     var coberturaReports : String
+    var maxLintViolations : Int?
+    var minCoveragePercent : Double?
     var baseUrl : String
     var authorization : String
     var buildStartTime : Date
@@ -17,6 +19,7 @@ interface ConfigEntity {
     var taskName : String
     var isPostActivated : Boolean
     var isPluginActivated: Boolean
+    var isSuccess: Boolean
 
     fun hash() = "git rev-parse HEAD".run() ?: ""
     fun shortHash()  = "git rev-parse --short HEAD".run() ?: ""

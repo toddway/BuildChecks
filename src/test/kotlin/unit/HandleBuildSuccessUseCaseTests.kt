@@ -21,9 +21,9 @@ class HandleBuildSuccessUseCaseTests {
         val statsDatasource : StatsDatasource = mock()
         val postStatsUseCase = PostStatsUseCase(listOf(statsDatasource))
         val summaries = listOf(
-                GetJacocoSummaryUseCase(listOf()),
+                GetCoverageSummaryUseCase(listOf(), CreateJacocoMap()),
                 GetLintSummaryUseCase(listOf()),
-                GetCoberturaSummaryUseCase(listOf())
+                GetCoverageSummaryUseCase(listOf(), CreateCoberturaMap())
         )
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,
@@ -47,9 +47,9 @@ class HandleBuildSuccessUseCaseTests {
         val statsDatasource : StatsDatasource = mock()
         val postStatsUseCase = PostStatsUseCase(listOf(statsDatasource))
         val summaries = listOf(
-                GetJacocoSummaryUseCase(listOf(mock(), mock())),
+                GetCoverageSummaryUseCase(listOf(mock(), mock()), CreateJacocoMap()),
                 GetLintSummaryUseCase(listOf(mock())),
-                GetCoberturaSummaryUseCase("".toDocumentList())
+                GetCoverageSummaryUseCase("".toDocumentList(), CreateCoberturaMap())
         )
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,

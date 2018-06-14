@@ -15,9 +15,10 @@ class HandleBuildFinishedUseCaseTests {
         val handleBuildSuccessUseCase : HandleBuildSuccessUseCase = mock()
         val config = ConfigEntityDefault()
         config.isPluginActivated = false
+        config.isSuccess = false
         val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config)
 
-        usecase.invoke(false)
+        usecase.invoke()
 
         VerifyNotCalled on handleBuildFailedUseCase that handleBuildFailedUseCase.invoke() was called
     }
@@ -28,9 +29,10 @@ class HandleBuildFinishedUseCaseTests {
         val handleBuildSuccessUseCase : HandleBuildSuccessUseCase = mock()
         val config = ConfigEntityDefault()
         config.isPluginActivated = true
+        config.isSuccess = false
         val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config)
 
-        usecase.invoke(false)
+        usecase.invoke()
 
         Verify on handleBuildFailedUseCase that handleBuildFailedUseCase.invoke() was called
     }
@@ -41,9 +43,10 @@ class HandleBuildFinishedUseCaseTests {
         val handleBuildSuccessUseCase : HandleBuildSuccessUseCase = mock()
         val config = ConfigEntityDefault()
         config.isPluginActivated = true
+        config.isSuccess = true
         val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config)
 
-        usecase.invoke(true)
+        usecase.invoke()
 
         //Verify on postStatusUseCase that postStatusUseCase.success(any(), any()) was called
         Verify on handleBuildSuccessUseCase that handleBuildSuccessUseCase.invoke() was called

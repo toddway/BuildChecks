@@ -11,7 +11,7 @@ class HandleBuildStartedUseCase(
 ) {
     fun invoke() {
         if (config.isPluginActivated) {
-            postStatusUseCase.pending(config.startedMessage(), "g")
+            postStatusUseCase.pending(config.startedMessage(), "gradle")
 
             if (config.isPostActivated) {
                 val remoteDatasource = postStatusUseCase.datasources

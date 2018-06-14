@@ -3,6 +3,9 @@ package core.entity
 import java.util.*
 
 open class ConfigEntityDefault : ConfigEntity {
+    override var isSuccess: Boolean = false
+    override var maxLintViolations: Int? = null
+    override var minCoveragePercent: Double? = null
     override var buildUrl  = ""
     override var androidLintReports  = ""
     override var jacocoReports  = ""

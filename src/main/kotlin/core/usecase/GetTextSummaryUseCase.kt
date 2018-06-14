@@ -3,11 +3,15 @@ package core.usecase
 import java.io.File
 
 class GetTextSummaryUseCase(val file : File) : GetSummaryUseCase {
-    override fun summaryString(): String? {
+    override fun isSuccessful(): Boolean {
+        return true
+    }
+
+    override fun summary(): String? {
         return file.readText()
     }
 
-    override fun keyString(): String {
+    override fun key(): String {
         return file.nameWithoutExtension
     }
 }

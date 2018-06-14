@@ -43,7 +43,15 @@ fun String.toFileList(): List<File> {
     return split(",").map { File(it.trim()) }.filter { it.exists() }
 }
 
+fun Number.isNotGreaterThan(number: Number?): Boolean {
+    if (number == null) return true
+    return this.toDouble() <= number.toDouble()
+}
 
+fun Number.isNotLessThan(number: Number?): Boolean {
+    if (number == null) return true
+    return this.toDouble() >= number.toDouble()
+}
 
 fun Int.blankOrNum() : String = if (this == 0) "" else "$this"
 

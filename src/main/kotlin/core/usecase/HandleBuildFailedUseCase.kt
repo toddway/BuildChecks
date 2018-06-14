@@ -5,8 +5,6 @@ open class HandleBuildFailedUseCase(
         val summaries: List<GetSummaryUseCase>
 ) {
     open fun invoke() {
-        summaries.forEach { summary ->
-            summary.summaryString()?.let { postStatusUseCase.failure(it, summary.keyString()) }
-        }
+        summaries.postAll(postStatusUseCase)
     }
 }

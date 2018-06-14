@@ -15,15 +15,14 @@ class GetSummaryUseCaseTests {
 
         val summaries : List<GetSummaryUseCase> = listOf(
                 GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toDocumentList() +  "./src/test/testFiles/detekt-checkstyle.xml".toDocumentList()),
-                GetJacocoSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument())),
-                GetCoberturaSummaryUseCase(listOf(File("./src/test/testFiles/cobertura-coverage.xml").toDocument())),
+                GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument()), CreateJacocoMap()),
                 GetTextSummaryUseCase(File("./src/test/testFiles/hello.txt"))
         )
 
         summaries.forEach {
-            it.keyString().isNotBlank() shouldBe true
-            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summaryString().isNullOrBlank())
-            println("${it.keyString()} - ${it.summaryString()}")
+            it.key().isNotBlank() shouldBe true
+            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summary().isNullOrBlank())
+            println("${it.key()} - ${it.summary()}")
         }
     }
 
@@ -31,14 +30,13 @@ class GetSummaryUseCaseTests {
     fun`when there are invalid report documents, summaries are generated`() {
         val summaries : List<GetSummaryUseCase> = listOf(
                 GetLintSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument(), File("./src/test/testFiles/coverage.xml").toDocument())),
-                GetJacocoSummaryUseCase(listOf(File("./src/test/testFiles/cobertura-coverage.xml").toDocument())),
-                GetCoberturaSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument())),
+                GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/cobertura-coverage.xml").toDocument()), CreateJacocoMap()),
                 GetTextSummaryUseCase(File("./src/test/testFiles/coverage.xml"))
         )
 
         summaries.forEach {
-            it.keyString().isNotBlank() shouldBe true
-            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summaryString().isNullOrBlank())
+            it.key().isNotBlank() shouldBe true
+            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summary().isNullOrBlank())
         }
     }
 }

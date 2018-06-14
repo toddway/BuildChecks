@@ -66,11 +66,17 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
     fun summariesUseCases(): List<GetSummaryUseCase> {
         return listOf(
                 GetDurationSummaryUseCase(config),
-                GetCoberturaSummaryUseCase(config.coberturaReports.toDocumentList()),
-                GetJacocoSummaryUseCase(config.jacocoReports.toDocumentList()),
+                GetCoverageSummaryUseCase(
+                        config.coberturaReports.toDocumentList(),
+                        CreateCoberturaMap(),
+                        config.minCoveragePercent),
+                GetCoverageSummaryUseCase(
+                        config.jacocoReports.toDocumentList(),
+                        CreateJacocoMap(),
+                        config.minCoveragePercent),
                 GetLintSummaryUseCase(
-                        config.androidLintReports.toDocumentList()
-                                + config.checkstyleReports.toDocumentList()
+                        config.androidLintReports.toDocumentList() + config.checkstyleReports.toDocumentList(),
+                        config.maxLintViolations
                 )
         )
     }
