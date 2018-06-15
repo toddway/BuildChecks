@@ -28,5 +28,6 @@ interface ConfigEntity {
     fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)
     fun startedMessage() = "gradle $taskName - in progress"
     fun completedMessage() = "${duration()}s for gradle $taskName"
+    fun isAllChangesCommitted() = "git status -s".run()?.isEmpty() ?: false
 }
 

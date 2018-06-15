@@ -17,7 +17,7 @@ class HandleBuildSuccessUseCaseTests {
     @Test
     fun `when there are no report docs, there are no calls and no errors`() {
         val datasource : StatusDatasource = mock()
-        val setBuildStatus = PostStatusUseCase(listOf(datasource), ShowMessageUseCase())
+        val setBuildStatus = PostStatusUseCase(listOf(datasource), mock())
         val statsDatasource : StatsDatasource = mock()
         val postStatsUseCase = PostStatsUseCase(listOf(statsDatasource))
         val summaries = listOf(
@@ -43,7 +43,7 @@ class HandleBuildSuccessUseCaseTests {
     @Test
     fun `when there are one or more report docs, post success status for each type and build metrics`() {
         val statusDatasource : StatusDatasource = mock()
-        val setBuildStatus = PostStatusUseCase(listOf(statusDatasource), ShowMessageUseCase())
+        val setBuildStatus = PostStatusUseCase(listOf(statusDatasource), mock())
         val statsDatasource : StatsDatasource = mock()
         val postStatsUseCase = PostStatsUseCase(listOf(statsDatasource))
         val summaries = listOf(

@@ -16,7 +16,7 @@ class HandleBuildFinishedUseCaseTests {
         val config = ConfigEntityDefault()
         config.isPluginActivated = false
         config.isSuccess = false
-        val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config)
+        val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, mock())
 
         usecase.invoke()
 
@@ -30,7 +30,7 @@ class HandleBuildFinishedUseCaseTests {
         val config = ConfigEntityDefault()
         config.isPluginActivated = true
         config.isSuccess = false
-        val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config)
+        val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, mutableListOf())
 
         usecase.invoke()
 
@@ -44,7 +44,7 @@ class HandleBuildFinishedUseCaseTests {
         val config = ConfigEntityDefault()
         config.isPluginActivated = true
         config.isSuccess = true
-        val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config)
+        val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, mutableListOf())
 
         usecase.invoke()
 

@@ -2,11 +2,13 @@ package gradle
 
 import core.datasource.StatsDatasource
 import core.datasource.StatusDatasource
-import core.entity.ConfigEntity
-import core.entity.ConfigEntityDefault
+import core.entity.*
 import core.toDocumentList
 import core.usecase.*
-import data.*
+import data.ConsoleDatasource
+import data.RetrofitStatsDatasource
+import data.createRetrifotBuildStatsService
+import data.findRemoteStatusDatasource
 
 
 class DI(val config : ConfigEntity = ConfigEntityDefault()) {
@@ -16,24 +18,17 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
 
         //TODO this block should be moved so it can be tested
         if (config.isPostActivated) {
-            if (config.baseUrl.contains("bitbucket")) {
-                datasources.add(bitbucketDatasource())
-            } else if (config.baseUrl.contains("github")) {
-                datasources.add(githubDatasource())
+            if (config.isAllChangesCommitted()) {
+                findRemoteStatusDatasource(config)?.let {
+                    datasources.add(it)
+                    messageQueue.add(InfoMessage("${it.name().toUpperCase()} config was found"))
+                } ?: messageQueue.add(ErrorMessage("No recognized post config was found"))
+            } else {
+                messageQueue.add(ErrorMessage("You must commit all changes to git before posting"))
             }
         }
 
         return datasources
-    }
-
-    fun bitbucketDatasource() : BitBucketDatasource {
-        val service = createBitBucketService(config.baseUrl, config.authorization)
-        return BitBucketDatasource(service, config.hash(), config.buildUrl)
-    }
-
-    fun githubDatasource() : GithubDatasource {
-        val service = createGithubService(config.baseUrl, config.authorization)
-        return GithubDatasource(service, config.hash(), config.buildUrl)
     }
 
 
@@ -47,7 +42,7 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
     }
 
     fun postStatusUseCase() : PostStatusUseCase {
-        return PostStatusUseCase(statusDatasources(), ShowMessageUseCase())
+        return PostStatusUseCase(statusDatasources(), messageQueue)
     }
 
     fun handleBuildSuccessUseCase() : HandleBuildSuccessUseCase {
@@ -82,12 +77,14 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
     }
 
     fun handleBuildStartedUseCase() : HandleBuildStartedUseCase {
-        return HandleBuildStartedUseCase(postStatusUseCase(), config, ShowMessageUseCase())
+        return HandleBuildStartedUseCase(postStatusUseCase(), config, messageQueue)
     }
 
     fun handleBuildFinishedUseCase() : HandleBuildFinishedUseCase {
-        return HandleBuildFinishedUseCase(handleBuildFailedUseCase(), handleBuildSuccessUseCase(), config)
+        return HandleBuildFinishedUseCase(handleBuildFailedUseCase(), handleBuildSuccessUseCase(), config, messageQueue)
     }
+
+    val messageQueue = mutableListOf<Message>()
 }
 
 

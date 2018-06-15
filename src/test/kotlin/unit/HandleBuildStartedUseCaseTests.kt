@@ -3,7 +3,6 @@ package unit
 import core.entity.ConfigEntityDefault
 import core.usecase.HandleBuildStartedUseCase
 import core.usecase.PostStatusUseCase
-import core.usecase.ShowMessageUseCase
 import data.GithubDatasource
 import org.amshove.kluent.*
 import org.junit.Test
@@ -15,7 +14,7 @@ class HandleBuildStartedUseCaseTests {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = ConfigEntityDefault()
         config.isPluginActivated = false
-        val usecase = HandleBuildStartedUseCase(postBuildStatus, config, ShowMessageUseCase())
+        val usecase = HandleBuildStartedUseCase(postBuildStatus, config, mock())
 
         usecase.invoke()
 
@@ -28,7 +27,7 @@ class HandleBuildStartedUseCaseTests {
         val config = ConfigEntityDefault()
         config.isPluginActivated = true
         config.isPostActivated = true
-        val usecase = HandleBuildStartedUseCase(postBuildStatus, config, ShowMessageUseCase())
+        val usecase = HandleBuildStartedUseCase(postBuildStatus, config, mock())
         When calling postBuildStatus.datasources itReturns listOf(GithubDatasource(mock(), "", ""))
 
         usecase.invoke()

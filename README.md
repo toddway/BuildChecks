@@ -63,6 +63,11 @@ Then run
 
 The exit value of command (0 or 1) will determine if success or failure is posted.
 
+## TODO
+- finish text report checks
+- fail check if report is missing?
+- check for uncommitted changes
+- update readme
 
 
 License

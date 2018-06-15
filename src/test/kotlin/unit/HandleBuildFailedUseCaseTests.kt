@@ -14,7 +14,7 @@ class HandleBuildFailedUseCaseTests {
     @Test
     fun `when there are no summaries, there are no calls and no errors`() {
         val datasource : StatusDatasource = mock()
-        val setBuildStatus = PostStatusUseCase(listOf(datasource), ShowMessageUseCase())
+        val setBuildStatus = PostStatusUseCase(listOf(datasource), mock())
         val summaries = listOf(
                 GetCoverageSummaryUseCase(listOf(), CreateJacocoMap()),
                 GetLintSummaryUseCase(listOf())
@@ -31,7 +31,7 @@ class HandleBuildFailedUseCaseTests {
     @Test
     fun `when there are one or more summaries, post status for each type`() {
         val statusDatasource : StatusDatasource = mock()
-        val setBuildStatus = PostStatusUseCase(listOf(statusDatasource), ShowMessageUseCase())
+        val setBuildStatus = PostStatusUseCase(listOf(statusDatasource), mock())
         val summaries = listOf(
                 GetCoverageSummaryUseCase(listOf(mock(), mock()), CreateJacocoMap()),
                 GetLintSummaryUseCase(listOf(mock())),

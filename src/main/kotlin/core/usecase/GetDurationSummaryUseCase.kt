@@ -12,6 +12,6 @@ class GetDurationSummaryUseCase(val config : ConfigEntity) : GetSummaryUseCase{
     }
 
     override fun key(): String {
-        return "gradle"
+        return "build"
     }
 }

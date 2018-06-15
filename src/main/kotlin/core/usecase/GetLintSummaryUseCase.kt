@@ -23,8 +23,10 @@ open class GetLintSummaryUseCase(
 
     fun asString(): String? {
         return severityMap?.let {
-            val detailList = it.flatMap { entry -> listOf("${entry.value.count()} ${entry.key?.toLowerCase()}") }.toMutableList()
-            var summary = "" + asTotal() + " lint violations " + "(" + detailList.joinToString(", ") + ")"
+            val detailList = it.flatMap { entry ->
+                listOf("${entry.value.count()} ${entry.key?.toLowerCase()}")
+            }.toMutableList()
+            var summary = "" + asTotal() + " rule violations " + "(" + detailList.joinToString(", ") + ")"
             maxLintViolations?.let { summary += ", threshold is $maxLintViolations" }
             return summary
         }
