@@ -14,22 +14,6 @@ Then add the following to the build.gradle file at the root of your project:
         id "com.toddway.buildchecks" version "1.4"
     }
 
-    buildChecks {
-        baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
-        authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
-        buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
-        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
-        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
-        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
-        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
-        minCoveragePercent = 60 //minimum threshold for test coverage
-        maxLintViolations = 5 //maximum threshold for lint violations
-    }
-
-The buildChecks block lets you configure the details of your build outputs and your source control system.  All examples above are optional.
-
-
-
 ## Usage
 To print build checks only to the console, run the `printChecks` Gradle task
 
@@ -41,27 +25,43 @@ To post build checks to your remote source control system, run the `postChecks` 
 
 You will most likely want to attach the `postChecks` task to some other command that builds your project and runs your lint and coverage tools.
 If you're already using a Gradle task for this (e.g. `build`, `assemble`, `myCustomTask`),
-you can include `postChecks` by making your task depend on it.  In your build.gradle:
+you can make postChecks depend on your task. In your build.gradle:
 
-    myCustomTask.dependsOn(postChecks)
+    postChecks.dependsOn(myCustomTask)
 
-Now simply running your task activates `postChecks`.
+Then calling `postChecks` will automatically activate `myCustomTask`:
 
-    ./gradlew myCustomTask
+    ./gradlew postChecks
 
 If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
 you can attach postChecks by letting Gradle execute your command.
-Gradle lets you set up external commands like this:
+Gradle lets you define custom executables like this:
 
     task myCustomTask(type: Exec) {
         workingDir 'path/to/optional/subdirectory'
         commandLine 'npm', 'deploy'
     }
 
-    myCustomTask.dependsOn(postChecks)
+    postChecks.dependsOn(myCustomTask)
 
 
 The exit value of the external command (0 or 1) will determine if success or failure is posted for the build.
+
+## Config
+To configure the details of your build output and your source control system, add a buildChecks block to your build.gradle.
+All example properties below are optional.
+
+    buildChecks {
+        baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
+        authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
+        buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
+        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
+        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
+        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
+        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
+        minCoveragePercent = 80 //minimum threshold for test coverage
+        maxLintViolations = 5 //maximum threshold for lint violations
+     }
 
 ## TODO
 - custom check summaries from text files

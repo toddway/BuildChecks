@@ -25,7 +25,7 @@ class DI(val config : ConfigEntity = ConfigEntityDefault()) {
                     messageQueue.add(InfoMessage("${it.name().toUpperCase()} config was found"))
                 } ?: messageQueue.add(ErrorMessage("No recognized post config was found"))
             } else {
-                messageQueue.add(ErrorMessage("You must commit your changes to git before posting"))
+                messageQueue.add(ErrorMessage("You must commit your changes to git before running postChecks"))
             }
         }
 

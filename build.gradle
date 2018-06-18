@@ -38,7 +38,7 @@ buildChecks {
     buildUrl = System.properties["buildUrl"]
     jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
     checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml"
-    minCoveragePercent = 60
+    minCoveragePercent = 50
     maxLintViolations = 5
 }
 
