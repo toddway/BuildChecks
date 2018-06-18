@@ -1,6 +1,6 @@
 package data
 
-import core.BuildStatusDatasource
+import core.datasource.StatusDatasource
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.Body
@@ -12,7 +12,11 @@ class GithubDatasource(
         val service: GithubService,
         val hash : String,
         val url : String
-) : BuildStatusDatasource {
+) : StatusDatasource {
+    override fun name(): String {
+        return "Github"
+    }
+
     override fun postPendingStatus(message: String, key: String): Observable<Boolean> {
         return postStatus("pending", message, key)
     }
@@ -27,7 +31,7 @@ class GithubDatasource(
 
     fun postStatus(status: String, message: String, key: String) : Observable<Boolean> {
         val body = GithubBuildStatusBody(status, key, message, url)
-        return service.postBuildStatus(hash, body).map { true }.onErrorReturn { true }
+        return service.postBuildStatus(hash, body).map { true }.onErrorReturn { false }
     }
 }
 

@@ -7,8 +7,12 @@ import java.util.concurrent.TimeUnit
 
 fun Pair<Int, Int>.percentage(): Double {
     return if (first == 0 && second == 0) 0.0
-        else ((first.toDouble() / (second + first)) * 100)
+        else ((first.toDouble() / (second + first)) * HUNDRED)
 }
+
+const val THOUSAND = 1000.0
+const val HUNDRED = 100
+const val COMMAND_TIMEOUT : Long = 60
 
 fun Double.round(scale : Int) =
         BigDecimal(this).setScale(scale, BigDecimal.ROUND_HALF_UP).toDouble()
@@ -22,8 +26,11 @@ fun String.runCommand(workingDir: File): String? {
                 .redirectError(ProcessBuilder.Redirect.PIPE)
                 .start()
 
-        proc.waitFor(60, TimeUnit.MINUTES)
-        proc.inputStream.bufferedReader().readText()
+        proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)
+        val v = proc.inputStream.bufferedReader().readText()
+        proc.inputStream.bufferedReader().close()
+        //println("${this} exit value: ${proc.exitValue()}")
+        v
     } catch(e: IOException) {
         e.printStackTrace()
         null
@@ -36,7 +43,16 @@ fun String.toFileList(): List<File> {
     return split(",").map { File(it.trim()) }.filter { it.exists() }
 }
 
+fun Number.isNotGreaterThan(number: Number?): Boolean {
+    if (number == null) return true
+    return this.toDouble() <= number.toDouble()
+}
 
+fun Number.isNotLessThan(number: Number?): Boolean {
+    if (number == null) return true
+    return this.toDouble() >= number.toDouble()
+}
 
 fun Int.blankOrNum() : String = if (this == 0) "" else "$this"
+
 

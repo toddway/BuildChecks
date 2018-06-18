@@ -1,47 +1,74 @@
-Gradle plugin to log build status details.  Output can go to the console or post directly to BitBucket and GitHub build status APIs.
+A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/)
+
+The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint)
+supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul)
 
 ## Installation
-Add the following to your root build.gradle file:
+If you're not already using Gradle on your project,
+you should [install it](https://docs.gradle.org/current/userguide/installation.html)
+and [initialize it for your project](https://guides.gradle.org/creating-new-gradle-builds/).
+
+Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildstatusplugin" version "1.0"
+        id "com.toddway.buildchecks" version "1.4"
     }
-
-    apply plugin: BuildStatusPlugin
-
-    buildstatus {
-        statusBaseUrl = "https://github.com" //tested with https://bitbucket.example.com and http://github.com
-        statusAuthorization = "Bearer <your repo token>"
-        buildUrl = System.getenv('BITRISE_BUILD_URL') ? System.getenv('BITRISE_BUILD_URL') : "http://localhost"
-        lintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your lint xml reports
-        jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your jacoco xml reports
-        detektReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to detekt xml reports
-    }
-
-Now on any gradle task, you should see build status info printed to the console.
-
 
 ## Usage
-To post the status to github or bitbucket, append `-Ppost` to your gradle task.  For example if you had a gradle task like:
+To print build checks only to the console, run the `printChecks` Gradle task
 
-    task ci {
-        dependsOn 'app:lintProdRelease'
-        dependsOn ':detektCheck'
-        dependsOn 'core:coverage'
-        dependsOn 'app:assembleRelease'
+    ./gradlew printChecks
+
+To post build checks to your remote source control system, run the `postChecks` Gradle task
+
+    ./gradlew postChecks
+
+You will most likely want to attach the `postChecks` task to some other command that builds your project and runs your lint and coverage tools.
+If you're already using a Gradle task for this (e.g. `build`, `assemble`, `myCustomTask`),
+you can make postChecks depend on your task. In your build.gradle:
+
+    postChecks.dependsOn(myCustomTask)
+
+Then calling `postChecks` will automatically activate `myCustomTask`:
+
+    ./gradlew postChecks
+
+If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
+you can attach postChecks by letting Gradle execute your command.
+Gradle lets you define custom executables like this:
+
+    task myCustomTask(type: Exec) {
+        workingDir 'path/to/optional/subdirectory'
+        commandLine 'npm', 'deploy'
     }
 
-You would run the following to postStats status details to BitBucket
+    postChecks.dependsOn(myCustomTask)
 
-    ./gradlew ci -Ppost
 
-To make sure you're not using data from old reports, add clean to your gradle command:
+The exit value of the external command (0 or 1) will determine if success or failure is posted for the build.
 
-    ./gradlew clean ci -Ppost
+## Config
+To configure the details of your build output and your source control system, add a buildChecks block to your build.gradle.
+All example properties below are optional.
 
-To log details on the HTTP requests add -i
+    buildChecks {
+        baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
+        authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
+        buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
+        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
+        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
+        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
+        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
+        minCoveragePercent = 80 //minimum threshold for test coverage
+        maxLintViolations = 5 //maximum threshold for lint violations
+     }
 
-    ./gradlew clean ci -Ppost -i
+## TODO
+- custom check summaries from text files
+- run checks on changed files only?
+- limit gradle task to a git branch?
+
+
 
 License
 -------

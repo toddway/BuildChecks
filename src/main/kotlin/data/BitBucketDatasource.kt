@@ -1,6 +1,6 @@
 package data
 
-import core.BuildStatusDatasource
+import core.datasource.StatusDatasource
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.Body
@@ -11,7 +11,10 @@ class BitBucketDatasource(
         val service: BitbucketService,
         val hash : String,
         val url : String
-) : BuildStatusDatasource {
+) : StatusDatasource {
+    override fun name(): String {
+        return "Bitbucket"
+    }
 
     override fun postPendingStatus(message: String, key: String): Observable<Boolean> {
         return postStatus("INPROGRESS", message, key)
@@ -27,7 +30,7 @@ class BitBucketDatasource(
 
     fun postStatus(status: String, message: String, key: String) : Observable<Boolean> {
         val body = BitbucketBuildStatusBody(status, key, message, url, "")
-        return service.postBuildStatus(hash, body).map { true }.onErrorReturn { true }
+        return service.postBuildStatus(hash, body).map { true }.onErrorReturn { false }
     }
 }
 
