@@ -5,7 +5,7 @@ package gradle
 //    var queue = ""
 //    var status = ""
 //
-//    @Option(option="m", description="MessageRenderer to postAll along with status", order=1)
+//    @Option(option="m", description="MessageRenderer to post along with status", order=1)
 //    fun setTheMessage(v : String) {
 //        this.queue = v
 //    }

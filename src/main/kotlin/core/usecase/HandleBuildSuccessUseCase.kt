@@ -1,7 +1,10 @@
 package core.usecase
 
+import core.commitBranch
+import core.commitDate
 import core.entity.ConfigEntity
 import core.entity.StatsEntity
+import core.commitHash
 
 open class HandleBuildSuccessUseCase(
         val postStatusUseCase: PostStatusUseCase,
@@ -19,9 +22,9 @@ open class HandleBuildSuccessUseCase(
                 lintUseCase.asTotal() ?: 0,
                 config.duration(),
                 coverageUseCase.lines() ?: 0,
-                config.commitDate(),
-                config.hash(),
-                config.commitBranch()
+                commitDate(),
+                commitHash(),
+                commitBranch()
         ))
     }
 }

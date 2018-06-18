@@ -14,7 +14,7 @@ class HandleBuildStartedUseCaseTests {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = ConfigEntityDefault()
         config.isPluginActivated = false
-        val usecase = HandleBuildStartedUseCase(postBuildStatus, config, mock())
+        val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
 
         usecase.invoke()
 
@@ -27,7 +27,7 @@ class HandleBuildStartedUseCaseTests {
         val config = ConfigEntityDefault()
         config.isPluginActivated = true
         config.isPostActivated = true
-        val usecase = HandleBuildStartedUseCase(postBuildStatus, config, mock())
+        val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
         When calling postBuildStatus.datasources itReturns listOf(GithubDatasource(mock(), "", ""))
 
         usecase.invoke()

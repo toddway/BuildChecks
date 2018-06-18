@@ -1,5 +1,7 @@
-Gradle plugin to post summaries from code analyzers (Jacoco, Android Lint, Detekt, Checkstyle, Cobertura)
-to VCS APIS ([GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/))
+A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/)
+
+The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint)
+supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul)
 
 ## Installation
 If you're not already using Gradle on your project,
@@ -16,10 +18,12 @@ Then add the following to the build.gradle file at the root of your project:
         baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
         authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
         buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
-        androidLintReports = "$projectDir/app/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
-        checkstyleReports = "$projectDir/app/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
-        jacocoReports = "$projectDir/core/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
+        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
+        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
+        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
         coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
+        minCoveragePercent = 60 //minimum threshold for test coverage
+        maxLintViolations = 5 //maximum threshold for lint violations
     }
 
 The buildChecks block lets you configure the details of your build outputs and your source control system.  All examples above are optional.
@@ -31,43 +35,39 @@ To print build checks only to the console, run the `printChecks` Gradle task
 
     ./gradlew printChecks
 
-To postAll build checks to your remote source control system, run the `postChecks` Gradle task
+To post build checks to your remote source control system, run the `postChecks` Gradle task
 
     ./gradlew postChecks
 
-You will most likely want to attach the `postChecks` task to some other command that builds your project.
-If you're already using a Gradle task for this (e.g. `build`, `assemble`, `mySpecialBuildTask`),
-you can make your task depend on `postChecks` in your build.gradle:
+You will most likely want to attach the `postChecks` task to some other command that builds your project and runs your lint and coverage tools.
+If you're already using a Gradle task for this (e.g. `build`, `assemble`, `myCustomTask`),
+you can include `postChecks` by making your task depend on it.  In your build.gradle:
 
-    mySpecialBuildTask.dependsOn(postChecks)
+    myCustomTask.dependsOn(postChecks)
 
 Now simply running your task activates `postChecks`.
 
-    ./gradlew mySpecialBuildTask
+    ./gradlew myCustomTask
 
 If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
 you can attach postChecks by letting Gradle execute your command.
-Gradle has a built in task type for external commands.  Here's an example build.gradle implementation:
+Gradle lets you set up external commands like this:
 
-    task mySpecialBuildTask(type: Exec) {
+    task myCustomTask(type: Exec) {
         workingDir 'path/to/optional/subdirectory'
         commandLine 'npm', 'deploy'
     }
 
-    mySpecialBuildTask.dependsOn(postChecks)
+    myCustomTask.dependsOn(postChecks)
 
 
-Then run
-
-    ./gradlew mySpecialBuildTask
-
-The exit value of command (0 or 1) will determine if success or failure is posted.
+The exit value of the external command (0 or 1) will determine if success or failure is posted for the build.
 
 ## TODO
-- finish text report checks
-- fail check if report is missing?
-- check for uncommitted changes
-- update readme
+- custom check summaries from text files
+- run checks on changed files only?
+- limit gradle task to a git branch?
+
 
 
 License

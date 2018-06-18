@@ -95,7 +95,7 @@ jar.baseName = "buildChecks"
 pluginBundle {
     website = "https://github.com/toddway/buildStatusPlugin"
     vcsUrl = "https://github.com/toddway/buildStatusPlugin.git"
-    description = "postAll summaries of code analyzer output to GitHub or BitBucket"
+    description = "post summaries of code analyzer output to GitHub or BitBucket"
     tags = ["build checks"]
 
     plugins {
