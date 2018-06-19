@@ -1,10 +1,9 @@
 package data
 
-import core.commitHash
 import core.datasource.StatusDatasource
-import core.entity.ConfigEntity
+import core.entity.BuildConfig
 
-fun findRemoteStatusDatasource(config : ConfigEntity): StatusDatasource? {
+fun findRemoteStatusDatasource(config : BuildConfig): StatusDatasource? {
     return when {
         config.baseUrl.contains("bitbucket") -> bitbucketDatasource(config)
         config.baseUrl.contains("github") -> githubDatasource(config)
@@ -12,12 +11,12 @@ fun findRemoteStatusDatasource(config : ConfigEntity): StatusDatasource? {
     }
 }
 
-fun bitbucketDatasource(config : ConfigEntity) : BitBucketDatasource {
+fun bitbucketDatasource(config : BuildConfig) : BitBucketDatasource {
     val service = createBitBucketService(config.baseUrl, config.authorization)
-    return BitBucketDatasource(service, commitHash(), config.buildUrl)
+    return BitBucketDatasource(service, config.git.commitHash, config.buildUrl)
 }
 
-fun githubDatasource(config : ConfigEntity) : GithubDatasource {
+fun githubDatasource(config : BuildConfig) : GithubDatasource {
     val service = createGithubService(config.baseUrl, config.authorization)
-    return GithubDatasource(service, commitHash(), config.buildUrl)
+    return GithubDatasource(service, config.git.commitHash, config.buildUrl)
 }

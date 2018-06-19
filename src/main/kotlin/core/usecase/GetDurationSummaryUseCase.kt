@@ -1,8 +1,8 @@
 package core.usecase
 
-import core.entity.ConfigEntity
+import core.entity.BuildConfig
 
-class GetDurationSummaryUseCase(val config : ConfigEntity) : GetSummaryUseCase{
+class GetDurationSummaryUseCase(val config : BuildConfig) : GetSummaryUseCase{
     override fun isSuccessful(): Boolean {
         return true
     }

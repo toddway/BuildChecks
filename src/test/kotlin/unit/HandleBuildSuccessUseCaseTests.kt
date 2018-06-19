@@ -4,7 +4,7 @@ import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import core.datasource.StatsDatasource
 import core.datasource.StatusDatasource
-import core.entity.ConfigEntityDefault
+import core.entity.BuildConfigDefault
 import core.toDocumentList
 import core.usecase.*
 import io.reactivex.Observable
@@ -28,7 +28,7 @@ class HandleBuildSuccessUseCaseTests {
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,
                 postStatsUseCase,
-                ConfigEntityDefault(),
+                BuildConfigDefault(),
                 summaries
         )
         When calling datasource.name() itReturns "asdf"
@@ -54,7 +54,7 @@ class HandleBuildSuccessUseCaseTests {
         val usecase = HandleBuildSuccessUseCase(
                 setBuildStatus,
                 postStatsUseCase,
-                ConfigEntityDefault(),
+                BuildConfigDefault(),
                 summaries
         )
         When calling statusDatasource.name() itReturns "asdf"

@@ -1,6 +1,6 @@
 package unit
 
-import core.entity.ConfigEntityDefault
+import core.entity.BuildConfigDefault
 import core.usecase.HandleBuildFailedUseCase
 import core.usecase.HandleBuildFinishedUseCase
 import core.usecase.HandleBuildSuccessUseCase
@@ -13,7 +13,7 @@ class HandleBuildFinishedUseCaseTests {
     fun `when plugin is not activated, nothing is posted`() {
         val handleBuildFailedUseCase : HandleBuildFailedUseCase =  mock()
         val handleBuildSuccessUseCase : HandleBuildSuccessUseCase = mock()
-        val config = ConfigEntityDefault()
+        val config = BuildConfigDefault()
         config.isPluginActivated = false
         config.isSuccess = false
         val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, mock())
@@ -27,7 +27,7 @@ class HandleBuildFinishedUseCaseTests {
     fun `when the build finishes unsuccessfully and plugin is activated, post failure`() {
         val handleBuildFailedUseCase : HandleBuildFailedUseCase =  mock()
         val handleBuildSuccessUseCase : HandleBuildSuccessUseCase = mock()
-        val config = ConfigEntityDefault()
+        val config = BuildConfigDefault()
         config.isPluginActivated = true
         config.isSuccess = false
         val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, mutableListOf())
@@ -41,7 +41,7 @@ class HandleBuildFinishedUseCaseTests {
     fun `when the build finishes successfully and plugin is activated, handle success`() {
         val handleBuildFailedUseCase : HandleBuildFailedUseCase =  mock()
         val handleBuildSuccessUseCase : HandleBuildSuccessUseCase = mock()
-        val config = ConfigEntityDefault()
+        val config = BuildConfigDefault()
         config.isPluginActivated = true
         config.isSuccess = true
         val usecase = HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, mutableListOf())

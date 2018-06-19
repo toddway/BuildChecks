@@ -1,6 +1,6 @@
 package unit
 
-import core.entity.ConfigEntityDefault
+import core.entity.BuildConfigDefault
 import core.usecase.HandleBuildStartedUseCase
 import core.usecase.PostStatusUseCase
 import data.GithubDatasource
@@ -12,7 +12,7 @@ class HandleBuildStartedUseCaseTests {
     @Test
     fun `when the plugin is disabled, nothing is posted`() {
         val postBuildStatus : PostStatusUseCase = mock()
-        val config = ConfigEntityDefault()
+        val config = BuildConfigDefault()
         config.isPluginActivated = false
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
 
@@ -24,7 +24,7 @@ class HandleBuildStartedUseCaseTests {
     @Test
     fun `when the build is started and the plugin is activated, post a pending build status`() {
         val postBuildStatus : PostStatusUseCase = mock()
-        val config = ConfigEntityDefault()
+        val config = BuildConfigDefault()
         config.isPluginActivated = true
         config.isPostActivated = true
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)

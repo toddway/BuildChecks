@@ -3,7 +3,6 @@ package gradle
 import core.datasource.StatsDatasource
 import core.datasource.StatusDatasource
 import core.entity.*
-import core.isAllCommitted
 import core.toDocumentList
 import core.usecase.*
 import data.ConsoleDatasource
@@ -12,26 +11,25 @@ import data.createRetrifotBuildStatsService
 import data.findRemoteStatusDatasource
 
 
-class DI(val config : ConfigEntity = ConfigEntityDefault()) {
+class DI(val config : BuildConfig = BuildConfigDefault()) {
 
     private fun statusDatasources() : List<StatusDatasource> {
         val datasources = mutableListOf<StatusDatasource>(ConsoleDatasource())
 
-        //TODO this block should be moved so it can be tested
         if (config.isPostActivated) {
-            if (isAllCommitted()) {
-                findRemoteStatusDatasource(config)?.let {
+            findRemoteStatusDatasource(config)?.let {
+                val name = it.name().toUpperCase()
+                if (config.allowUncommittedChanges || config.git.isAllCommitted) {
                     datasources.add(it)
-                    messageQueue.add(InfoMessage("${it.name().toUpperCase()} config was found"))
-                } ?: messageQueue.add(ErrorMessage("No recognized post config was found"))
-            } else {
-                messageQueue.add(ErrorMessage("You must commit your changes to git before running postChecks"))
-            }
+                    messageQueue.add(InfoMessage("Posting to $name"))
+                } else {
+                    messageQueue.add(ErrorMessage("You must commit all changes before posting checks to $name"))
+                }
+            } ?: messageQueue.add(ErrorMessage("No recognized post config was found"))
         }
 
         return datasources
     }
-
 
     private fun statsDatasources(): List<StatsDatasource> {
         val datasources = mutableListOf<StatsDatasource>()

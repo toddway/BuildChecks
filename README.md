@@ -11,7 +11,7 @@ and [initialize it for your project](https://guides.gradle.org/creating-new-grad
 Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildchecks" version "1.4"
+        id "com.toddway.buildchecks" version "1.5"
     }
 
 ## Usage

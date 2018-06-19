@@ -1,6 +1,6 @@
 package unit
 
-import core.entity.StatsEntity
+import core.entity.Stats
 import core.datasource.StatsDatasource
 import core.usecase.PostStatsUseCase
 import io.reactivex.Observable
@@ -13,7 +13,7 @@ class PostStatsUseCaseTests {
     fun `when metrics, post them`() {
         val datasource : StatsDatasource = mock()
         val usecase = PostStatsUseCase(listOf(datasource))
-        val metrics = StatsEntity(
+        val metrics = Stats(
                 1.1,
                 1,
                 1.1,

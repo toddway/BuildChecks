@@ -1,6 +1,6 @@
 package func
 
-import core.entity.StatsEntity
+import core.entity.Stats
 import data.RetrofitStatsDatasource
 import data.createRetrifotBuildStatsService
 import org.amshove.kluent.shouldBe
@@ -13,7 +13,7 @@ class RetrofitBuildMetricDatasourceIntegrationTests {
     @Test
     fun `asdf`() {
         val datasource = RetrofitStatsDatasource(createRetrifotBuildStatsService("", ""))
-        val metrics = StatsEntity(
+        val metrics = Stats(
                 1.1,
                 1,
                 1.1,

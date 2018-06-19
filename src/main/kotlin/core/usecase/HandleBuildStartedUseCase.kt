@@ -1,10 +1,10 @@
 package core.usecase
 
-import core.entity.ConfigEntity
+import core.entity.BuildConfig
 
 class HandleBuildStartedUseCase(
         val postStatusUseCase: PostStatusUseCase,
-        val config: ConfigEntity
+        val config: BuildConfig
 ) {
     fun invoke() {
         if (config.isPluginActivated) {

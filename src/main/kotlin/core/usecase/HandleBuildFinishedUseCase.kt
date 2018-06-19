@@ -1,12 +1,12 @@
 package core.usecase
 
-import core.entity.ConfigEntity
+import core.entity.BuildConfig
 import core.entity.Message
 
 class HandleBuildFinishedUseCase(
         private val handleBuildFailedUseCase: HandleBuildFailedUseCase,
         private val handleBuildSuccessUseCase: HandleBuildSuccessUseCase,
-        private val config: ConfigEntity,
+        private val config: BuildConfig,
         private val messageQueue : MutableList<Message>
 ) {
     fun invoke() {
