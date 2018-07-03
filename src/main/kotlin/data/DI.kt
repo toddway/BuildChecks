@@ -1,14 +1,10 @@
-package gradle
+package data
 
 import core.datasource.StatsDatasource
 import core.datasource.StatusDatasource
 import core.entity.*
 import core.toDocumentList
 import core.usecase.*
-import data.ConsoleDatasource
-import data.RetrofitStatsDatasource
-import data.createRetrifotBuildStatsService
-import data.findRemoteStatusDatasource
 
 
 class DI(val config : BuildConfig = BuildConfigDefault()) {
@@ -69,7 +65,9 @@ class DI(val config : BuildConfig = BuildConfigDefault()) {
                         CreateJacocoMap(),
                         config.minCoveragePercent),
                 GetLintSummaryUseCase(
-                        config.androidLintReports.toDocumentList() + config.checkstyleReports.toDocumentList(),
+                        config.androidLintReports.toDocumentList()
+                                + config.checkstyleReports.toDocumentList()
+                                + config.cpdReports.toDocumentList(),
                         config.maxLintViolations
                 )
         )

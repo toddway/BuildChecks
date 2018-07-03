@@ -1,5 +1,6 @@
 package gradle
 import core.entity.BuildConfigDefault
+import data.DI
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -8,6 +9,7 @@ open class BuildChecksPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.createPostChecksTask()
         project.createPrintChecksTask()
+        project.createChecksReportTask()
         val di = DI(project.createBuildChecksConfig())
 
         project.gradle.taskGraph.whenReady {
@@ -31,9 +33,4 @@ fun Project.taskNameString() = gradle.startParameter.taskNames.joinToString(" ")
 fun Project.createBuildChecksConfig() = extensions.create("buildChecks", BuildConfigDefault::class.java)
 fun Project.createPostChecksTask() = tasks.create("postChecks", PostChecksTask::class.java)
 fun Project.createPrintChecksTask() = tasks.create("printChecks", PrintChecksTask::class.java)
-
-
-
-//        project.tasks.create("postPending", gradle.PostStatusTask::class.java).status = "pending"
-//        project.tasks.create("postSuccess", gradle.PostStatusTask::class.java).status = "success"
-//        project.tasks.create("postFailed", gradle.PostStatusTask::class.java).status = "success"
+fun Project.createChecksReportTask() = tasks.create("checks", ChecksReportTask::class.java)

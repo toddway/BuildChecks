@@ -66,8 +66,6 @@ All example properties below are optional.
 ## TODO
 - custom check summaries from text files
 - run checks on changed files only?
-- limit gradle task to a git branch?
-
 
 
 License
