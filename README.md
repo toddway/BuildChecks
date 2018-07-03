@@ -11,7 +11,7 @@ and [initialize it for your project](https://guides.gradle.org/creating-new-grad
 Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildchecks" version "1.5"
+        id "com.toddway.buildchecks" version "1.6"
     }
 
 ## Usage
@@ -66,8 +66,6 @@ All example properties below are optional.
 ## TODO
 - custom check summaries from text files
 - run checks on changed files only?
-- limit gradle task to a git branch?
-
 
 
 License

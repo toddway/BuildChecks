@@ -39,3 +39,16 @@ fun Node.attr(name : String): String? {
     if (this.nodeType != Node.ELEMENT_NODE) return null
     return (this as Element).getAttribute(name)
 }
+
+fun List<Document>.children(childNames: List<String>) : Iterable<Node> {
+    return flatMap { it.children(childNames) }
+}
+
+fun Document.children(childNames : List<String>) : Iterable<Node> {
+    var nodes = mutableListOf<Node>().asIterable()
+    childNames.forEach {
+        getElementsByTagName(it)?.let { nodes += it.children() }
+    }
+    return nodes
+}
+

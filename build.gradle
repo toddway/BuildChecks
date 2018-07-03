@@ -31,7 +31,7 @@ plugins {
 
 apply plugin: gradle.BuildChecksPlugin
 buildChecks {
-    baseUrl = "https://api.github.com/repos/toddway/buildStatusPlugin/"
+    baseUrl = "https://api.github.com/repos/toddway/BuildChecks/"
     authorization = System.properties["githubAuth"]
     buildUrl = System.properties["buildUrl"]
     jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
@@ -86,13 +86,13 @@ test {
     }
 }
 
-version = "1.5"
+version = "1.6"
 group = "com.toddway"
 jar.baseName = "buildChecks"
 
 pluginBundle {
-    website = "https://github.com/toddway/buildStatusPlugin"
-    vcsUrl = "https://github.com/toddway/buildStatusPlugin.git"
+    website = "https://github.com/toddway/BuildChecks"
+    vcsUrl = "https://github.com/toddway/BuildChecks.git"
     description = "post summaries of code analyzer output to GitHub or BitBucket"
     tags = ["build checks"]
 

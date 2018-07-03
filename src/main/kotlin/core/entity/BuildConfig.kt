@@ -1,6 +1,7 @@
 package core.entity
 
 import core.round
+import core.toFileList
 import java.util.*
 
 interface BuildConfig {
@@ -21,13 +22,16 @@ interface BuildConfig {
     var isPluginActivated: Boolean
     var isSuccess: Boolean
     var git : GitConfig
+    var cpdReports: String
 
     fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)
     fun startedMessage() = "gradle $taskName - in progress"
     fun completedMessage() = "${duration()}s for gradle $taskName"
+    fun reportFiles() = listOf(androidLintReports, checkstyleReports, jacocoReports, coberturaReports, cpdReports).joinToString(",").toFileList()
 }
 
 open class BuildConfigDefault : BuildConfig {
+    override var cpdReports: String = ""
     override var git: GitConfig = GitConfigDefault()
     override var allowUncommittedChanges: Boolean = false
     override var isSuccess: Boolean = false

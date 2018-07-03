@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+   <duplication lines="15" tokens="52">
+      <file line="32"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <file line="74"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <codefragment><![CDATA[    it(`can write if admin or author`, () => {
+        targaryen.setFirebaseData({
+            users: {
+                adminUser: {
+                    isAdmin:true
+                }
+            },
+            posts: {
+                aPostId: {
+                    userID:"authorUser"
+                }
+            }
+        });
+
+        expect({uid: 'adminUser'}).can.write.path(postPath);]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="49">
+      <file line="43"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <file line="61"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <codefragment><![CDATA[            }
+        });
+
+        expect({uid: 'adminUser'}).can.write.path(postPath);
+        expect({uid: 'authorUser'}).can.write.path(postPath);
+        expect({uid: 'randomUser'}).cannot.write.path(postPath);]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="43">
+      <file line="223"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <file line="246"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <codefragment><![CDATA[    it('should call archive', async () => {
+        const postDatasource = <PostDatasource>{};
+        const configDatasource = <ConfigDatasource>{};
+        const postRepository: PostInteractor = new PostInteractor(postDatasource, configDatasource, null);
+        const postId = "123";]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="42">
+      <file line="32"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <file line="74"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <file line="148"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <codefragment><![CDATA[    it(`can write if admin or author`, () => {
+        targaryen.setFirebaseData({
+            users: {
+                adminUser: {
+                    isAdmin:true
+                }
+            },
+            posts: {
+                aPostId: {
+                    userID:"authorUser"
+                }
+            }
+        });
+
+        expect({uid: 'adminUser'}).can.write.path(postPath);]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="39">
+      <file line="162"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <file line="173"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <codefragment><![CDATA[        const countData = {great: 1, meh: 1, nope: 0};
+        const newRating = "great";
+        const oldRating = "meh";
+
+        const ratingCountEntity = ratingRepository.changeCountsCallback(countData, new RatingCountsEntity(), newRating, oldRating);
+
+        expect(ratingCountEntity.great).equals(2)]]></codefragment>
+   </duplication>
+   <duplication lines="3" tokens="32">
+      <file line="274"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <file line="383"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <codefragment><![CDATA[        postDatasource.getPost = sinon.stub().resolves(post);
+        configDatasource.getLinkConfig = sinon.stub().resolves(linkConfig);
+        configDatasource.getWebPurifyConfig = sinon.stub().resolves(webPurifyConfig);]]></codefragment>
+   </duplication>
+   <duplication lines="4" tokens="31">
+      <file line="59" path="/Users/tway/dev/sorry-firebase/functions/src/index.ts"/>
+      <file line="63" path="/Users/tway/dev/sorry-firebase/functions/src/index.ts"/>
+      <codefragment><![CDATA[    return ratingInteractor.changeRatingCounts(event.params.postId, event.data.val(), event.data.previous.val());
+});
+
+exports.onWriteRatingDetail = functions.database.ref('/ratings/{postId}/users/{userId}/detail').onWrite(event => {]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="31">
+      <file line="27"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <file line="43"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.functions.ts"/>
+      <codefragment><![CDATA[describe('PostEntity.createIndexes', () => {
+    let post: PostEntity;
+
+    beforeEach(() => {
+        post = new PostEntity();
+        post.userID = "abc";]]></codefragment>
+   </duplication>
+   <duplication lines="4" tokens="30">
+      <file line="97"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <file line="134"
+            path="/Users/tway/dev/sorry-firebase/functions/src/test/tests.database.ts"/>
+      <codefragment><![CDATA[describe(ratingsPath, () => {
+
+    it('can write only if $user matches the current user id', () => {
+        expect({uid: 'aUserId'}).can.write.path(ratingsPath);]]></codefragment>
+   </duplication>
+</pmd-cpd>

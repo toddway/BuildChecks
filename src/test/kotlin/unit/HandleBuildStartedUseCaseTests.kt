@@ -22,7 +22,7 @@ class HandleBuildStartedUseCaseTests {
     }
 
     @Test
-    fun `when the build is started and the plugin is activated, post a pending build status`() {
+    fun `when the build is started and the plugin is activated, post a pending build status and delete report files`() {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = BuildConfigDefault()
         config.isPluginActivated = true
