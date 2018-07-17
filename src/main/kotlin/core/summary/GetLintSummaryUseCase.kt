@@ -1,9 +1,9 @@
-package core.usecase
+package core.summary
 
-import core.attr
-import core.children
-import core.entryChildrenSum
-import core.isNotLessThan
+import core.entity.attr
+import core.entity.children
+import core.entity.entryChildrenSum
+import core.entity.isNotLessThan
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 

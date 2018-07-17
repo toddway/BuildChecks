@@ -1,6 +1,5 @@
-package core.usecase
+package core.post
 
-import core.datasource.StatusDatasource
 import core.entity.ErrorMessage
 import core.entity.Message
 import io.reactivex.Observable

@@ -1,10 +1,20 @@
 package data
 
-import core.datasource.StatsDatasource
-import core.datasource.StatusDatasource
+import core.buildstate.HandleBuildFailedUseCase
+import core.buildstate.HandleBuildFinishedUseCase
+import core.buildstate.HandleBuildStartedUseCase
+import core.buildstate.HandleBuildSuccessUseCase
+import core.coverage.CreateCoberturaMap
+import core.coverage.CreateJacocoMap
 import core.entity.*
-import core.toDocumentList
-import core.usecase.*
+import core.post.PostStatsUseCase
+import core.post.PostStatusUseCase
+import core.post.StatsDatasource
+import core.post.StatusDatasource
+import core.summary.GetCoverageSummaryUseCase
+import core.summary.GetDurationSummaryUseCase
+import core.summary.GetLintSummaryUseCase
+import core.summary.GetSummaryUseCase
 
 
 class DI(val config : BuildConfig = BuildConfigDefault()) {

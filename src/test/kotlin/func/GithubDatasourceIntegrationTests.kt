@@ -1,6 +1,6 @@
 package func
 
-import core.datasource.StatusDatasource
+import core.post.StatusDatasource
 import data.GithubDatasource
 import data.createGithubService
 import org.amshove.kluent.shouldBe

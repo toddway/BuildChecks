@@ -1,9 +1,9 @@
 package unit
 
-import core.toDocument
-import core.usecase.CreateCoberturaMap
-import core.usecase.CreateCoverageMap
-import core.usecase.CreateJacocoMap
+import core.entity.toDocument
+import core.coverage.CreateCoberturaMap
+import core.coverage.CreateCoverageMap
+import core.coverage.CreateJacocoMap
 import org.amshove.kluent.shouldBeGreaterThan
 import org.junit.Test
 import java.io.File

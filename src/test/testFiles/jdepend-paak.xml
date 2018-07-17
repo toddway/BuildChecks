@@ -1,0 +1,2623 @@
+<?xml version="1.0"?>
+<JDepend>
+    <Packages>
+
+        <Package name="android.app">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.bluetooth">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.bluetooth.le">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.content">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.content.res">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.os">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.security">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.security.keystore">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.support.v4.app">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.ford.paak">
+            <Stats>
+                <TotalClasses>15</TotalClasses>
+                <ConcreteClasses>15</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>1</Ce>
+                <A>0</A>
+                <I>0.33</I>
+                <D>0.67</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BuildConfig.java">
+                    com.ford.paak.BuildConfig
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$anim
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$attr
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$bool
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$color
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$dimen
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$drawable
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$id
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$integer
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$layout
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$raw
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$string
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$style
+                </Class>
+                <Class sourceFile="R.java">
+                    com.ford.paak.R$styleable
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.encryption.http</Package>
+                <Package>com.ford.paak.encryption.rsa</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.beacon">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>6</Ce>
+                <A>0.38</A>
+                <I>1</I>
+                <D>0.38</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BeaconScanner.java">
+                    com.ford.paak.beacon.BeaconScanner
+                </Class>
+                <Class sourceFile="BeaconScanningManager.java">
+                    com.ford.paak.beacon.BeaconScanningManager
+                </Class>
+                <Class sourceFile="MonitorBeaconListener.java">
+                    com.ford.paak.beacon.MonitorBeaconListener
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AltBeaconScanningManager.java">
+                    com.ford.paak.beacon.AltBeaconScanningManager
+                </Class>
+                <Class sourceFile="AltBeaconScanningManager.java">
+                    com.ford.paak.beacon.AltBeaconScanningManager$1
+                </Class>
+                <Class sourceFile="AltBeaconScanningManager.java">
+                    com.ford.paak.beacon.AltBeaconScanningManager$InternalConsumer
+                </Class>
+                <Class sourceFile="Beacon.java">
+                    com.ford.paak.beacon.Beacon
+                </Class>
+                <Class sourceFile="PaakBeaconScanner.java">
+                    com.ford.paak.beacon.PaakBeaconScanner
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>android.os</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>org.altbeacon.beacon</Package>
+                <Package>org.altbeacon.beacon.logging</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>7</Ce>
+                <A>0.2</A>
+                <I>0.58</I>
+                <D>0.22</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BleConnectivityManager.java">
+                    com.ford.paak.bluetooth.BleConnectivityManager
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ActiveCommands.java">
+                    com.ford.paak.bluetooth.ActiveCommands
+                </Class>
+                <Class sourceFile="BleListeners.java">
+                    com.ford.paak.bluetooth.BleListeners
+                </Class>
+                <Class sourceFile="BleListeners_Factory.java">
+                    com.ford.paak.bluetooth.BleListeners_Factory
+                </Class>
+                <Class sourceFile="BleManager.java">
+                    com.ford.paak.bluetooth.BleManager
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.bluetooth</Package>
+                <Package>android.content</Package>
+                <Package>com.ford.paak.bluetooth.events</Package>
+                <Package>dagger.internal</Package>
+                <Package>io.reactivex</Package>
+                <Package>io.reactivex.subjects</Package>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.service</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.advertising">
+            <Stats>
+                <TotalClasses>9</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>4</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>7</Ce>
+                <A>0.44</A>
+                <I>1</I>
+                <D>0.44</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AdvertisingItem.java">
+                    com.ford.paak.bluetooth.advertising.AdvertisingItem
+                </Class>
+                <Class sourceFile="AdvertisingItem.java">
+                    com.ford.paak.bluetooth.advertising.AdvertisingItem$StartCallback
+                </Class>
+                <Class sourceFile="AdvertisingItemFactory.java">
+                    com.ford.paak.bluetooth.advertising.AdvertisingItemFactory
+                </Class>
+                <Class sourceFile="AdvertisingManager.java">
+                    com.ford.paak.bluetooth.advertising.AdvertisingManager
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AndroidAdvertisingManager.java">
+                    com.ford.paak.bluetooth.advertising.AndroidAdvertisingManager
+                </Class>
+                <Class sourceFile="AndroidAdvertisingManager.java">
+                    com.ford.paak.bluetooth.advertising.AndroidAdvertisingManager$1
+                </Class>
+                <Class sourceFile="BleAdvertisingItem.java">
+                    com.ford.paak.bluetooth.advertising.BleAdvertisingItem
+                </Class>
+                <Class sourceFile="BleAdvertisingItem.java">
+                    com.ford.paak.bluetooth.advertising.BleAdvertisingItem$AndroidLeAdvertiseCallback
+                </Class>
+                <Class sourceFile="BleAdvertisingItemFactory.java">
+                    com.ford.paak.bluetooth.advertising.BleAdvertisingItemFactory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.bluetooth.le</Package>
+                <Package>android.os</Package>
+                <Package>com.ford.paak.bluetooth.events</Package>
+                <Package>com.ford.paak.log</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>org.threeten.bp</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.events">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>8</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>1</Ce>
+                <A>0</A>
+                <I>0.17</I>
+                <D>0.83</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$Auth
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$CakDelivered
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$CakDelivery
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$Command
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$Connection
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$Status
+                </Class>
+                <Class sourceFile="BleEvents.java">
+                    com.ford.paak.bluetooth.events.BleEvents$VehicleStatus
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.advertising</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.gatt">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>4</Ca>
+                <Ce>3</Ce>
+                <A>0.38</A>
+                <I>0.43</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="Characteristic.java">
+                    com.ford.paak.bluetooth.gatt.Characteristic
+                </Class>
+                <Class sourceFile="Descriptor.java">
+                    com.ford.paak.bluetooth.gatt.Descriptor
+                </Class>
+                <Class sourceFile="Service.java">
+                    com.ford.paak.bluetooth.gatt.Service
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AndroidGattCharacteristic.java">
+                    com.ford.paak.bluetooth.gatt.AndroidGattCharacteristic
+                </Class>
+                <Class sourceFile="AndroidGattCharacteristic.java">
+                    com.ford.paak.bluetooth.gatt.AndroidGattCharacteristic$1
+                </Class>
+                <Class sourceFile="AndroidGattDescriptor.java">
+                    com.ford.paak.bluetooth.gatt.AndroidGattDescriptor
+                </Class>
+                <Class sourceFile="AndroidGattService.java">
+                    com.ford.paak.bluetooth.gatt.AndroidGattService
+                </Class>
+                <Class sourceFile="ClientConfigDescriptor.java">
+                    com.ford.paak.bluetooth.gatt.ClientConfigDescriptor
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.bluetooth</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.gatt.paak</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.gatt.paak">
+            <Stats>
+                <TotalClasses>4</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>4</Ca>
+                <Ce>4</Ce>
+                <A>0</A>
+                <I>0.5</I>
+                <D>0.5</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AuthCharacteristics.java">
+                    com.ford.paak.bluetooth.gatt.paak.AuthCharacteristics
+                </Class>
+                <Class sourceFile="EncryptedAuthcharacteristics.java">
+                    com.ford.paak.bluetooth.gatt.paak.EncryptedAuthcharacteristics
+                </Class>
+                <Class sourceFile="KeyDeliveryCharacteristics.java">
+                    com.ford.paak.bluetooth.gatt.paak.KeyDeliveryCharacteristics
+                </Class>
+                <Class sourceFile="Services.java">
+                    com.ford.paak.bluetooth.gatt.paak.Services
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.gatt</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.interceptor">
+            <Stats>
+                <TotalClasses>13</TotalClasses>
+                <ConcreteClasses>9</ConcreteClasses>
+                <AbstractClasses>4</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>11</Ce>
+                <A>0.31</A>
+                <I>0.85</I>
+                <D>0.15</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="IncomingMessageInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.IncomingMessageInterceptor
+                </Class>
+                <Class sourceFile="IncomingMessageInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.IncomingMessageInterceptor$Chain
+                </Class>
+                <Class sourceFile="OutgoingMessageInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.OutgoingMessageInterceptor
+                </Class>
+                <Class sourceFile="OutgoingMessageInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.OutgoingMessageInterceptor$Chain
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="IncomingDecryptionInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.IncomingDecryptionInterceptor
+                </Class>
+                <Class sourceFile="IncomingLoggingInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.IncomingLoggingInterceptor
+                </Class>
+                <Class sourceFile="MessageIdIncomingInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.MessageIdIncomingInterceptor
+                </Class>
+                <Class sourceFile="MessageIdOutgoingInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.MessageIdOutgoingInterceptor
+                </Class>
+                <Class sourceFile="OutgoingCriticalErrorInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.OutgoingCriticalErrorInterceptor
+                </Class>
+                <Class sourceFile="OutgoingEncryptionInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.OutgoingEncryptionInterceptor
+                </Class>
+                <Class sourceFile="OutgoingLoggingInterceptor.java">
+                    com.ford.paak.bluetooth.interceptor.OutgoingLoggingInterceptor
+                </Class>
+                <Class sourceFile="RealIncomingInterceptorChain.java">
+                    com.ford.paak.bluetooth.interceptor.RealIncomingInterceptorChain
+                </Class>
+                <Class sourceFile="RealOutgoingInterceptorChain.java">
+                    com.ford.paak.bluetooth.interceptor.RealOutgoingInterceptorChain
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.log</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+                <Package>javax.crypto</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.message">
+            <Stats>
+                <TotalClasses>9</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>8</Ca>
+                <Ce>11</Ce>
+                <A>0.22</A>
+                <I>0.58</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="Message.java">
+                    com.ford.paak.bluetooth.message.Message
+                </Class>
+                <Class sourceFile="Messenger.java">
+                    com.ford.paak.bluetooth.message.Messenger
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="GattMessenger.java">
+                    com.ford.paak.bluetooth.message.GattMessenger
+                </Class>
+                <Class sourceFile="GattMessenger.java">
+                    com.ford.paak.bluetooth.message.GattMessenger$1
+                </Class>
+                <Class sourceFile="GattMessenger.java">
+                    com.ford.paak.bluetooth.message.GattMessenger$PendingMessage
+                </Class>
+                <Class sourceFile="GattMessenger.java">
+                    com.ford.paak.bluetooth.message.GattMessenger$SendOutgoingMessageInterceptor
+                </Class>
+                <Class sourceFile="KeyDeliveryMessage.java">
+                    com.ford.paak.bluetooth.message.KeyDeliveryMessage
+                </Class>
+                <Class sourceFile="OpCode.java">
+                    com.ford.paak.bluetooth.message.OpCode
+                </Class>
+                <Class sourceFile="PaakMessage.java">
+                    com.ford.paak.bluetooth.message.PaakMessage
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth.gatt</Package>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>java.lang</Package>
+                <Package>java.nio</Package>
+                <Package>java.util</Package>
+                <Package>java.util.concurrent</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.processors</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.encryption</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.payload">
+            <Stats>
+                <TotalClasses>4</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>2</Ce>
+                <A>0.5</A>
+                <I>0.5</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="PaakPayload.java">
+                    com.ford.paak.bluetooth.payload.PaakPayload
+                </Class>
+                <Class sourceFile="PayloadProvider.java">
+                    com.ford.paak.bluetooth.payload.PayloadProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="KeyPayload.java">
+                    com.ford.paak.bluetooth.payload.KeyPayload
+                </Class>
+                <Class sourceFile="KeyRevokePayload.java">
+                    com.ford.paak.bluetooth.payload.KeyRevokePayload
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.service</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.router">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>7</Ca>
+                <Ce>8</Ce>
+                <A>0.5</A>
+                <I>0.53</I>
+                <D>0.03</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="DeviceDelegate.java">
+                    com.ford.paak.bluetooth.router.DeviceDelegate
+                </Class>
+                <Class sourceFile="MessageRouter.java">
+                    com.ford.paak.bluetooth.router.MessageRouter
+                </Class>
+                <Class sourceFile="PaakMessageProcessor.java">
+                    com.ford.paak.bluetooth.router.PaakMessageProcessor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PaakMessageRouter.java">
+                    com.ford.paak.bluetooth.router.PaakMessageRouter
+                </Class>
+                <Class sourceFile="PaakMessageRouter.java">
+                    com.ford.paak.bluetooth.router.PaakMessageRouter$1
+                </Class>
+                <Class sourceFile="PaakMessageRouter.java">
+                    com.ford.paak.bluetooth.router.PaakMessageRouter$NoOpInterceptor
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth.gatt.paak</Package>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router.processors</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.router.handlers">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>4</Ca>
+                <Ce>2</Ce>
+                <A>0.33</A>
+                <I>0.33</I>
+                <D>0.33</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="EventHandler.java">
+                    com.ford.paak.bluetooth.router.handlers.EventHandler
+                </Class>
+                <Class sourceFile="TimeoutHandler.java">
+                    com.ford.paak.bluetooth.router.handlers.TimeoutHandler
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AndroidEventHandler.java">
+                    com.ford.paak.bluetooth.router.handlers.AndroidEventHandler
+                </Class>
+                <Class sourceFile="CommandRetryHandler.java">
+                    com.ford.paak.bluetooth.router.handlers.CommandRetryHandler
+                </Class>
+                <Class sourceFile="CommandTimeoutHandler.java">
+                    com.ford.paak.bluetooth.router.handlers.CommandTimeoutHandler
+                </Class>
+                <Class sourceFile="PaakTimeoutHandler.java">
+                    com.ford.paak.bluetooth.router.handlers.PaakTimeoutHandler
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.os</Package>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.router.processors</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.router.processors">
+            <Stats>
+                <TotalClasses>3</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>7</Ce>
+                <A>0.33</A>
+                <I>0.78</I>
+                <D>0.11</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="TrackMessageIdProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.TrackMessageIdProcessor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CriticalErrorProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.CriticalErrorProcessor
+                </Class>
+                <Class sourceFile="CriticalErrorProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.CriticalErrorProcessor_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.handlers</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>java.util.concurrent</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.router.processors.auth">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>13</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AuthChallengeProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.auth.AuthChallengeProcessor_Factory
+                </Class>
+                <Class sourceFile="FirstHalfSessionKeyProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.auth.FirstHalfSessionKeyProcessor_Factory
+                </Class>
+                <Class sourceFile="FullSessionKeyProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.auth.FullSessionKeyProcessor_Factory
+                </Class>
+                <Class sourceFile="StartSessionProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.auth.StartSessionProcessor
+                </Class>
+                <Class sourceFile="StartSessionProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.auth.StartSessionProcessor_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.events</Package>
+                <Package>com.ford.paak.bluetooth.gatt.paak</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.handlers</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>java.nio</Package>
+                <Package>javax.inject</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.router.processors.keydelivery">
+            <Stats>
+                <TotalClasses>7</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>12</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BpekAuthAckProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.BpekAuthAckProcessor_Factory
+                </Class>
+                <Class sourceFile="BpekChallengeProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.BpekChallengeProcessor_Factory
+                </Class>
+                <Class sourceFile="CloseCakConnectionProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.CloseCakConnectionProcessor
+                </Class>
+                <Class sourceFile="CloseCakConnectionProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.CloseCakConnectionProcessor_Factory
+                </Class>
+                <Class sourceFile="ConfirmCakDeliveryProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.ConfirmCakDeliveryProcessor_Factory
+                </Class>
+                <Class sourceFile="PayloadBufferResponseProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.PayloadBufferResponseProcessor_Factory
+                </Class>
+                <Class sourceFile="PayloadRequestProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.keydelivery.PayloadRequestProcessor_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.payload</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.processors</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.key</Package>
+                <Package>com.ford.paak.log</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.router.processors.session">
+            <Stats>
+                <TotalClasses>13</TotalClasses>
+                <ConcreteClasses>13</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>16</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ActiveCommandResponseProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.ActiveCommandResponseProcessor_Factory
+                </Class>
+                <Class sourceFile="ActiveCommandStatusResponseProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.session.ActiveCommandStatusResponseProcessor
+                </Class>
+                <Class sourceFile="ActiveCommandStatusResponseProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.ActiveCommandStatusResponseProcessor_Factory
+                </Class>
+                <Class sourceFile="CloseSessionProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.session.CloseSessionProcessor
+                </Class>
+                <Class sourceFile="CloseSessionProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.CloseSessionProcessor_Factory
+                </Class>
+                <Class sourceFile="LocalizationChallengeProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.session.LocalizationChallengeProcessor
+                </Class>
+                <Class sourceFile="LocalizationChallengeProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.LocalizationChallengeProcessor_Factory
+                </Class>
+                <Class sourceFile="NotificationHelper.java">
+                    com.ford.paak.bluetooth.router.processors.session.NotificationHelper
+                </Class>
+                <Class sourceFile="NotificationHelper_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.NotificationHelper_Factory
+                </Class>
+                <Class sourceFile="ResynchronizeMessageProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.session.ResynchronizeMessageProcessor
+                </Class>
+                <Class sourceFile="ResynchronizeMessageProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.ResynchronizeMessageProcessor_Factory
+                </Class>
+                <Class sourceFile="ValetCodeProcessor.java">
+                    com.ford.paak.bluetooth.router.processors.session.ValetCodeProcessor
+                </Class>
+                <Class sourceFile="ValetCodeProcessor_Factory.java">
+                    com.ford.paak.bluetooth.router.processors.session.ValetCodeProcessor_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.app</Package>
+                <Package>android.content</Package>
+                <Package>android.support.v4.app</Package>
+                <Package>com.ford.paak.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.events</Package>
+                <Package>com.ford.paak.bluetooth.gatt.paak</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.handlers</Package>
+                <Package>com.ford.paak.bluetooth.router.processors</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>javax.inject</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.server">
+            <Stats>
+                <TotalClasses>9</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>6</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>16</Ce>
+                <A>0.67</A>
+                <I>0.89</I>
+                <D>0.56</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="ConnectionManager.java">
+                    com.ford.paak.bluetooth.server.ConnectionManager
+                </Class>
+                <Class sourceFile="DeviceDisconnectionListener.java">
+                    com.ford.paak.bluetooth.server.DeviceDisconnectionListener
+                </Class>
+                <Class sourceFile="GattServer.java">
+                    com.ford.paak.bluetooth.server.GattServer
+                </Class>
+                <Class sourceFile="GattServerCallbacks.java">
+                    com.ford.paak.bluetooth.server.GattServerCallbacks
+                </Class>
+                <Class sourceFile="GattServerCharacteristicUpdate.java">
+                    com.ford.paak.bluetooth.server.GattServerCharacteristicUpdate
+                </Class>
+                <Class sourceFile="ServerManager.java">
+                    com.ford.paak.bluetooth.server.ServerManager
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AndroidGattServer.java">
+                    com.ford.paak.bluetooth.server.AndroidGattServer$1
+                </Class>
+                <Class sourceFile="GattServerManager.java">
+                    com.ford.paak.bluetooth.server.GattServerManager
+                </Class>
+                <Class sourceFile="PaakConnectionManager.java">
+                    com.ford.paak.bluetooth.server.PaakConnectionManager
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.bluetooth</Package>
+                <Package>android.content</Package>
+                <Package>com.ford.paak.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.events</Package>
+                <Package>com.ford.paak.bluetooth.gatt</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.key</Package>
+                <Package>com.ford.paak.log</Package>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+                <Package>org.threeten.bp</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.service</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.service">
+            <Stats>
+                <TotalClasses>4</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>9</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BleService.java">
+                    com.ford.paak.bluetooth.service.BleService$ServerType
+                </Class>
+                <Class sourceFile="BleServiceConnection.java">
+                    com.ford.paak.bluetooth.service.BleServiceConnection
+                </Class>
+                <Class sourceFile="BleServiceConnection.java">
+                    com.ford.paak.bluetooth.service.BleServiceConnection$BleServiceBinder
+                </Class>
+                <Class sourceFile="BleService_MembersInjector.java">
+                    com.ford.paak.bluetooth.service.BleService_MembersInjector
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>android.os</Package>
+                <Package>com.ford.paak.bluetooth</Package>
+                <Package>com.ford.paak.bluetooth.payload</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.log</Package>
+                <Package>dagger</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.session">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>10</Ca>
+                <Ce>9</Ce>
+                <A>0.33</A>
+                <I>0.47</I>
+                <D>0.19</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="Session.java">
+                    com.ford.paak.bluetooth.session.Session
+                </Class>
+                <Class sourceFile="SessionProvider.java">
+                    com.ford.paak.bluetooth.session.SessionProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AuthSession.java">
+                    com.ford.paak.bluetooth.session.AuthSession
+                </Class>
+                <Class sourceFile="BaseSession.java">
+                    com.ford.paak.bluetooth.session.BaseSession
+                </Class>
+                <Class sourceFile="KeyDeliverySession.java">
+                    com.ford.paak.bluetooth.session.KeyDeliverySession
+                </Class>
+                <Class sourceFile="SessionProviderImpl.java">
+                    com.ford.paak.bluetooth.session.SessionProviderImpl
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.os</Package>
+                <Package>com.ford.paak.bluetooth.router.handlers</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.processors</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.encryption</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.bluetooth.util">
+            <Stats>
+                <TotalClasses>2</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>9</Ca>
+                <Ce>7</Ce>
+                <A>0</A>
+                <I>0.44</I>
+                <D>0.56</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="Bytes.java">
+                    com.ford.paak.bluetooth.util.Bytes
+                </Class>
+                <Class sourceFile="GattUtils.java">
+                    com.ford.paak.bluetooth.util.GattUtils
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.bluetooth.gatt</Package>
+                <Package>com.ford.paak.bluetooth.gatt.paak</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.google.common.primitives</Package>
+                <Package>java.lang</Package>
+                <Package>java.nio</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.session</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.encryption</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.environment">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>5</Ce>
+                <A>0.12</A>
+                <I>0.71</I>
+                <D>0.16</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="EnvironmentRepository.java">
+                    com.ford.paak.data.environment.EnvironmentRepository
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="Environment.java">
+                    com.ford.paak.data.environment.Environment
+                </Class>
+                <Class sourceFile="EnvironmentConfig.java">
+                    com.ford.paak.data.environment.EnvironmentConfig
+                </Class>
+                <Class sourceFile="EnvironmentConfig.java">
+                    com.ford.paak.data.environment.EnvironmentConfig$Brand
+                </Class>
+                <Class sourceFile="EnvironmentConfig.java">
+                    com.ford.paak.data.environment.EnvironmentConfig$Level
+                </Class>
+                <Class sourceFile="EnvironmentConfig.java">
+                    com.ford.paak.data.environment.EnvironmentConfig$Region
+                </Class>
+                <Class sourceFile="PaakEnvironmentRepository.java">
+                    com.ford.paak.data.environment.PaakEnvironmentRepository
+                </Class>
+                <Class sourceFile="PaakEnvironmentRepository_Factory.java">
+                    com.ford.paak.data.environment.PaakEnvironmentRepository_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>javax.inject</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.http</Package>
+                <Package>com.ford.paak.data.paakfi</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.http">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>12</Ce>
+                <A>0.4</A>
+                <I>1</I>
+                <D>0.4</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="NgsdnErrorMapper.java">
+                    com.ford.paak.data.http.NgsdnErrorMapper
+                </Class>
+                <Class sourceFile="ServiceFactory.java">
+                    com.ford.paak.data.http.ServiceFactory
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BaseNgsdnResponse.java">
+                    com.ford.paak.data.http.BaseNgsdnResponse
+                </Class>
+                <Class sourceFile="NgsdnErrorResponse.java">
+                    com.ford.paak.data.http.NgsdnErrorResponse
+                </Class>
+                <Class sourceFile="RetrofitNgsdnErrorMapper.java">
+                    com.ford.paak.data.http.RetrofitNgsdnErrorMapper
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.data.environment</Package>
+                <Package>com.ford.paak.data.util</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>com.google.gson</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>java.util.concurrent</Package>
+                <Package>okhttp3</Package>
+                <Package>okhttp3.logging</Package>
+                <Package>retrofit2</Package>
+                <Package>retrofit2.adapter.rxjava2</Package>
+                <Package>retrofit2.converter.gson</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.key">
+            <Stats>
+                <TotalClasses>14</TotalClasses>
+                <ConcreteClasses>11</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>14</Ce>
+                <A>0.21</A>
+                <I>0.88</I>
+                <D>0.09</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="RevokeRepository.java">
+                    com.ford.paak.data.key.RevokeRepository
+                </Class>
+                <Class sourceFile="VehicleKeyEncryptionHandler.java">
+                    com.ford.paak.data.key.VehicleKeyEncryptionHandler
+                </Class>
+                <Class sourceFile="VehicleKeyRepository.java">
+                    com.ford.paak.data.key.VehicleKeyRepository
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CakBlemPayload.java">
+                    com.ford.paak.data.key.CakBlemPayload
+                </Class>
+                <Class sourceFile="CakMetadata.java">
+                    com.ford.paak.data.key.CakMetadata
+                </Class>
+                <Class sourceFile="CakRevoke.java">
+                    com.ford.paak.data.key.CakRevoke
+                </Class>
+                <Class sourceFile="PaakKey.java">
+                    com.ford.paak.data.key.PaakKey
+                </Class>
+                <Class sourceFile="PaakKey.java">
+                    com.ford.paak.data.key.PaakKey$Builder
+                </Class>
+                <Class sourceFile="RevokeCakRequest.java">
+                    com.ford.paak.data.key.RevokeCakRequest
+                </Class>
+                <Class sourceFile="RevokeCakRequest.java">
+                    com.ford.paak.data.key.RevokeCakRequest$RevokeCakRequestHeader
+                </Class>
+                <Class sourceFile="RevokeData.java">
+                    com.ford.paak.data.key.RevokeData
+                </Class>
+                <Class sourceFile="UpdateCakStatusRequest.java">
+                    com.ford.paak.data.key.UpdateCakStatusRequest
+                </Class>
+                <Class sourceFile="UpdateCakStatusRequest.java">
+                    com.ford.paak.data.key.UpdateCakStatusRequest$RequestHeader
+                </Class>
+                <Class sourceFile="VehicleKeyEncryptionHandlerImpl.java">
+                    com.ford.paak.data.key.VehicleKeyEncryptionHandlerImpl
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.util</Package>
+                <Package>com.ford.paak.data.key.generate</Package>
+                <Package>com.ford.paak.data.paakfi</Package>
+                <Package>com.ford.paak.data.util</Package>
+                <Package>com.ford.paak.encryption.http</Package>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>io.reactivex</Package>
+                <Package>java.lang</Package>
+                <Package>java.nio.charset</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+                <Package>org.threeten.bp</Package>
+                <Package>org.threeten.bp.format</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.key.generate</Package>
+                <Package>com.ford.paak.data.key.hashed</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.key.generate">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>6</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>5</Ce>
+                <A>0</A>
+                <I>0.71</I>
+                <D>0.29</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="DecryptedGenerateCakResponse.java">
+                    com.ford.paak.data.key.generate.DecryptedGenerateCakResponse
+                </Class>
+                <Class sourceFile="EncryptedGenerateCakRequest.java">
+                    com.ford.paak.data.key.generate.EncryptedGenerateCakRequest
+                </Class>
+                <Class sourceFile="GenerateCakRequest.java">
+                    com.ford.paak.data.key.generate.GenerateCakRequest
+                </Class>
+                <Class sourceFile="GenerateCakRequest.java">
+                    com.ford.paak.data.key.generate.GenerateCakRequest$CakRequestHeader
+                </Class>
+                <Class sourceFile="GenerateCakRequest.java">
+                    com.ford.paak.data.key.generate.GenerateCakRequest$CakRequestPayload
+                </Class>
+                <Class sourceFile="GenerateCakResponse.java">
+                    com.ford.paak.data.key.generate.GenerateCakResponse
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.lang</Package>
+                <Package>org.threeten.bp</Package>
+                <Package>org.threeten.bp.format</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.data.key.hashed</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.key.hashed">
+            <Stats>
+                <TotalClasses>4</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>6</Ce>
+                <A>0.5</A>
+                <I>1</I>
+                <D>0.5</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="CakHashedStorageHandler.java">
+                    com.ford.paak.data.key.hashed.CakHashedStorageHandler
+                </Class>
+                <Class sourceFile="HashedKeyDataProvider.java">
+                    com.ford.paak.data.key.hashed.HashedKeyDataProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CakHashedStorageHandlerImpl.java">
+                    com.ford.paak.data.key.hashed.CakHashedStorageHandlerImpl
+                </Class>
+                <Class sourceFile="HashedKeyData.java">
+                    com.ford.paak.data.key.hashed.HashedKeyData
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.data.key.generate</Package>
+                <Package>com.ford.paak.data.util</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.key.status">
+            <Stats>
+                <TotalClasses>3</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>5</Ce>
+                <A>0</A>
+                <I>0.83</I>
+                <D>0.17</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="GetVehicleKeyStatusRequest.java">
+                    com.ford.paak.data.key.status.GetVehicleKeyStatusRequest
+                </Class>
+                <Class sourceFile="VehicleKey.java">
+                    com.ford.paak.data.key.status.VehicleKey
+                </Class>
+                <Class sourceFile="VehicleKeyStatesResponse.java">
+                    com.ford.paak.data.key.status.VehicleKeyStatesResponse
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>org.threeten.bp</Package>
+                <Package>org.threeten.bp.format</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.paakfi</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.loginkey">
+            <Stats>
+                <TotalClasses>4</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>4</Ce>
+                <A>0</A>
+                <I>0.8</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="EnvelopeKey.java">
+                    com.ford.paak.data.loginkey.EnvelopeKey
+                </Class>
+                <Class sourceFile="LoginPacketKey.java">
+                    com.ford.paak.data.loginkey.LoginPacketKey
+                </Class>
+                <Class sourceFile="LoginPacketKeyResponse.java">
+                    com.ford.paak.data.loginkey.LoginPacketKeyResponse
+                </Class>
+                <Class sourceFile="LoginPacketRequest.java">
+                    com.ford.paak.data.loginkey.LoginPacketRequest
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>org.threeten.bp</Package>
+                <Package>org.threeten.bp.format</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.paakfi</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.paakfi">
+            <Stats>
+                <TotalClasses>11</TotalClasses>
+                <ConcreteClasses>9</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>15</Ce>
+                <A>0.18</A>
+                <I>0.88</I>
+                <D>0.06</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="PaakInterceptorHeaderValuesProvider.java">
+                    com.ford.paak.data.paakfi.PaakInterceptorHeaderValuesProvider
+                </Class>
+                <Class sourceFile="PaakfiService.java">
+                    com.ford.paak.data.paakfi.PaakfiService
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PaakAuthStorageProvider.java">
+                    com.ford.paak.data.paakfi.PaakAuthStorageProvider
+                </Class>
+                <Class sourceFile="PaakAuthStorageProvider_Factory.java">
+                    com.ford.paak.data.paakfi.PaakAuthStorageProvider_Factory
+                </Class>
+                <Class sourceFile="PaakEncodedRequest.java">
+                    com.ford.paak.data.paakfi.PaakEncodedRequest
+                </Class>
+                <Class sourceFile="PaakEncodedRequestPacket.java">
+                    com.ford.paak.data.paakfi.PaakEncodedRequestPacket
+                </Class>
+                <Class sourceFile="PaakEncodedResponse.java">
+                    com.ford.paak.data.paakfi.PaakEncodedResponse
+                </Class>
+                <Class sourceFile="PaakInterceptor.java">
+                    com.ford.paak.data.paakfi.PaakInterceptor
+                </Class>
+                <Class sourceFile="PaakSessionRequestInterceptor.java">
+                    com.ford.paak.data.paakfi.PaakSessionRequestInterceptor
+                </Class>
+                <Class sourceFile="PaakfiServiceFactory.java">
+                    com.ford.paak.data.paakfi.PaakfiServiceFactory$1
+                </Class>
+                <Class sourceFile="PaakfiServiceFactory_Factory.java">
+                    com.ford.paak.data.paakfi.PaakfiServiceFactory_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.util</Package>
+                <Package>com.ford.paak.data.environment</Package>
+                <Package>com.ford.paak.data.key.status</Package>
+                <Package>com.ford.paak.data.loginkey</Package>
+                <Package>com.ford.paak.data.rsa</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>com.google.gson</Package>
+                <Package>dagger.internal</Package>
+                <Package>io.reactivex</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>okhttp3</Package>
+                <Package>okhttp3.logging</Package>
+                <Package>org.xmlpull.v1</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.encryption.http</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.rsa">
+            <Stats>
+                <TotalClasses>3</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>7</Ce>
+                <A>0.33</A>
+                <I>0.78</I>
+                <D>0.11</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="KeystoreRepository.java">
+                    com.ford.paak.data.rsa.KeystoreRepository
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PublicKeyShareRequest.java">
+                    com.ford.paak.data.rsa.PublicKeyShareRequest
+                </Class>
+                <Class sourceFile="PublicKeyShareResponse.java">
+                    com.ford.paak.data.rsa.PublicKeyShareResponse
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>io.reactivex</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>org.threeten.bp</Package>
+                <Package>org.threeten.bp.format</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.paakfi</Package>
+                <Package>com.ford.paak.encryption.http</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.data.util">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>0</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>3</Ca>
+                <Ce>1</Ce>
+                <A>1</A>
+                <I>0.25</I>
+                <D>0.25</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="JsonConverter.java">
+                    com.ford.paak.data.util.JsonConverter
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.http</Package>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.data.key.hashed</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.encryption">
+            <Stats>
+                <TotalClasses>11</TotalClasses>
+                <ConcreteClasses>8</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>8</Ca>
+                <Ce>13</Ce>
+                <A>0.27</A>
+                <I>0.62</I>
+                <D>0.11</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BleCredentialProvider.java">
+                    com.ford.paak.encryption.BleCredentialProvider
+                </Class>
+                <Class sourceFile="BleEncryptionProvider.java">
+                    com.ford.paak.encryption.BleEncryptionProvider
+                </Class>
+                <Class sourceFile="BleIvProvider.java">
+                    com.ford.paak.encryption.BleIvProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AESGCMIvProvider.java">
+                    com.ford.paak.encryption.AESGCMIvProvider
+                </Class>
+                <Class sourceFile="AESGCMIvProvider.java">
+                    com.ford.paak.encryption.AESGCMIvProvider$1
+                </Class>
+                <Class sourceFile="ArxanAESEncryptionProvider.java">
+                    com.ford.paak.encryption.ArxanAESEncryptionProvider
+                </Class>
+                <Class sourceFile="CMSValidation.java">
+                    com.ford.paak.encryption.CMSValidation
+                </Class>
+                <Class sourceFile="CredentialType.java">
+                    com.ford.paak.encryption.CredentialType
+                </Class>
+                <Class sourceFile="GCMTag.java">
+                    com.ford.paak.encryption.GCMTag
+                </Class>
+                <Class sourceFile="IllegalIVException.java">
+                    com.ford.paak.encryption.IllegalIVException
+                </Class>
+                <Class sourceFile="KeystoreCredentialProvider.java">
+                    com.ford.paak.encryption.KeystoreCredentialProvider
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.util</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.bluetooth.util</Package>
+                <Package>com.ford.paak.encryption.aes</Package>
+                <Package>com.ford.paak.key</Package>
+                <Package>com.ford.paak.models</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.lang</Package>
+                <Package>java.nio</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+                <Package>javax.crypto</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.message</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.auth</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.encryption.aes</Package>
+                <Package>com.ford.paak.encryption.http</Package>
+                <Package>com.ford.paak.keystore</Package>
+                <Package>com.ford.paak.paakutil</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.encryption.aes">
+            <Stats>
+                <TotalClasses>11</TotalClasses>
+                <ConcreteClasses>8</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>5</Ce>
+                <A>0.27</A>
+                <I>0.83</I>
+                <D>0.11</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="CryptoStrategyProvider.java">
+                    com.ford.paak.encryption.aes.CryptoStrategyProvider
+                </Class>
+                <Class sourceFile="DecryptionStrategy.java">
+                    com.ford.paak.encryption.aes.DecryptionStrategy
+                </Class>
+                <Class sourceFile="EncryptionStrategy.java">
+                    com.ford.paak.encryption.aes.EncryptionStrategy
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ArxanBPEKDecryptionStrategy.java">
+                    com.ford.paak.encryption.aes.ArxanBPEKDecryptionStrategy
+                </Class>
+                <Class sourceFile="ArxanBPEKEncryptionStrategy.java">
+                    com.ford.paak.encryption.aes.ArxanBPEKEncryptionStrategy
+                </Class>
+                <Class sourceFile="ArxanCAKDecryptionStrategy.java">
+                    com.ford.paak.encryption.aes.ArxanCAKDecryptionStrategy
+                </Class>
+                <Class sourceFile="ArxanCAKEncryptionStrategy.java">
+                    com.ford.paak.encryption.aes.ArxanCAKEncryptionStrategy
+                </Class>
+                <Class sourceFile="ArxanCryptoStrategyProvider.java">
+                    com.ford.paak.encryption.aes.ArxanCryptoStrategyProvider
+                </Class>
+                <Class sourceFile="ArxanCryptoStrategyProvider.java">
+                    com.ford.paak.encryption.aes.ArxanCryptoStrategyProvider$1
+                </Class>
+                <Class sourceFile="ArxanDSKDecryptionStrategy.java">
+                    com.ford.paak.encryption.aes.ArxanDSKDecryptionStrategy
+                </Class>
+                <Class sourceFile="ArxanDSKEncryptionStrategy.java">
+                    com.ford.paak.encryption.aes.ArxanDSKEncryptionStrategy
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.encryption</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.encryption.http">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>15</Ce>
+                <A>0.38</A>
+                <I>0.94</I>
+                <D>0.31</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="CertificateProvider.java">
+                    com.ford.paak.encryption.http.CertificateProvider
+                </Class>
+                <Class sourceFile="HttpEncryptionProvider.java">
+                    com.ford.paak.encryption.http.HttpEncryptionProvider
+                </Class>
+                <Class sourceFile="HttpSigningProvider.java">
+                    com.ford.paak.encryption.http.HttpSigningProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AESHttpEncryptionProvider.java">
+                    com.ford.paak.encryption.http.AESHttpEncryptionProvider
+                </Class>
+                <Class sourceFile="PaakCertificateProvider.java">
+                    com.ford.paak.encryption.http.PaakCertificateProvider
+                </Class>
+                <Class sourceFile="PaakHttpEncryptionProvider.java">
+                    com.ford.paak.encryption.http.PaakHttpEncryptionProvider
+                </Class>
+                <Class sourceFile="PaakHttpSigningProvider.java">
+                    com.ford.paak.encryption.http.PaakHttpSigningProvider
+                </Class>
+                <Class sourceFile="SignatureValidationFailed.java">
+                    com.ford.paak.encryption.http.SignatureValidationFailed
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content.res</Package>
+                <Package>com.ford.paak</Package>
+                <Package>com.ford.paak.data.paakfi</Package>
+                <Package>com.ford.paak.data.rsa</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.encryption.rsa</Package>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.nio.charset</Package>
+                <Package>java.security</Package>
+                <Package>javax.crypto</Package>
+                <Package>javax.crypto.spec</Package>
+                <Package>okio</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.data.key</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.encryption.rsa">
+            <Stats>
+                <TotalClasses>2</TotalClasses>
+                <ConcreteClasses>1</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>9</Ce>
+                <A>0.5</A>
+                <I>0.9</I>
+                <D>0.4</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="PublicRSAKeyProvider.java">
+                    com.ford.paak.encryption.rsa.PublicRSAKeyProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PaakPublicRSAKeyProvider.java">
+                    com.ford.paak.encryption.rsa.PaakPublicRSAKeyProvider
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>android.content.res</Package>
+                <Package>com.ford.paak</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>com.google.common.io</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.security.spec</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.encryption.http</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.key">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>0</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>3</Ca>
+                <Ce>2</Ce>
+                <A>1</A>
+                <I>0.4</I>
+                <D>0.4</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="KeyDataProvider.java">
+                    com.ford.paak.key.KeyDataProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.models</Package>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.encryption</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.keystore">
+            <Stats>
+                <TotalClasses>19</TotalClasses>
+                <ConcreteClasses>12</ConcreteClasses>
+                <AbstractClasses>7</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>18</Ce>
+                <A>0.37</A>
+                <I>1</I>
+                <D>0.37</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AesStorageKeyProvider.java">
+                    com.ford.paak.keystore.AesStorageKeyProvider
+                </Class>
+                <Class sourceFile="EncryptedStorage.java">
+                    com.ford.paak.keystore.EncryptedStorage
+                </Class>
+                <Class sourceFile="EncryptionSerializer.java">
+                    com.ford.paak.keystore.EncryptionSerializer
+                </Class>
+                <Class sourceFile="KeySerializer.java">
+                    com.ford.paak.keystore.KeySerializer
+                </Class>
+                <Class sourceFile="KeyStorage.java">
+                    com.ford.paak.keystore.KeyStorage
+                </Class>
+                <Class sourceFile="PaakUtilAesStorageKeyProvider.java">
+                    com.ford.paak.keystore.PaakUtilAesStorageKeyProvider
+                </Class>
+                <Class sourceFile="PaakUtilStorageKeyProvider.java">
+                    com.ford.paak.keystore.PaakUtilStorageKeyProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AesEncryptedObject.java">
+                    com.ford.paak.keystore.AesEncryptedObject
+                </Class>
+                <Class sourceFile="AesEncryptedSerializer.java">
+                    com.ford.paak.keystore.AesEncryptedSerializer
+                </Class>
+                <Class sourceFile="AesKeyStorageProvider.java">
+                    com.ford.paak.keystore.AesKeyStorageProvider
+                </Class>
+                <Class sourceFile="AesKeystoreProvider.java">
+                    com.ford.paak.keystore.AesKeystoreProvider
+                </Class>
+                <Class sourceFile="ArxanWrappedAesKeyProvider.java">
+                    com.ford.paak.keystore.ArxanWrappedAesKeyProvider
+                </Class>
+                <Class sourceFile="BaseFileStorageProvider.java">
+                    com.ford.paak.keystore.BaseFileStorageProvider
+                </Class>
+                <Class sourceFile="EncryptedFileStorageProvider.java">
+                    com.ford.paak.keystore.EncryptedFileStorageProvider
+                </Class>
+                <Class sourceFile="FileKeyStorageProvider.java">
+                    com.ford.paak.keystore.FileKeyStorageProvider
+                </Class>
+                <Class sourceFile="KeyStoreProvider.java">
+                    com.ford.paak.keystore.KeyStoreProvider
+                </Class>
+                <Class sourceFile="KeystoreWrappedRsaKeyProvider.java">
+                    com.ford.paak.keystore.KeystoreWrappedRsaKeyProvider
+                </Class>
+                <Class sourceFile="RsaBackedAesKeySerializer.java">
+                    com.ford.paak.keystore.RsaBackedAesKeySerializer
+                </Class>
+                <Class sourceFile="RsaKeystoreProvider.java">
+                    com.ford.paak.keystore.RsaKeystoreProvider
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>android.os</Package>
+                <Package>android.security</Package>
+                <Package>android.security.keystore</Package>
+                <Package>android.util</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.paakutil</Package>
+                <Package>com.ford.paak.util</Package>
+                <Package>com.google.gson</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.security.cert</Package>
+                <Package>java.util</Package>
+                <Package>javax.crypto</Package>
+                <Package>javax.crypto.spec</Package>
+                <Package>javax.security.auth.x500</Package>
+                <Package>okio</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.log">
+            <Stats>
+                <TotalClasses>2</TotalClasses>
+                <ConcreteClasses>1</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>2</Ce>
+                <A>0.5</A>
+                <I>0.29</I>
+                <D>0.21</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BleLogger.java">
+                    com.ford.paak.log.BleLogger
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="LogEntry.java">
+                    com.ford.paak.log.LogEntry
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>org.threeten.bp</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.advertising</Package>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.router.processors.keydelivery</Package>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.service</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.models">
+            <Stats>
+                <TotalClasses>2</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>1</Ce>
+                <A>0</A>
+                <I>0.33</I>
+                <D>0.67</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="KeyData.java">
+                    com.ford.paak.models.KeyData
+                </Class>
+                <Class sourceFile="KeyData.java">
+                    com.ford.paak.models.KeyData$Builder
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.key</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.paakutil">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>7</Ca>
+                <Ce>3</Ce>
+                <A>0.5</A>
+                <I>0.3</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="TfitProvider.java">
+                    com.ford.paak.paakutil.TfitProvider
+                </Class>
+                <Class sourceFile="WrappedAesKeyProvider.java">
+                    com.ford.paak.paakutil.WrappedAesKeyProvider
+                </Class>
+                <Class sourceFile="WrappedRsaKeyProvider.java">
+                    com.ford.paak.paakutil.WrappedRsaKeyProvider
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ArxanAesWrappedKeys.java">
+                    com.ford.paak.paakutil.ArxanAesWrappedKeys
+                </Class>
+                <Class sourceFile="ArxanRsaWrappedKey.java">
+                    com.ford.paak.paakutil.ArxanRsaWrappedKey
+                </Class>
+                <Class sourceFile="PaakUtil.java">
+                    com.ford.paak.paakutil.PaakUtil
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.server</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.data.rsa</Package>
+                <Package>com.ford.paak.encryption.aes</Package>
+                <Package>com.ford.paak.encryption.http</Package>
+                <Package>com.ford.paak.keystore</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ford.paak.util">
+            <Stats>
+                <TotalClasses>10</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>13</Ca>
+                <Ce>10</Ce>
+                <A>0.3</A>
+                <I>0.43</I>
+                <D>0.27</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="Base64.java">
+                    com.ford.paak.util.Base64
+                </Class>
+                <Class sourceFile="PreferenceManager.java">
+                    com.ford.paak.util.PreferenceManager
+                </Class>
+                <Class sourceFile="Sha256.java">
+                    com.ford.paak.util.Sha256
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AndroidPreferenceManager.java">
+                    com.ford.paak.util.AndroidPreferenceManager
+                </Class>
+                <Class sourceFile="Base64Handler.java">
+                    com.ford.paak.util.Base64Handler
+                </Class>
+                <Class sourceFile="CryptoUtil.java">
+                    com.ford.paak.util.CryptoUtil
+                </Class>
+                <Class sourceFile="Formatters.java">
+                    com.ford.paak.util.Formatters
+                </Class>
+                <Class sourceFile="PreferenceKeys.java">
+                    com.ford.paak.util.PreferenceKeys
+                </Class>
+                <Class sourceFile="Sha256Handler.java">
+                    com.ford.paak.util.Sha256Handler
+                </Class>
+                <Class sourceFile="TextUtils.java">
+                    com.ford.paak.util.TextUtils
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>android.util</Package>
+                <Package>com.google.common.base</Package>
+                <Package>com.google.common.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+                <Package>javax.crypto</Package>
+                <Package>javax.crypto.spec</Package>
+                <Package>org.threeten.bp.format</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ford.paak.bluetooth.interceptor</Package>
+                <Package>com.ford.paak.bluetooth.session</Package>
+                <Package>com.ford.paak.data.http</Package>
+                <Package>com.ford.paak.data.key</Package>
+                <Package>com.ford.paak.data.key.generate</Package>
+                <Package>com.ford.paak.data.key.hashed</Package>
+                <Package>com.ford.paak.data.key.status</Package>
+                <Package>com.ford.paak.data.paakfi</Package>
+                <Package>com.ford.paak.data.rsa</Package>
+                <Package>com.ford.paak.encryption</Package>
+                <Package>com.ford.paak.encryption.http</Package>
+                <Package>com.ford.paak.encryption.rsa</Package>
+                <Package>com.ford.paak.keystore</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.google.common.base">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.google.common.io">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.google.common.primitives">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.google.gson">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="dagger">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="dagger.internal">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="io.reactivex">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="io.reactivex.subjects">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.io">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.lang">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.nio">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.nio.charset">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.security">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.security.cert">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.security.spec">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util.concurrent">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.crypto">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.crypto.spec">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.inject">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.security.auth.x500">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="okhttp3">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="okhttp3.logging">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="okio">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.altbeacon.beacon">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.altbeacon.beacon.logging">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.threeten.bp">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.threeten.bp.format">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.xmlpull.v1">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="retrofit2">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="retrofit2.adapter.rxjava2">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="retrofit2.converter.gson">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+    </Packages>
+
+    <Cycles>
+        <Package Name="com.ford.paak.bluetooth.interceptor">
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.message">
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.router">
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.router.processors">
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.router.processors.auth">
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.router.processors.keydelivery">
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.router.processors.session">
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.server">
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.service">
+            <Package>com.ford.paak.bluetooth.server</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.session">
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.bluetooth.util">
+            <Package>com.ford.paak.bluetooth.session</Package>
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.data.key">
+            <Package>com.ford.paak.data.paakfi</Package>
+            <Package>com.ford.paak.data.rsa</Package>
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.data.key.generate">
+            <Package>com.ford.paak.data.key</Package>
+            <Package>com.ford.paak.data.paakfi</Package>
+            <Package>com.ford.paak.data.rsa</Package>
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.data.key.hashed">
+            <Package>com.ford.paak.data.key.generate</Package>
+            <Package>com.ford.paak.data.key</Package>
+            <Package>com.ford.paak.data.paakfi</Package>
+            <Package>com.ford.paak.data.rsa</Package>
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.data.paakfi">
+            <Package>com.ford.paak.data.rsa</Package>
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.data.rsa">
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.encryption">
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.encryption.aes">
+            <Package>com.ford.paak.paakutil</Package>
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.encryption.http">
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.keystore">
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+        <Package Name="com.ford.paak.paakutil">
+            <Package>com.ford.paak.encryption</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+            <Package>com.ford.paak.bluetooth.router</Package>
+            <Package>com.ford.paak.bluetooth.message</Package>
+        </Package>
+
+    </Cycles>
+</JDepend>

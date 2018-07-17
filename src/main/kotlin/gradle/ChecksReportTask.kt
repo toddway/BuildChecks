@@ -1,6 +1,6 @@
 package gradle
 
-import core.run
+import core.entity.run
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 

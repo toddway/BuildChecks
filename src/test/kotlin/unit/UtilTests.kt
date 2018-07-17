@@ -1,7 +1,7 @@
 package unit
 
-import core.isNotGreaterThan
-import core.isNotLessThan
+import core.entity.isNotGreaterThan
+import core.entity.isNotLessThan
 import org.amshove.kluent.shouldBe
 import org.junit.Rule
 import org.junit.Test

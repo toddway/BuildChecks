@@ -1,7 +1,7 @@
-package core.usecase
+package core.coverage
 
-import core.attr
-import core.children
+import core.entity.attr
+import core.entity.children
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 

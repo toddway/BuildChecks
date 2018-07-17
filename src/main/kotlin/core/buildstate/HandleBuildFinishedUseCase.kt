@@ -1,4 +1,4 @@
-package core.usecase
+package core.buildstate
 
 import core.entity.BuildConfig
 import core.entity.Message

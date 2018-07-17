@@ -1,6 +1,6 @@
 package unit
-import core.datasource.StatusDatasource
-import core.usecase.PostStatusUseCase
+import core.post.StatusDatasource
+import core.post.PostStatusUseCase
 import io.reactivex.Observable
 import org.amshove.kluent.*
 import org.junit.Test

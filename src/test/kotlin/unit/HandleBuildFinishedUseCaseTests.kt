@@ -1,9 +1,9 @@
 package unit
 
 import core.entity.BuildConfigDefault
-import core.usecase.HandleBuildFailedUseCase
-import core.usecase.HandleBuildFinishedUseCase
-import core.usecase.HandleBuildSuccessUseCase
+import core.buildstate.HandleBuildFailedUseCase
+import core.buildstate.HandleBuildFinishedUseCase
+import core.buildstate.HandleBuildSuccessUseCase
 import org.amshove.kluent.*
 import org.junit.Test
 

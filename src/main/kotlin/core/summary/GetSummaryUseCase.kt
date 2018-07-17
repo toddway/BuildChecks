@@ -1,4 +1,6 @@
-package core.usecase
+package core.summary
+
+import core.post.PostStatusUseCase
 
 interface GetSummaryUseCase {
     fun summary() : String?

@@ -1,6 +1,7 @@
-package core.usecase
+package core.buildstate
 
 import core.entity.BuildConfig
+import core.post.PostStatusUseCase
 
 class HandleBuildStartedUseCase(
         val postStatusUseCase: PostStatusUseCase,

@@ -1,4 +1,4 @@
-package core
+package core.entity
 
 import org.w3c.dom.Document
 import org.w3c.dom.Element

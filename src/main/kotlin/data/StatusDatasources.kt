@@ -1,6 +1,6 @@
 package data
 
-import core.datasource.StatusDatasource
+import core.post.StatusDatasource
 import core.entity.BuildConfig
 
 fun findRemoteStatusDatasource(config : BuildConfig): StatusDatasource? {

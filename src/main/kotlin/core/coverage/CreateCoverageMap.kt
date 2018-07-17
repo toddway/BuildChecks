@@ -1,4 +1,4 @@
-package core.usecase
+package core.coverage
 
 import org.w3c.dom.Document
 

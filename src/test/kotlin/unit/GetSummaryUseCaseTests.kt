@@ -1,8 +1,12 @@
 package unit
 
-import core.toDocument
-import core.toDocumentList
-import core.usecase.*
+import core.coverage.CreateJacocoMap
+import core.summary.GetCoverageSummaryUseCase
+import core.summary.GetLintSummaryUseCase
+import core.summary.GetSummaryUseCase
+import core.summary.GetTextSummaryUseCase
+import core.entity.toDocument
+import core.entity.toDocumentList
 import org.amshove.kluent.shouldBe
 import org.junit.Assert
 import org.junit.Test
@@ -14,7 +18,7 @@ class GetSummaryUseCaseTests {
     fun`when there are valid report documents, summaries are generated`() {
 
         val summaries : List<GetSummaryUseCase> = listOf(
-                GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toDocumentList() +  "./src/test/testFiles/detekt-checkstyle.xml".toDocumentList()),
+                GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toDocumentList() + "./src/test/testFiles/detekt-checkstyle.xml".toDocumentList()),
                 GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument()), CreateJacocoMap()),
                 GetTextSummaryUseCase(File("./src/test/testFiles/hello.txt"))
         )

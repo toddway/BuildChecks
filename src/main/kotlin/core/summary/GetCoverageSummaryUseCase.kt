@@ -1,8 +1,9 @@
-package core.usecase
+package core.summary
 
-import core.isNotGreaterThan
-import core.percentage
-import core.round
+import core.entity.isNotGreaterThan
+import core.entity.percentage
+import core.entity.round
+import core.coverage.CreateCoverageMap
 import org.w3c.dom.Document
 
 open class GetCoverageSummaryUseCase(

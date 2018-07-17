@@ -1,4 +1,4 @@
-package core
+package core.entity
 
 import java.io.File
 import java.io.IOException
@@ -42,6 +42,8 @@ fun String.run() = runCommand(File("."))?.trim()
 fun String.toFileList(): List<File> {
     return split(",").map { File(it.trim()) }.filter { it.exists() }
 }
+
+fun String?.toIntOrZero() : Int = this?.toIntOrNull() ?: 0
 
 fun Number.isNotGreaterThan(number: Number?): Boolean {
     if (number == null) return true

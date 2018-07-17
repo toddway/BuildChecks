@@ -1,8 +1,8 @@
 package unit
 
 import core.entity.Stats
-import core.datasource.StatsDatasource
-import core.usecase.PostStatsUseCase
+import core.post.StatsDatasource
+import core.post.PostStatsUseCase
 import io.reactivex.Observable
 import org.amshove.kluent.*
 import org.junit.Test

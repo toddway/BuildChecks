@@ -1,6 +1,6 @@
 package data
 
-import core.datasource.StatsDatasource
+import core.post.StatsDatasource
 import core.entity.Stats
 import io.reactivex.Observable
 import okhttp3.ResponseBody

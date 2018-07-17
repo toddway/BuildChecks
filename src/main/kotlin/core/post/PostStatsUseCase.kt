@@ -1,6 +1,5 @@
-package core.usecase
+package core.post
 
-import core.datasource.StatsDatasource
 import core.entity.Stats
 
 class PostStatsUseCase(val datasources: List<StatsDatasource>) {

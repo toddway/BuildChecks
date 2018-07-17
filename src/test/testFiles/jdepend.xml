@@ -1,0 +1,1769 @@
+<?xml version="1.0"?>
+<JDepend>
+    <Packages>
+
+        <Package name="android">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.animation">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.app">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.content">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.content.res">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.graphics">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.graphics.drawable">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.os">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.support.v4.view.animation">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.support.v7.widget">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.transition">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.view">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.view.animation">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="android.widget">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.danikula.videocache">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.google.firebase.analytics">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.google.firebase.iid">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="com.google.firebase.messaging">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="dagger">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="dagger.internal">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.io">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.lang">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.inject">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.collections">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.jvm.internal">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.text">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="rx">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="rx.functions">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="rx.subscriptions">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="vml.com.sorry">
+            <Stats>
+                <TotalClasses>21</TotalClasses>
+                <ConcreteClasses>21</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>1</Ce>
+                <A>0</A>
+                <I>0.33</I>
+                <D>0.67</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BuildConfig.java">
+                    vml.com.sorry.BuildConfig
+                </Class>
+                <Class sourceFile="Manifest.java">
+                    vml.com.sorry.Manifest
+                </Class>
+                <Class sourceFile="Manifest.java">
+                    vml.com.sorry.Manifest$permission
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$anim
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$animator
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$attr
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$bool
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$color
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$dimen
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$drawable
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$id
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$integer
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$layout
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$menu
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$mipmap
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$raw
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$string
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$style
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$styleable
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.R$transition
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.base</Package>
+                <Package>vml.com.sorry.app.transitions</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.article">
+            <Stats>
+                <TotalClasses>9</TotalClasses>
+                <ConcreteClasses>6</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>12</Ce>
+                <A>0.33</A>
+                <I>0.86</I>
+                <D>0.19</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="SettingsContract.kt">
+                    vml.com.sorry.app.article.SettingsContract
+                </Class>
+                <Class sourceFile="SettingsContract.kt">
+                    vml.com.sorry.app.article.SettingsContract$Presenter
+                </Class>
+                <Class sourceFile="SettingsContract.kt">
+                    vml.com.sorry.app.article.SettingsContract$View
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ArticleActivity_MembersInjector.java">
+                    vml.com.sorry.app.article.ArticleActivity_MembersInjector
+                </Class>
+                <Class sourceFile="ArticlePresenter_Factory.java">
+                    vml.com.sorry.app.article.ArticlePresenter_Factory
+                </Class>
+                <Class sourceFile="SettingsContract.kt">
+                    vml.com.sorry.app.article.SettingsContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="SettingsPresenter.kt">
+                    vml.com.sorry.app.article.SettingsPresenter
+                </Class>
+                <Class sourceFile="SettingsPresenter.kt">
+                    vml.com.sorry.app.article.SettingsPresenter$checkAuth$1
+                </Class>
+                <Class sourceFile="SettingsPresenter.kt">
+                    vml.com.sorry.app.article.SettingsPresenter$checkAuth$2
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>dagger</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.text</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.article</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.app.settings</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.authentication">
+            <Stats>
+                <TotalClasses>7</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>6</Ce>
+                <A>0</A>
+                <I>0.86</I>
+                <D>0.14</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CreateAccountActivity_MembersInjector.java">
+                    vml.com.sorry.app.authentication.CreateAccountActivity_MembersInjector
+                </Class>
+                <Class sourceFile="CreateAccountPresenter_Factory.java">
+                    vml.com.sorry.app.authentication.CreateAccountPresenter_Factory
+                </Class>
+                <Class sourceFile="FacebookSignInActivity_MembersInjector.java">
+                    vml.com.sorry.app.authentication.FacebookSignInActivity_MembersInjector
+                </Class>
+                <Class sourceFile="FacebookSignInPresenter_Factory.java">
+                    vml.com.sorry.app.authentication.FacebookSignInPresenter_Factory
+                </Class>
+                <Class sourceFile="ResetPasswordLayout_MembersInjector.java">
+                    vml.com.sorry.app.authentication.ResetPasswordLayout_MembersInjector
+                </Class>
+                <Class sourceFile="SignInActivity_MembersInjector.java">
+                    vml.com.sorry.app.authentication.SignInActivity_MembersInjector
+                </Class>
+                <Class sourceFile="SignInPresenter_Factory.java">
+                    vml.com.sorry.app.authentication.SignInPresenter_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>dagger</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.settings</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.base">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>11</Ce>
+                <A>0.12</A>
+                <I>1</I>
+                <D>0.12</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="SpannedGridLayoutManager.java">
+                    vml.com.sorry.app.base.SpannedGridLayoutManager$GridSpanLookup
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="MyFirebaseIdService.java">
+                    vml.com.sorry.app.base.MyFirebaseIdService
+                </Class>
+                <Class sourceFile="MyFirebaseMessagingService.java">
+                    vml.com.sorry.app.base.MyFirebaseMessagingService
+                </Class>
+                <Class sourceFile="SpannedGridLayoutManager.java">
+                    vml.com.sorry.app.base.SpannedGridLayoutManager
+                </Class>
+                <Class sourceFile="SpannedGridLayoutManager.java">
+                    vml.com.sorry.app.base.SpannedGridLayoutManager$1
+                </Class>
+                <Class sourceFile="SpannedGridLayoutManager.java">
+                    vml.com.sorry.app.base.SpannedGridLayoutManager$GridCell
+                </Class>
+                <Class sourceFile="SpannedGridLayoutManager.java">
+                    vml.com.sorry.app.base.SpannedGridLayoutManager$LayoutParams
+                </Class>
+                <Class sourceFile="SpannedGridLayoutManager.java">
+                    vml.com.sorry.app.base.SpannedGridLayoutManager$SpanInfo
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android.content</Package>
+                <Package>android.content.res</Package>
+                <Package>android.graphics</Package>
+                <Package>android.support.v7.widget</Package>
+                <Package>android.util</Package>
+                <Package>android.view</Package>
+                <Package>com.google.firebase.iid</Package>
+                <Package>com.google.firebase.messaging</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>vml.com.sorry</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.create">
+            <Stats>
+                <TotalClasses>2</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>5</Ce>
+                <A>0</A>
+                <I>0.83</I>
+                <D>0.17</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="EditPostActivity_MembersInjector.java">
+                    vml.com.sorry.app.create.EditPostActivity_MembersInjector
+                </Class>
+                <Class sourceFile="RecordInfoLayout_MembersInjector.java">
+                    vml.com.sorry.app.create.RecordInfoLayout_MembersInjector
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>dagger</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.di">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>28</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AppModule_ProvideFirebaseAnalyticsFactory.java">
+                    vml.com.sorry.app.di.AppModule_ProvideFirebaseAnalyticsFactory
+                </Class>
+                <Class sourceFile="AppModule_ProvideHttpProxyServerFactory.java">
+                    vml.com.sorry.app.di.AppModule_ProvideHttpProxyServerFactory
+                </Class>
+                <Class sourceFile="DaggerAppComponent.java">
+                    vml.com.sorry.app.di.DaggerAppComponent
+                </Class>
+                <Class sourceFile="DaggerAppComponent.java">
+                    vml.com.sorry.app.di.DaggerAppComponent$1
+                </Class>
+                <Class sourceFile="DaggerAppComponent.java">
+                    vml.com.sorry.app.di.DaggerAppComponent$Builder
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.danikula.videocache</Package>
+                <Package>com.google.firebase.analytics</Package>
+                <Package>dagger</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>vml.com.sorry.app.article</Package>
+                <Package>vml.com.sorry.app.authentication</Package>
+                <Package>vml.com.sorry.app.create</Package>
+                <Package>vml.com.sorry.app.feed</Package>
+                <Package>vml.com.sorry.app.post</Package>
+                <Package>vml.com.sorry.app.settings</Package>
+                <Package>vml.com.sorry.app.walkthrough</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.article</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.config</Package>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+                <Package>vml.com.sorry.core.rating</Package>
+                <Package>vml.com.sorry.core.settings</Package>
+                <Package>vml.com.sorry.data</Package>
+                <Package>vml.com.sorry.data.analytics</Package>
+                <Package>vml.com.sorry.data.article</Package>
+                <Package>vml.com.sorry.data.auth</Package>
+                <Package>vml.com.sorry.data.config</Package>
+                <Package>vml.com.sorry.data.post</Package>
+                <Package>vml.com.sorry.data.rating</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.feed">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>1</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>4</Ce>
+                <A>0</A>
+                <I>0.8</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="FeedActivity_MembersInjector.java">
+                    vml.com.sorry.app.feed.FeedActivity_MembersInjector
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>dagger</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.post">
+            <Stats>
+                <TotalClasses>3</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>6</Ce>
+                <A>0</A>
+                <I>0.86</I>
+                <D>0.14</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PlayVideoLayout_MembersInjector.java">
+                    vml.com.sorry.app.post.PlayVideoLayout_MembersInjector
+                </Class>
+                <Class sourceFile="PostActivity_MembersInjector.java">
+                    vml.com.sorry.app.post.PostActivity_MembersInjector
+                </Class>
+                <Class sourceFile="RateLayout_MembersInjector.java">
+                    vml.com.sorry.app.post.RateLayout_MembersInjector
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.danikula.videocache</Package>
+                <Package>dagger</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.rating</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.settings">
+            <Stats>
+                <TotalClasses>18</TotalClasses>
+                <ConcreteClasses>12</ConcreteClasses>
+                <AbstractClasses>6</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>12</Ce>
+                <A>0.33</A>
+                <I>0.92</I>
+                <D>0.26</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="EditProfileContract.kt">
+                    vml.com.sorry.app.settings.EditProfileContract
+                </Class>
+                <Class sourceFile="EditProfileContract.kt">
+                    vml.com.sorry.app.settings.EditProfileContract$Presenter
+                </Class>
+                <Class sourceFile="EditProfileContract.kt">
+                    vml.com.sorry.app.settings.EditProfileContract$View
+                </Class>
+                <Class sourceFile="MyPostsContract.kt">
+                    vml.com.sorry.app.settings.MyPostsContract
+                </Class>
+                <Class sourceFile="MyPostsContract.kt">
+                    vml.com.sorry.app.settings.MyPostsContract$Presenter
+                </Class>
+                <Class sourceFile="MyPostsContract.kt">
+                    vml.com.sorry.app.settings.MyPostsContract$View
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="EditProfileContract.kt">
+                    vml.com.sorry.app.settings.EditProfileContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="EditProfileLayout_MembersInjector.java">
+                    vml.com.sorry.app.settings.EditProfileLayout_MembersInjector
+                </Class>
+                <Class sourceFile="EditProfilePresenter.kt">
+                    vml.com.sorry.app.settings.EditProfilePresenter
+                </Class>
+                <Class sourceFile="EditProfilePresenter.kt">
+                    vml.com.sorry.app.settings.EditProfilePresenter$getProfileValues$1
+                </Class>
+                <Class sourceFile="EditProfilePresenter.kt">
+                    vml.com.sorry.app.settings.EditProfilePresenter$updateProfileValues$$inlined$let$lambda$1
+                </Class>
+                <Class sourceFile="EditProfilePresenter.kt">
+                    vml.com.sorry.app.settings.EditProfilePresenter$updateProfileValues$1$2
+                </Class>
+                <Class sourceFile="EditProfilePresenter.kt">
+                    vml.com.sorry.app.settings.EditProfilePresenter$updateProfileValues$1$3
+                </Class>
+                <Class sourceFile="MyPostsActivity_MembersInjector.java">
+                    vml.com.sorry.app.settings.MyPostsActivity_MembersInjector
+                </Class>
+                <Class sourceFile="MyPostsContract.kt">
+                    vml.com.sorry.app.settings.MyPostsContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="MyPostsPresenter.kt">
+                    vml.com.sorry.app.settings.MyPostsPresenter
+                </Class>
+                <Class sourceFile="MyPostsPresenter.kt">
+                    vml.com.sorry.app.settings.MyPostsPresenter$observeFeed$1
+                </Class>
+                <Class sourceFile="SettingsActivity_MembersInjector.java">
+                    vml.com.sorry.app.settings.SettingsActivity_MembersInjector
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>dagger</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>javax.inject</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.app.article</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.transitions">
+            <Stats>
+                <TotalClasses>17</TotalClasses>
+                <ConcreteClasses>14</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>17</Ce>
+                <A>0.18</A>
+                <I>1</I>
+                <D>0.18</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$FloatProp
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$IntProp
+                </Class>
+                <Class sourceFile="ElasticDragDismissFrameLayout.java">
+                    vml.com.sorry.app.transitions.ElasticDragDismissFrameLayout$ElasticDragDismissCallback
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$1
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$2
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$3
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$4
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$AnimatorListenerWrapper
+                </Class>
+                <Class sourceFile="AnimUtils.java">
+                    vml.com.sorry.app.transitions.AnimUtils$NoPauseAnimator
+                </Class>
+                <Class sourceFile="ElasticDragDismissFrameLayout.java">
+                    vml.com.sorry.app.transitions.ElasticDragDismissFrameLayout
+                </Class>
+                <Class sourceFile="GravityArcMotion.java">
+                    vml.com.sorry.app.transitions.GravityArcMotion
+                </Class>
+                <Class sourceFile="LiftOff.java">
+                    vml.com.sorry.app.transitions.LiftOff
+                </Class>
+                <Class sourceFile="MorphDrawable.java">
+                    vml.com.sorry.app.transitions.MorphDrawable
+                </Class>
+                <Class sourceFile="MorphDrawable.java">
+                    vml.com.sorry.app.transitions.MorphDrawable$1
+                </Class>
+                <Class sourceFile="MorphDrawable.java">
+                    vml.com.sorry.app.transitions.MorphDrawable$2
+                </Class>
+                <Class sourceFile="MorphTransition.java">
+                    vml.com.sorry.app.transitions.MorphTransition
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>android</Package>
+                <Package>android.animation</Package>
+                <Package>android.app</Package>
+                <Package>android.content</Package>
+                <Package>android.content.res</Package>
+                <Package>android.graphics</Package>
+                <Package>android.graphics.drawable</Package>
+                <Package>android.os</Package>
+                <Package>android.support.v4.view.animation</Package>
+                <Package>android.transition</Package>
+                <Package>android.util</Package>
+                <Package>android.view</Package>
+                <Package>android.view.animation</Package>
+                <Package>android.widget</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>vml.com.sorry</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.app.walkthrough">
+            <Stats>
+                <TotalClasses>2</TotalClasses>
+                <ConcreteClasses>2</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>5</Ce>
+                <A>0</A>
+                <I>0.83</I>
+                <D>0.17</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="WalkthroughActivity_MembersInjector.java">
+                    vml.com.sorry.app.walkthrough.WalkthroughActivity_MembersInjector
+                </Class>
+                <Class sourceFile="WalkthroughPresenter_Factory.java">
+                    vml.com.sorry.app.walkthrough.WalkthroughPresenter_Factory
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>dagger</Package>
+                <Package>dagger.internal</Package>
+                <Package>java.lang</Package>
+                <Package>javax.inject</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core">
+            <Stats>
+                <TotalClasses>10</TotalClasses>
+                <ConcreteClasses>6</ConcreteClasses>
+                <AbstractClasses>4</AbstractClasses>
+                <Ca>9</Ca>
+                <Ce>12</Ce>
+                <A>0.4</A>
+                <I>0.57</I>
+                <D>0.03</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BasePres.kt">
+                    vml.com.sorry.core.BasePres
+                </Class>
+                <Class sourceFile="BaseView.kt">
+                    vml.com.sorry.core.BaseView
+                </Class>
+                <Class sourceFile="IdEntity.kt">
+                    vml.com.sorry.core.IdEntity
+                </Class>
+                <Class sourceFile="StorageDatasource.kt">
+                    vml.com.sorry.core.StorageDatasource
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BasePres.kt">
+                    vml.com.sorry.core.BasePres$DefaultImpls
+                </Class>
+                <Class sourceFile="DomainModule.kt">
+                    vml.com.sorry.core.DomainModule
+                </Class>
+                <Class sourceFile="IdEntity.kt">
+                    vml.com.sorry.core.IdEntityKt
+                </Class>
+                <Class sourceFile="NetworkUnavailableError.kt">
+                    vml.com.sorry.core.NetworkUnavailableError
+                </Class>
+                <Class sourceFile="PermissionDeniedError.kt">
+                    vml.com.sorry.core.PermissionDeniedError
+                </Class>
+                <Class sourceFile="Rxs.kt">
+                    vml.com.sorry.core.RxsKt
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.core.article</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.config</Package>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+                <Package>vml.com.sorry.core.rating</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.article</Package>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.app.settings</Package>
+                <Package>vml.com.sorry.core.article</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+                <Package>vml.com.sorry.core.rating</Package>
+                <Package>vml.com.sorry.core.settings</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.analytics">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>0</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>3</Ca>
+                <Ce>1</Ce>
+                <A>1</A>
+                <I>0.25</I>
+                <D>0.25</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AnalylticsInteractor.kt">
+                    vml.com.sorry.core.analytics.AnalylticsInteractor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+                <Package>vml.com.sorry.core.rating</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.article">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>3</Ca>
+                <Ce>7</Ce>
+                <A>0.4</A>
+                <I>0.7</I>
+                <D>0.1</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="ArticleDatasource.kt">
+                    vml.com.sorry.core.article.ArticleDatasource
+                </Class>
+                <Class sourceFile="ArticleInteractor.kt">
+                    vml.com.sorry.core.article.ArticleInteractor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ArticleEntity.kt">
+                    vml.com.sorry.core.article.ArticleEntity
+                </Class>
+                <Class sourceFile="ArticleRepository.kt">
+                    vml.com.sorry.core.article.ArticleRepository
+                </Class>
+                <Class sourceFile="ArticleRepository.kt">
+                    vml.com.sorry.core.article.ArticleRepository$articles$1
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>vml.com.sorry.core</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.article</Package>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.core</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.auth">
+            <Stats>
+                <TotalClasses>11</TotalClasses>
+                <ConcreteClasses>8</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>9</Ca>
+                <Ce>4</Ce>
+                <A>0.27</A>
+                <I>0.31</I>
+                <D>0.42</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AuthInteractor.kt">
+                    vml.com.sorry.core.auth.AuthInteractor
+                </Class>
+                <Class sourceFile="UserDatasource.kt">
+                    vml.com.sorry.core.auth.UserDatasource
+                </Class>
+                <Class sourceFile="UserInteractor.kt">
+                    vml.com.sorry.core.auth.UserInteractor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AuthErrors.kt">
+                    vml.com.sorry.core.auth.EmailNotFoundError
+                </Class>
+                <Class sourceFile="AuthErrors.kt">
+                    vml.com.sorry.core.auth.EmailTakenError
+                </Class>
+                <Class sourceFile="AuthErrors.kt">
+                    vml.com.sorry.core.auth.InvalidEmailError
+                </Class>
+                <Class sourceFile="AuthErrors.kt">
+                    vml.com.sorry.core.auth.MissingInputError
+                </Class>
+                <Class sourceFile="UserEntity.kt">
+                    vml.com.sorry.core.auth.UserEntity
+                </Class>
+                <Class sourceFile="UserRepository.kt">
+                    vml.com.sorry.core.auth.UserRepository
+                </Class>
+                <Class sourceFile="AuthErrors.kt">
+                    vml.com.sorry.core.auth.WeakPasswordError
+                </Class>
+                <Class sourceFile="AuthErrors.kt">
+                    vml.com.sorry.core.auth.WrongPasswordError
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>vml.com.sorry.core</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.article</Package>
+                <Package>vml.com.sorry.app.authentication</Package>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.app.settings</Package>
+                <Package>vml.com.sorry.app.walkthrough</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.post</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+                <Package>vml.com.sorry.core.settings</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.config">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>3</Ca>
+                <Ce>4</Ce>
+                <A>0.33</A>
+                <I>0.57</I>
+                <D>0.1</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="ConfigDatasource.kt">
+                    vml.com.sorry.core.config.ConfigDatasource
+                </Class>
+                <Class sourceFile="ConfigInteractor.kt">
+                    vml.com.sorry.core.config.ConfigInteractor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ConfigEntity.kt">
+                    vml.com.sorry.core.config.ConfigEntity
+                </Class>
+                <Class sourceFile="ConfigRepository.kt">
+                    vml.com.sorry.core.config.ConfigRepository
+                </Class>
+                <Class sourceFile="ConfigRepository.kt">
+                    vml.com.sorry.core.config.ConfigRepository$observeIsSupportedVersion$1
+                </Class>
+                <Class sourceFile="DynamicLinkConfigEntity.kt">
+                    vml.com.sorry.core.config.DynamicLinkConfigEntity
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.post">
+            <Stats>
+                <TotalClasses>56</TotalClasses>
+                <ConcreteClasses>47</ConcreteClasses>
+                <AbstractClasses>9</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>13</Ce>
+                <A>0.16</A>
+                <I>0.72</I>
+                <D>0.12</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="EditPostContract.kt">
+                    vml.com.sorry.core.post.EditPostContract
+                </Class>
+                <Class sourceFile="EditPostContract.kt">
+                    vml.com.sorry.core.post.EditPostContract$Presenter
+                </Class>
+                <Class sourceFile="EditPostContract.kt">
+                    vml.com.sorry.core.post.EditPostContract$View
+                </Class>
+                <Class sourceFile="EditPostInteractor.kt">
+                    vml.com.sorry.core.post.EditPostInteractor
+                </Class>
+                <Class sourceFile="PostDatasource.kt">
+                    vml.com.sorry.core.post.PostDatasource
+                </Class>
+                <Class sourceFile="PostDetailContract.kt">
+                    vml.com.sorry.core.post.PostDetailContract
+                </Class>
+                <Class sourceFile="PostDetailContract.kt">
+                    vml.com.sorry.core.post.PostDetailContract$Presenter
+                </Class>
+                <Class sourceFile="PostDetailContract.kt">
+                    vml.com.sorry.core.post.PostDetailContract$View
+                </Class>
+                <Class sourceFile="PostDetailInteractor.kt">
+                    vml.com.sorry.core.post.PostDetailInteractor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CreatePostEntity.kt">
+                    vml.com.sorry.core.post.CreatePostEntity
+                </Class>
+                <Class sourceFile="EditPostContract.kt">
+                    vml.com.sorry.core.post.EditPostContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$createPost$$inlined$let$lambda$1
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$createPost$$inlined$let$lambda$2
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$deletePost$$inlined$let$lambda$1
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$deletePost$$inlined$let$lambda$2
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$getPostDetails$$inlined$let$lambda$1
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$getPostDetails$$inlined$let$lambda$2
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$getPostDetails$1$3
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$getPostDetails$1$4
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$updatePost$$inlined$let$lambda$1
+                </Class>
+                <Class sourceFile="EditPostPresenter.kt">
+                    vml.com.sorry.core.post.EditPostPresenter$updatePost$$inlined$let$lambda$2
+                </Class>
+                <Class sourceFile="PostDetailContract.kt">
+                    vml.com.sorry.core.post.PostDetailContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$flagPost$1
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$flagPost$2
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getAuthorData$1
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getAuthorData$2
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$1
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$2
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$3
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$4
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$5
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$6
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$7
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$getPostDetails$$inlined$let$lambda$8
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$unarchivePost$1
+                </Class>
+                <Class sourceFile="PostDetailPresenter.kt">
+                    vml.com.sorry.core.post.PostDetailPresenter$unarchivePost$2
+                </Class>
+                <Class sourceFile="PostEntity.kt">
+                    vml.com.sorry.core.post.PostEntity
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$createPost$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$createPost$2
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$createPost$3
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$delete$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$delete$2
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$delete$2$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$delete$3
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$delete$3$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$delete$4
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$flagPost$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$flagPost$2
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$getArchivedPost$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$getPost$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$getPost$2
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$updateDetails$1
+                </Class>
+                <Class sourceFile="PostRepository.kt">
+                    vml.com.sorry.core.post.PostRepository$updateDetails$2
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.text</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.analytics</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.rating</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.create</Package>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.app.post</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.postlist</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.postlist">
+            <Stats>
+                <TotalClasses>30</TotalClasses>
+                <ConcreteClasses>22</ConcreteClasses>
+                <AbstractClasses>8</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>13</Ce>
+                <A>0.27</A>
+                <I>0.72</I>
+                <D>0.01</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="FeedContract.kt">
+                    vml.com.sorry.core.postlist.FeedContract
+                </Class>
+                <Class sourceFile="FeedContract.kt">
+                    vml.com.sorry.core.postlist.FeedContract$Presenter
+                </Class>
+                <Class sourceFile="FeedContract.kt">
+                    vml.com.sorry.core.postlist.FeedContract$View
+                </Class>
+                <Class sourceFile="PostListDatasource.kt">
+                    vml.com.sorry.core.postlist.PostListDatasource
+                </Class>
+                <Class sourceFile="PostListInteractor.kt">
+                    vml.com.sorry.core.postlist.PostListInteractor
+                </Class>
+                <Class sourceFile="RecordInfoContract.kt">
+                    vml.com.sorry.core.postlist.RecordInfoContract
+                </Class>
+                <Class sourceFile="RecordInfoContract.kt">
+                    vml.com.sorry.core.postlist.RecordInfoContract$Presenter
+                </Class>
+                <Class sourceFile="RecordInfoContract.kt">
+                    vml.com.sorry.core.postlist.RecordInfoContract$View
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="FeedContract.kt">
+                    vml.com.sorry.core.postlist.FeedContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$fabLongClicked$1
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$fabLongClicked$2
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$observeSupportedVersion$1
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$observeSupportedVersion$2
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$subscribeToArchivedPosts$1
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$subscribeToArchivedPosts$2
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$subscribeToPublicAndFeaturedPosts$1
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$subscribeToPublicAndFeaturedPosts$2
+                </Class>
+                <Class sourceFile="FeedPresenter.kt">
+                    vml.com.sorry.core.postlist.FeedPresenter$subscribeToPublicAndFeaturedPosts$3
+                </Class>
+                <Class sourceFile="GridRules.kt">
+                    vml.com.sorry.core.postlist.GridRulesKt
+                </Class>
+                <Class sourceFile="PostListRepository.kt">
+                    vml.com.sorry.core.postlist.PostListRepository
+                </Class>
+                <Class sourceFile="PostListRepository.kt">
+                    vml.com.sorry.core.postlist.PostListRepository$getArchivedPosts$1
+                </Class>
+                <Class sourceFile="PostListRepository.kt">
+                    vml.com.sorry.core.postlist.PostListRepository$getFeaturedPosts$1
+                </Class>
+                <Class sourceFile="PostListRepository.kt">
+                    vml.com.sorry.core.postlist.PostListRepository$getPosts$1
+                </Class>
+                <Class sourceFile="PostListRepository.kt">
+                    vml.com.sorry.core.postlist.PostListRepository$getPublicPosts$1
+                </Class>
+                <Class sourceFile="PostListRepository.kt">
+                    vml.com.sorry.core.postlist.PostListRepository$getUserPosts$1
+                </Class>
+                <Class sourceFile="RecordInfoContract.kt">
+                    vml.com.sorry.core.postlist.RecordInfoContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="RecordInfoPresenter.kt">
+                    vml.com.sorry.core.postlist.RecordInfoPresenter
+                </Class>
+                <Class sourceFile="RecordInfoPresenter.kt">
+                    vml.com.sorry.core.postlist.RecordInfoPresenter$attachView$1
+                </Class>
+                <Class sourceFile="RecordInfoPresenter.kt">
+                    vml.com.sorry.core.postlist.RecordInfoPresenter$attachView$2
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.analytics</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+                <Package>vml.com.sorry.core.config</Package>
+                <Package>vml.com.sorry.core.post</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.create</Package>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.app.feed</Package>
+                <Package>vml.com.sorry.app.settings</Package>
+                <Package>vml.com.sorry.core</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.rating">
+            <Stats>
+                <TotalClasses>18</TotalClasses>
+                <ConcreteClasses>13</ConcreteClasses>
+                <AbstractClasses>5</AbstractClasses>
+                <Ca>4</Ca>
+                <Ce>9</Ce>
+                <A>0.28</A>
+                <I>0.69</I>
+                <D>0.03</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="RateContract.kt">
+                    vml.com.sorry.core.rating.RateContract
+                </Class>
+                <Class sourceFile="RateContract.kt">
+                    vml.com.sorry.core.rating.RateContract$Presenter
+                </Class>
+                <Class sourceFile="RateContract.kt">
+                    vml.com.sorry.core.rating.RateContract$View
+                </Class>
+                <Class sourceFile="RatingDatasource.kt">
+                    vml.com.sorry.core.rating.RatingDatasource
+                </Class>
+                <Class sourceFile="RatingInteractor.kt">
+                    vml.com.sorry.core.rating.RatingInteractor
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="RateContract.kt">
+                    vml.com.sorry.core.rating.RateContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$getRatingData$1
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$getRatingData$1$1
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$getRatingData$1$2
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$getRatingData$2
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$getRatingData$2$1
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$getRatingData$2$2
+                </Class>
+                <Class sourceFile="RatePresenter.kt">
+                    vml.com.sorry.core.rating.RatePresenter$submitRating$1
+                </Class>
+                <Class sourceFile="RatingCountEntity.kt">
+                    vml.com.sorry.core.rating.RatingCountEntity
+                </Class>
+                <Class sourceFile="RatingDetailCountEntity.kt">
+                    vml.com.sorry.core.rating.RatingDetailCountEntity
+                </Class>
+                <Class sourceFile="RatingEntity.kt">
+                    vml.com.sorry.core.rating.RatingEntity
+                </Class>
+                <Class sourceFile="RatingRepository.kt">
+                    vml.com.sorry.core.rating.RatingRepository
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.text</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.analytics</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+                <Package>vml.com.sorry.app.post</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.post</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.core.settings">
+            <Stats>
+                <TotalClasses>7</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>7</Ce>
+                <A>0.43</A>
+                <I>0.78</I>
+                <D>0.21</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="ResetPasswordContract.kt">
+                    vml.com.sorry.core.settings.ResetPasswordContract
+                </Class>
+                <Class sourceFile="ResetPasswordContract.kt">
+                    vml.com.sorry.core.settings.ResetPasswordContract$Presenter
+                </Class>
+                <Class sourceFile="ResetPasswordContract.kt">
+                    vml.com.sorry.core.settings.ResetPasswordContract$View
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ResetPasswordContract.kt">
+                    vml.com.sorry.core.settings.ResetPasswordContract$Presenter$DefaultImpls
+                </Class>
+                <Class sourceFile="ResetPasswordPresenter.kt">
+                    vml.com.sorry.core.settings.ResetPasswordPresenter
+                </Class>
+                <Class sourceFile="ResetPasswordPresenter.kt">
+                    vml.com.sorry.core.settings.ResetPasswordPresenter$submit$1
+                </Class>
+                <Class sourceFile="ResetPasswordPresenter.kt">
+                    vml.com.sorry.core.settings.ResetPasswordPresenter$submit$2
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>rx</Package>
+                <Package>rx.functions</Package>
+                <Package>rx.subscriptions</Package>
+                <Package>vml.com.sorry.core</Package>
+                <Package>vml.com.sorry.core.auth</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.authentication</Package>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.data">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>8</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>1</Ce>
+                <A>0</A>
+                <I>0.5</I>
+                <D>0.5</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$attr
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$color
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$drawable
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$id
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$integer
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$string
+                </Class>
+                <Class sourceFile="R.java">
+                    vml.com.sorry.data.R$styleable
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>vml.com.sorry.app.di</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="vml.com.sorry.data.analytics">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="vml.com.sorry.data.article">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="vml.com.sorry.data.auth">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="vml.com.sorry.data.config">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="vml.com.sorry.data.post">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="vml.com.sorry.data.rating">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+    </Packages>
+
+    <Cycles>
+        <Package Name="vml.com.sorry.app.article">
+            <Package>vml.com.sorry.core.article</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.authentication">
+            <Package>vml.com.sorry.core.auth</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.create">
+            <Package>vml.com.sorry.core.post</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.di">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.feed">
+            <Package>vml.com.sorry.core.postlist</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.post">
+            <Package>vml.com.sorry.core.post</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.settings">
+            <Package>vml.com.sorry.app.article</Package>
+            <Package>vml.com.sorry.core.article</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.app.walkthrough">
+            <Package>vml.com.sorry.core.auth</Package>
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core">
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core.article">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core.auth">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core.post">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core.postlist">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core.rating">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+        </Package>
+
+        <Package Name="vml.com.sorry.core.settings">
+            <Package>vml.com.sorry.core</Package>
+            <Package>vml.com.sorry.core.rating</Package>
+            <Package>vml.com.sorry.core</Package>
+        </Package>
+
+    </Cycles>
+</JDepend>

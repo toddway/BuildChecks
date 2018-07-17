@@ -1,7 +1,5 @@
 package core.entity
 
-import core.round
-import core.toFileList
 import java.util.*
 
 interface BuildConfig {
@@ -24,7 +22,7 @@ interface BuildConfig {
     var git : GitConfig
     var cpdReports: String
 
-    fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)
+    fun duration() = ((Date().time - buildStartTime.time) / THOUSAND).round(2)
     fun startedMessage() = "gradle $taskName - in progress"
     fun completedMessage() = "${duration()}s for gradle $taskName"
     fun reportFiles() = listOf(androidLintReports, checkstyleReports, jacocoReports, coberturaReports, cpdReports).joinToString(",").toFileList()

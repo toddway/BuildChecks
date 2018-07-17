@@ -1,9 +1,9 @@
 package unit
 
-import core.toDocumentList
-import core.usecase.GetLintSummaryUseCase
-import core.usecase.toViolationMap
-import core.usecase.toViolationSummary
+import core.entity.toDocumentList
+import core.summary.GetLintSummaryUseCase
+import core.summary.toViolationMap
+import core.summary.toViolationSummary
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe
 import org.junit.Test

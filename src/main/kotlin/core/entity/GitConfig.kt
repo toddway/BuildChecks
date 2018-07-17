@@ -1,7 +1,5 @@
 package core.entity
 
-import core.run
-
 interface GitConfig {
     var commitHash : String
     var shortHash : String

@@ -1,8 +1,8 @@
 package unit
 
 import core.entity.BuildConfigDefault
-import core.usecase.HandleBuildStartedUseCase
-import core.usecase.PostStatusUseCase
+import core.buildstate.HandleBuildStartedUseCase
+import core.post.PostStatusUseCase
 import data.GithubDatasource
 import org.amshove.kluent.*
 import org.junit.Test

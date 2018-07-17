@@ -1,7 +1,7 @@
 package data
 
-import core.datasource.StatsDatasource
-import core.datasource.StatusDatasource
+import core.post.StatsDatasource
+import core.post.StatusDatasource
 import core.entity.ErrorMessage
 import core.entity.InfoMessage
 import core.entity.Stats

@@ -1,0 +1,658 @@
+<?xml version="1.0"?>
+<JDepend>
+    <Packages>
+
+        <Package name="core">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>15</Ce>
+                <A>0</A>
+                <I>0.75</I>
+                <D>0.25</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="Documents.kt">
+                    core.DocumentsKt
+                </Class>
+                <Class sourceFile="Documents.kt">
+                    core.DocumentsKt$children$1
+                </Class>
+                <Class sourceFile="Documents.kt">
+                    core.DocumentsKt$children$1$iterator$1
+                </Class>
+                <Class sourceFile="Documents.kt">
+                    core.DocumentsKt$toDocument$1
+                </Class>
+                <Class sourceFile="Utils.kt">
+                    core.UtilsKt
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.math</Package>
+                <Package>java.nio.charset</Package>
+                <Package>java.util</Package>
+                <Package>java.util.concurrent</Package>
+                <Package>javax.xml.parsers</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.io</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.jvm.internal.markers</Package>
+                <Package>kotlin.text</Package>
+                <Package>org.w3c.dom</Package>
+                <Package>org.xml.sax</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>core.coverage</Package>
+                <Package>core.entity</Package>
+                <Package>core.summary</Package>
+                <Package>data</Package>
+                <Package>gradle</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="core.buildstate">
+            <Stats>
+                <TotalClasses>4</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>9</Ce>
+                <A>0</A>
+                <I>0.82</I>
+                <D>0.18</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="HandleBuildFailedUseCase.kt">
+                    core.buildstate.HandleBuildFailedUseCase
+                </Class>
+                <Class sourceFile="HandleBuildFinishedUseCase.kt">
+                    core.buildstate.HandleBuildFinishedUseCase
+                </Class>
+                <Class sourceFile="HandleBuildStartedUseCase.kt">
+                    core.buildstate.HandleBuildStartedUseCase
+                </Class>
+                <Class sourceFile="HandleBuildSuccessUseCase.kt">
+                    core.buildstate.HandleBuildSuccessUseCase
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core.entity</Package>
+                <Package>core.post</Package>
+                <Package>core.summary</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>data</Package>
+                <Package>gradle</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="core.coverage">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>4</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>8</Ce>
+                <A>0.2</A>
+                <I>0.8</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="CreateCoverageMap.kt">
+                    core.coverage.CreateCoverageMap
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CreateCoverageCoberturaMap.kt">
+                    core.coverage.CreateCoberturaMap
+                </Class>
+                <Class sourceFile="CreateCoverageCoberturaMap.kt">
+                    core.coverage.CreateCoverageCoberturaMapKt
+                </Class>
+                <Class sourceFile="CreateCoverageJacocoMap.kt">
+                    core.coverage.CreateCoverageJacocoMapKt
+                </Class>
+                <Class sourceFile="CreateCoverageJacocoMap.kt">
+                    core.coverage.CreateJacocoMap
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.text</Package>
+                <Package>org.w3c.dom</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>core.summary</Package>
+                <Package>data</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="core.entity">
+            <Stats>
+                <TotalClasses>10</TotalClasses>
+                <ConcreteClasses>8</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>5</Ce>
+                <A>0.2</A>
+                <I>0.5</I>
+                <D>0.3</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BuildConfig.kt">
+                    core.entity.BuildConfig
+                </Class>
+                <Class sourceFile="GitConfig.kt">
+                    core.entity.GitConfig
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BuildConfig.kt">
+                    core.entity.BuildConfig$DefaultImpls
+                </Class>
+                <Class sourceFile="BuildConfig.kt">
+                    core.entity.BuildConfigDefault
+                </Class>
+                <Class sourceFile="Message.kt">
+                    core.entity.ErrorMessage
+                </Class>
+                <Class sourceFile="GitConfig.kt">
+                    core.entity.GitConfigDefault
+                </Class>
+                <Class sourceFile="GitConfig.kt">
+                    core.entity.GitConfigKt
+                </Class>
+                <Class sourceFile="Message.kt">
+                    core.entity.InfoMessage
+                </Class>
+                <Class sourceFile="Message.kt">
+                    core.entity.Message
+                </Class>
+                <Class sourceFile="Stats.kt">
+                    core.entity.Stats
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>core.buildstate</Package>
+                <Package>core.post</Package>
+                <Package>core.summary</Package>
+                <Package>data</Package>
+                <Package>gradle</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="core.post">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>3</Ca>
+                <Ce>7</Ce>
+                <A>0.4</A>
+                <I>0.7</I>
+                <D>0.1</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="StatsDatasource.kt">
+                    core.post.StatsDatasource
+                </Class>
+                <Class sourceFile="StatusDatasource.kt">
+                    core.post.StatusDatasource
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PostStatsUseCase.kt">
+                    core.post.PostStatsUseCase
+                </Class>
+                <Class sourceFile="PostStatusUseCase.kt">
+                    core.post.PostStatusUseCase
+                </Class>
+                <Class sourceFile="PostStatusUseCase.kt">
+                    core.post.PostStatusUseCase$subscribe$1
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core.entity</Package>
+                <Package>io.reactivex</Package>
+                <Package>io.reactivex.functions</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.jvm.internal</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>core.buildstate</Package>
+                <Package>core.summary</Package>
+                <Package>data</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="core.summary">
+            <Stats>
+                <TotalClasses>8</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>15</Ce>
+                <A>0.12</A>
+                <I>0.88</I>
+                <D>0.01</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="GetSummaryUseCase.kt">
+                    core.summary.GetSummaryUseCase
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="GetCoverageSummaryUseCase.kt">
+                    core.summary.GetCoverageSummaryUseCase
+                </Class>
+                <Class sourceFile="GetDurationSummaryUseCase.kt">
+                    core.summary.GetDurationSummaryUseCase
+                </Class>
+                <Class sourceFile="GetLintSummaryUseCase.kt">
+                    core.summary.GetLintSummaryUseCase
+                </Class>
+                <Class sourceFile="GetLintSummaryUseCase.kt">
+                    core.summary.GetLintSummaryUseCase$violationMap$2
+                </Class>
+                <Class sourceFile="GetLintSummaryUseCase.kt">
+                    core.summary.GetLintSummaryUseCaseKt
+                </Class>
+                <Class sourceFile="GetSummaryUseCase.kt">
+                    core.summary.GetSummaryUseCaseKt
+                </Class>
+                <Class sourceFile="GetTextSummaryUseCase.kt">
+                    core.summary.GetTextSummaryUseCase
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core</Package>
+                <Package>core.coverage</Package>
+                <Package>core.entity</Package>
+                <Package>core.post</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.io</Package>
+                <Package>kotlin.jvm.functions</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.reflect</Package>
+                <Package>kotlin.text</Package>
+                <Package>org.w3c.dom</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>core.buildstate</Package>
+                <Package>data</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="data">
+            <Stats>
+                <TotalClasses>25</TotalClasses>
+                <ConcreteClasses>22</ConcreteClasses>
+                <AbstractClasses>3</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>20</Ce>
+                <A>0.12</A>
+                <I>0.95</I>
+                <D>0.07</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BitBucketDatasource.kt">
+                    data.BitbucketService
+                </Class>
+                <Class sourceFile="GithubDatasource.kt">
+                    data.GithubService
+                </Class>
+                <Class sourceFile="RetrofitStatsDatasource.kt">
+                    data.RetrofitBuildStatsService
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BitBucketDatasource.kt">
+                    data.BitBucketDatasource
+                </Class>
+                <Class sourceFile="BitBucketDatasource.kt">
+                    data.BitBucketDatasource$postStatus$1
+                </Class>
+                <Class sourceFile="BitBucketDatasource.kt">
+                    data.BitBucketDatasource$postStatus$2
+                </Class>
+                <Class sourceFile="BitBucketDatasource.kt">
+                    data.BitBucketDatasourceKt
+                </Class>
+                <Class sourceFile="BitBucketDatasource.kt">
+                    data.BitbucketBuildStatusBody
+                </Class>
+                <Class sourceFile="ConsoleDatasource.kt">
+                    data.ConsoleDatasource
+                </Class>
+                <Class sourceFile="ConsoleDatasource.kt">
+                    data.ConsoleDatasource$postStats$1
+                </Class>
+                <Class sourceFile="ConsoleDatasource.kt">
+                    data.ConsoleDatasource$postStatus$1
+                </Class>
+                <Class sourceFile="DI.kt">
+                    data.DI
+                </Class>
+                <Class sourceFile="GithubDatasource.kt">
+                    data.GithubBuildStatusBody
+                </Class>
+                <Class sourceFile="GithubDatasource.kt">
+                    data.GithubDatasource
+                </Class>
+                <Class sourceFile="GithubDatasource.kt">
+                    data.GithubDatasource$postStatus$1
+                </Class>
+                <Class sourceFile="GithubDatasource.kt">
+                    data.GithubDatasource$postStatus$2
+                </Class>
+                <Class sourceFile="GithubDatasource.kt">
+                    data.GithubDatasourceKt
+                </Class>
+                <Class sourceFile="RetrofitStatsDatasource.kt">
+                    data.RetrofitStatsDatasource
+                </Class>
+                <Class sourceFile="RetrofitStatsDatasource.kt">
+                    data.RetrofitStatsDatasource$postStats$1
+                </Class>
+                <Class sourceFile="RetrofitStatsDatasource.kt">
+                    data.RetrofitStatsDatasource$postStats$2
+                </Class>
+                <Class sourceFile="RetrofitStatsDatasource.kt">
+                    data.RetrofitStatsDatasourceKt
+                </Class>
+                <Class sourceFile="Retrofits.kt">
+                    data.RetrofitsKt
+                </Class>
+                <Class sourceFile="Retrofits.kt">
+                    data.RetrofitsKt$overrideCacheControlInterceptor$1
+                </Class>
+                <Class sourceFile="Retrofits.kt">
+                    data.RetrofitsKt$retrofit$authHeaderInterceptor$1
+                </Class>
+                <Class sourceFile="StatusDatasources.kt">
+                    data.StatusDatasourcesKt
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core</Package>
+                <Package>core.buildstate</Package>
+                <Package>core.coverage</Package>
+                <Package>core.entity</Package>
+                <Package>core.post</Package>
+                <Package>core.summary</Package>
+                <Package>io.reactivex</Package>
+                <Package>io.reactivex.functions</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.text</Package>
+                <Package>okhttp3</Package>
+                <Package>okhttp3.logging</Package>
+                <Package>retrofit2</Package>
+                <Package>retrofit2.adapter.rxjava2</Package>
+                <Package>retrofit2.converter.gson</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>gradle</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="gradle">
+            <Stats>
+                <TotalClasses>7</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>16</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="BuildChecksPlugin.kt">
+                    gradle.BuildChecksPlugin
+                </Class>
+                <Class sourceFile="BuildChecksPlugin.kt">
+                    gradle.BuildChecksPlugin$apply$1
+                </Class>
+                <Class sourceFile="BuildChecksPlugin.kt">
+                    gradle.BuildChecksPlugin$apply$2
+                </Class>
+                <Class sourceFile="BuildChecksPlugin.kt">
+                    gradle.BuildChecksPluginKt
+                </Class>
+                <Class sourceFile="ChecksReportTask.kt">
+                    gradle.ChecksReportTask
+                </Class>
+                <Class sourceFile="PostChecksTask.kt">
+                    gradle.PostChecksTask
+                </Class>
+                <Class sourceFile="PrintChecksTask.kt">
+                    gradle.PrintChecksTask
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>core</Package>
+                <Package>core.buildstate</Package>
+                <Package>core.entity</Package>
+                <Package>data</Package>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>kotlin.collections</Package>
+                <Package>kotlin.jvm.internal</Package>
+                <Package>kotlin.text</Package>
+                <Package>org.gradle</Package>
+                <Package>org.gradle.api</Package>
+                <Package>org.gradle.api.execution</Package>
+                <Package>org.gradle.api.invocation</Package>
+                <Package>org.gradle.api.plugins</Package>
+                <Package>org.gradle.api.tasks</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="io.reactivex">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="io.reactivex.functions">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.io">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.lang">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.math">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.nio.charset">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util.concurrent">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.xml.parsers">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.collections">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.io">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.jvm.functions">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.jvm.internal">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.jvm.internal.markers">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.reflect">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="kotlin.text">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="okhttp3">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="okhttp3.logging">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.gradle">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.gradle.api">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.gradle.api.execution">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.gradle.api.invocation">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.gradle.api.plugins">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.gradle.api.tasks">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.w3c.dom">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.xml.sax">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="retrofit2">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="retrofit2.adapter.rxjava2">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="retrofit2.converter.gson">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+    </Packages>
+
+    <Cycles>
+    </Cycles>
+</JDepend>

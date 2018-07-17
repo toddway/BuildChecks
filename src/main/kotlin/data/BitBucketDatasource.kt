@@ -1,6 +1,6 @@
 package data
 
-import core.datasource.StatusDatasource
+import core.post.StatusDatasource
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.Body

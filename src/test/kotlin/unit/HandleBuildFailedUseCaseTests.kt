@@ -2,9 +2,14 @@ package unit
 
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
-import core.datasource.StatusDatasource
-import core.toDocumentList
-import core.usecase.*
+import core.buildstate.HandleBuildFailedUseCase
+import core.coverage.CreateCoberturaMap
+import core.coverage.CreateJacocoMap
+import core.post.PostStatusUseCase
+import core.post.StatusDatasource
+import core.summary.GetCoverageSummaryUseCase
+import core.summary.GetLintSummaryUseCase
+import core.entity.toDocumentList
 import io.reactivex.Observable
 import org.amshove.kluent.*
 import org.junit.Test

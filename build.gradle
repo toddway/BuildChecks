@@ -68,6 +68,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation group: 'org.jfree', name: 'jfreechart', version: '1.5.0'
+
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.nhaarman:mockito-kotlin:1.5.0'
@@ -141,6 +143,23 @@ task coverage(type: JacocoReport, dependsOn: "test") {
     sourceDirectories = files(["src/main/kotlin"])
     executionData = files("$buildDir/jacoco/test.exec")
 }
+
+apply plugin: 'jdepend'
+
+task jdepend(type: JDepend, dependsOn: "build") {
+    classesDirs = files("$buildDir/classes/kotlin/main")
+    reports {
+        text {
+            enabled = false
+            destination 'build/reports/jdepend.txt'
+        }
+        xml.enabled = true
+    }
+//    doLast {
+//        ant.xslt(in: "build/reports/jdepend.xml", style: "jdepend.xsl", out:   "build/reports/jdepend.html")
+//    }
+}
+
 
 
 postChecks.dependsOn(build)

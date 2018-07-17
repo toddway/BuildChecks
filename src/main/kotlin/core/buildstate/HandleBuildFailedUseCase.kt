@@ -1,4 +1,8 @@
-package core.usecase
+package core.buildstate
+
+import core.summary.GetSummaryUseCase
+import core.summary.postAll
+import core.post.PostStatusUseCase
 
 open class HandleBuildFailedUseCase(
         val postStatusUseCase: PostStatusUseCase,
