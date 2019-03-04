@@ -11,11 +11,11 @@ interface GitConfig {
 }
 
 open class GitConfigDefault : GitConfig {
-    override var commitHash: String = core.entity.commitHash()
-    override var shortHash: String = core.entity.shortHash()
-    override var commitDate: Long = core.entity.commitDate()
-    override var commitBranch: String = core.entity.commitBranch()
-    override var isAllCommitted: Boolean = core.entity.isAllCommitted()
+    override var commitHash: String = commitHash()
+    override var shortHash: String = shortHash()
+    override var commitDate: Long = commitDate()
+    override var commitBranch: String = commitBranch()
+    override var isAllCommitted: Boolean = isAllCommitted()
 }
 
 fun commitHash() = "git rev-parse HEAD".run() ?: ""

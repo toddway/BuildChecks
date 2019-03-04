@@ -55,4 +55,6 @@ fun Number.isNotLessThan(number: Number?): Boolean {
 
 fun Int.blankOrNum() : String = if (this == 0) "" else "$this"
 
-
+fun <T, V> Map<V?, List<T>>.entryChildrenSum(): Int {
+    return flatMap { entry -> listOf(entry.value.count()) }.sum()
+}

@@ -3,9 +3,12 @@ package unit
 import core.isNotGreaterThan
 import core.isNotLessThan
 import org.amshove.kluent.shouldBe
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 
-class UtilTests {
+public class UtilTests {
 
     @Test
     fun`when calling split forEach, it prints each item`() {
@@ -56,6 +59,15 @@ class UtilTests {
         60.0.isNotLessThan(null) shouldBe true
         .00.isNotLessThan(null) shouldBe true
         4.isNotLessThan(null) shouldBe true
+    }
+
+    @Rule @JvmField
+    var folder = TemporaryFolder()
+
+    @Test
+    fun `when calling file delete it returns true if the file exists`() {
+        val files = listOf(File("adsfl.txt"), folder.newFile())
+        files.forEach { println(it.delete()) }
     }
 }
 

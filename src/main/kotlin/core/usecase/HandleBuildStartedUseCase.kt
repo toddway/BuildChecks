@@ -8,6 +8,7 @@ class HandleBuildStartedUseCase(
 ) {
     fun invoke() {
         if (config.isPluginActivated) {
+            config.reportFiles().forEach { it.delete() }
             postStatusUseCase.pending(config.startedMessage(), "build")
         }
     }

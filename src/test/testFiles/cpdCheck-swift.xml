@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+   <duplication lines="12" tokens="48">
+      <file line="5" path="/Users/tway/dev/qt-ios/QuikTrip/Shared/RoundCorner.swift"/>
+      <file line="16" path="/Users/tway/dev/qt-ios/QuikTrip/Shared/RoundCorner.swift"/>
+      <codefragment><![CDATA[class RoundCornerButton: UIButton, RoundCorner {
+    @IBInspectable var borderWidth:  CGFloat = 0
+    @IBInspectable var borderColor:  UIColor = UIColor.black
+    @IBInspectable var cornerRadius: CGFloat = 0.0
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.applyVisualProperties()
+    }
+}
+
+// MARK: View
+class RoundCornerView: UIView, RoundCorner {]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="47">
+      <file line="5" path="/Users/tway/dev/qt-ios/QuikTrip/Shared/RoundCorner.swift"/>
+      <file line="16" path="/Users/tway/dev/qt-ios/QuikTrip/Shared/RoundCorner.swift"/>
+      <file line="27" path="/Users/tway/dev/qt-ios/QuikTrip/Shared/RoundCorner.swift"/>
+      <codefragment><![CDATA[class RoundCornerButton: UIButton, RoundCorner {
+    @IBInspectable var borderWidth:  CGFloat = 0
+    @IBInspectable var borderColor:  UIColor = UIColor.black
+    @IBInspectable var cornerRadius: CGFloat = 0.0
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.applyVisualProperties()
+    }
+}]]></codefragment>
+   </duplication>
+</pmd-cpd>
