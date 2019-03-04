@@ -4,7 +4,7 @@ import core.entity.BuildConfig
 
 class GetDurationSummaryUseCase(val config : BuildConfig) : GetSummaryUseCase{
     override fun isSuccessful(): Boolean {
-        return true
+        return config.isSuccess
     }
 
     override fun summary(): String? {

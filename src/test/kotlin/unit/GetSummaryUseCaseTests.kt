@@ -1,9 +1,10 @@
 package unit
 
+import core.entity.BuildConfig
 import core.toDocument
 import core.toDocumentList
 import core.usecase.*
-import org.amshove.kluent.shouldBe
+import org.amshove.kluent.*
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -38,5 +39,21 @@ class GetSummaryUseCaseTests {
             it.key().isNotBlank() shouldBe true
             Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summary().isNullOrBlank())
         }
+    }
+
+    @Test
+    fun `when the build was successful, the duration summary isSuccessful is true`() {
+        val config : BuildConfig = mock()
+        When calling config.isSuccess itReturns true
+        val summary = GetDurationSummaryUseCase(config)
+        summary.isSuccessful() shouldBe true
+    }
+
+    @Test
+    fun `when the build was not successful, the duration summary isSuccessful is false`() {
+        val config : BuildConfig = mock()
+        When calling config.isSuccess itReturns false
+        val summary = GetDurationSummaryUseCase(config)
+        summary.isSuccessful() shouldBe false
     }
 }
