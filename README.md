@@ -1,4 +1,13 @@
-A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/)
+A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).  E.g.:
+
+
+    BUILD SUCCESSFUL in 11s
+    9 actionable tasks: 7 executed, 2 up-to-date
+    ✔ 10.05s for gradle postChecks
+    ✔ 79.33% coverage, threshold is 70.0%
+    ✔ 5 rule violations (5 warning), threshold is 5
+    ✔ Posting to GITHUB
+
 
 The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint)
 supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul)
@@ -11,7 +20,7 @@ and [initialize it for your project](https://guides.gradle.org/creating-new-grad
 Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildchecks" version "1.6"
+        id "com.toddway.buildchecks" version "1.7"
     }
 
 ## Usage
