@@ -34,23 +34,27 @@ class BitBucketDatasource(
     }
 }
 
-interface BitbucketService {
+interface BitbucketService1 {
     @POST("rest/build-status/1.0/commits/{hash}")
     fun postBuildStatus(@Path("hash") hash : String, @Body body : BitbucketBuildStatusBody)
             : Observable<ResponseBody>
 }
 
-interface BitbucketService2 : BitbucketService {
+interface BitbucketService2 {
     @POST("commit/{hash}/statuses/build")
-    override fun postBuildStatus(@Path("hash") hash : String, @Body body : BitbucketBuildStatusBody)
+    fun postBuildStatus(@Path("hash") hash : String, @Body body : BitbucketBuildStatusBody)
             : Observable<ResponseBody>
 }
 
-fun createBitBucketService(baseUrl : String, authorization : String): BitbucketService {
-    val clazz =
-            if (baseUrl.contains("2.0/")) BitbucketService2::class.java
-            else BitbucketService::class.java
-    return retrofit(baseUrl, authorization).create(clazz)
+class BitbucketService(baseUrl : String, authorization : String) : BitbucketService1, BitbucketService2 {
+    private val retrofit = retrofit(baseUrl, authorization)
+    private val service1 = retrofit.create(BitbucketService1::class.java)
+    private val service2 = retrofit.create(BitbucketService2::class.java)
+    private fun isVersion2() = retrofit.baseUrl().toString().contains("2.0/")
+
+    override fun postBuildStatus(hash: String, body: BitbucketBuildStatusBody): Observable<ResponseBody> {
+        return if (isVersion2()) service2.postBuildStatus(hash, body) else service1.postBuildStatus(hash, body)
+    }
 }
 
 data class BitbucketBuildStatusBody(

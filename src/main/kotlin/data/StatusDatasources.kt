@@ -12,7 +12,7 @@ fun findRemoteStatusDatasource(config : BuildConfig): StatusDatasource? {
 }
 
 fun bitbucketDatasource(config : BuildConfig) : BitBucketDatasource {
-    val service = createBitBucketService(config.baseUrl, config.authorization)
+    val service = BitbucketService(config.baseUrl, config.authorization)
     return BitBucketDatasource(service, config.git.commitHash, config.buildUrl)
 }
 

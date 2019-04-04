@@ -29,8 +29,7 @@ plugins {
 
 apply plugin: BuildChecksPlugin
 buildChecks {
-    //baseUrl = "https://api.github.com/repos/toddway/BuildChecks/"
-    baseUrl = "https://api.bitbucket.org/2.0/repositories/toddway/buildchecks/"
+    baseUrl = System.properties["baseUrl"]
     authorization = System.properties["auth"]
     buildUrl = System.properties["buildUrl"]
     jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
