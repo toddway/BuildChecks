@@ -1,20 +1,18 @@
+import gradle.BuildChecksPlugin
+
 buildscript {
     ext.kotlin_version = '1.2.30'
     ext.okHttpVersion = "3.9.0"
     ext.retrofitVersion = '2.4.0'
     repositories {
         jcenter()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-        flatDir {
-            dirs "build/libs", "libs"
-        }
+        maven { url "https://plugins.gradle.org/m2/" }
+        flatDir { dirs "build/libs", "libs" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
-        classpath "com.toddway:buildChecks:1.5"
+        classpath "com.toddway:buildChecks:1.8"
 
         //these are here because they're dependencies of the buildStatusPlugin jar file
         classpath 'io.reactivex.rxjava2:rxjava:2.1.14'
@@ -29,10 +27,11 @@ plugins {
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC6"
 }
 
-apply plugin: gradle.BuildChecksPlugin
+apply plugin: BuildChecksPlugin
 buildChecks {
-    baseUrl = "https://api.github.com/repos/toddway/BuildChecks/"
-    authorization = System.properties["githubAuth"]
+    //baseUrl = "https://api.github.com/repos/toddway/BuildChecks/"
+    baseUrl = "https://api.bitbucket.org/2.0/repositories/toddway/buildchecks/"
+    authorization = System.properties["auth"]
     buildUrl = System.properties["buildUrl"]
     jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml"
     checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml"
@@ -86,7 +85,7 @@ test {
     }
 }
 
-version = "1.7"
+version = "1.8"
 group = "com.toddway"
 jar.baseName = "buildChecks"
 
