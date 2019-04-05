@@ -17,7 +17,7 @@ open class GetCoverageSummaryUseCase(
         return "test"
     }
 
-    override fun summary(): String? {
+    override fun value(): String? {
         var summary = percent()?.let { "$it% coverage" }
         if (!summary.isNullOrBlank()) minCoveragePercent?.let { summary += ", threshold is $minCoveragePercent%" }
         return summary

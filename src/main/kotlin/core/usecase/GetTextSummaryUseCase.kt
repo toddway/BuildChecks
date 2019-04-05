@@ -7,7 +7,7 @@ class GetTextSummaryUseCase(val file : File) : GetSummaryUseCase {
         return true
     }
 
-    override fun summary(): String? {
+    override fun value(): String? {
         return file.readText()
     }
 

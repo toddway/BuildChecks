@@ -1,30 +1,27 @@
 package data
 
 import core.datasource.StatsDatasource
-import core.datasource.StatusDatasource
-import core.entity.*
-import core.toDocumentList
+import core.entity.BuildConfig
+import core.entity.BuildConfigDefault
+import core.entity.Message
 import core.usecase.*
 
 
 class DI(val config : BuildConfig = BuildConfigDefault()) {
 
-    private fun statusDatasources() : List<StatusDatasource> {
-        val datasources = mutableListOf<StatusDatasource>(ConsoleDatasource())
+    private val retrofit by lazy { retrofit(config.baseUrl, config.authorization) }
 
-        if (config.isPostActivated) {
-            findRemoteStatusDatasource(config)?.let {
-                val name = it.name().toUpperCase()
-                if (config.allowUncommittedChanges || config.git.isAllCommitted) {
-                    datasources.add(it)
-                    messageQueue.add(InfoMessage("Posting to $name"))
-                } else {
-                    messageQueue.add(ErrorMessage("You must commit all changes before posting checks to $name"))
-                }
-            } ?: messageQueue.add(ErrorMessage("No recognized post config was found"))
-        }
+    private val list by lazy {
+        listOf(
+                ConsoleDatasource(),
+                GithubDatasource(retrofit, config),
+                BitBucket1Datasource(retrofit, config),
+                BitBucket2Datasource(retrofit, config)
+        )
+    }
 
-        return datasources
+    private val postStatusUseCase by lazy {
+        PostStatusUseCase(list, config, messageQueue)
     }
 
     private fun statsDatasources(): List<StatsDatasource> {
@@ -36,49 +33,25 @@ class DI(val config : BuildConfig = BuildConfigDefault()) {
         return datasources
     }
 
-    private fun postStatusUseCase() : PostStatusUseCase {
-        return PostStatusUseCase(statusDatasources(), messageQueue)
-    }
-
-    private fun handleBuildSuccessUseCase() : HandleBuildSuccessUseCase {
-        return HandleBuildSuccessUseCase(
-                postStatusUseCase(),
+    private val handleBuildSuccessUseCase by lazy {
+        HandleBuildSuccessUseCase(
+                postStatusUseCase,
                 PostStatsUseCase(statsDatasources()),
                 config,
-                summariesUseCases()
+                getSummaryUseCaseList(config)
         )
     }
 
-    private fun handleBuildFailedUseCase() : HandleBuildFailedUseCase {
-        return HandleBuildFailedUseCase(postStatusUseCase(), summariesUseCases())
-    }
-
-    private fun summariesUseCases(): List<GetSummaryUseCase> {
-        return listOf(
-                GetDurationSummaryUseCase(config),
-                GetCoverageSummaryUseCase(
-                        config.coberturaReports.toDocumentList(),
-                        CreateCoberturaMap(),
-                        config.minCoveragePercent),
-                GetCoverageSummaryUseCase(
-                        config.jacocoReports.toDocumentList(),
-                        CreateJacocoMap(),
-                        config.minCoveragePercent),
-                GetLintSummaryUseCase(
-                        config.androidLintReports.toDocumentList()
-                                + config.checkstyleReports.toDocumentList()
-                                + config.cpdReports.toDocumentList(),
-                        config.maxLintViolations
-                )
-        )
+    private val handleBuildFailedUseCase by lazy {
+        HandleBuildFailedUseCase(postStatusUseCase, getSummaryUseCaseList(config))
     }
 
     fun handleBuildStartedUseCase() : HandleBuildStartedUseCase {
-        return HandleBuildStartedUseCase(postStatusUseCase(), config)
+        return HandleBuildStartedUseCase(postStatusUseCase, config)
     }
 
     fun handleBuildFinishedUseCase() : HandleBuildFinishedUseCase {
-        return HandleBuildFinishedUseCase(handleBuildFailedUseCase(), handleBuildSuccessUseCase(), config, messageQueue)
+        return HandleBuildFinishedUseCase(handleBuildFailedUseCase, handleBuildSuccessUseCase, config, messageQueue)
     }
 
     private val messageQueue = mutableListOf<Message>()

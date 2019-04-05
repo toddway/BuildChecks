@@ -13,7 +13,7 @@ class GetLintSummaryUseCaseTests {
     @Test
     fun `when there is a valid report document, the summary is returned`() {
         val usecase = GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toDocumentList())
-        val v = usecase.summary()
+        val v = usecase.value()
         println(v)
         v shouldNotBe null
     }

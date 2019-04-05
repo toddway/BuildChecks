@@ -1,34 +1,32 @@
 package data
 
 import core.datasource.StatsDatasource
-import core.datasource.StatusDatasource
+import core.entity.BuildStatus
 import core.entity.ErrorMessage
 import core.entity.InfoMessage
 import core.entity.Stats
+import core.usecase.PostStatusUseCase
 import io.reactivex.Observable
 
-class ConsoleDatasource : StatusDatasource, StatsDatasource {
-    override fun name(): String {
-        return "Console"
+class ConsoleDatasource : PostStatusUseCase.Datasource, StatsDatasource {
+    override fun isRemote() = false
+
+    override fun post(status: BuildStatus, message: String, key: String): Observable<Boolean> {
+        return Observable.just(true).doOnNext { println(status.consoleFormat(message)) }
     }
+
+    override fun isActive(): Boolean {
+        return true
+    }
+
+    override fun name() = "Console"
 
     override fun postStats(stats: Stats): Observable<Boolean> {
         return Observable.just(true).doOnNext {  println(InfoMessage(stats.toString()).toString()) }
     }
+}
 
-    override fun postPendingStatus(message: String, key: String): Observable<Boolean> {
-        return postStatus(InfoMessage(message).toString())
-    }
-
-    override fun postFailureStatus(message: String, key: String): Observable<Boolean> {
-        return postStatus(ErrorMessage(message).toString())
-    }
-
-    override fun postSuccessStatus(message: String, key: String): Observable<Boolean> {
-        return postStatus(InfoMessage(message).toString())
-    }
-
-    fun postStatus(message: String): Observable<Boolean> {
-        return Observable.just(true).doOnNext { println("$message") }
-    }
+fun BuildStatus.consoleFormat(message: String) = when(this) {
+    BuildStatus.FAILURE -> ErrorMessage(message).toString()
+    else -> InfoMessage(message).toString()
 }

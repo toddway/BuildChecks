@@ -1,18 +1,20 @@
 package core.usecase
 
+import core.entity.BuildStatus
+
 interface GetSummaryUseCase {
-    fun summary() : String?
+    fun value() : String?
     fun key() : String
     fun isSuccessful() : Boolean
 }
 
 fun List<GetSummaryUseCase>.postAll(postStatusUseCase: PostStatusUseCase) {
-    forEach { s ->
-        s.summary()?.let {
-            if (s.isSuccessful())
-                postStatusUseCase.success(it, s.key())
+    forEach { getSummaryUseCase ->
+        getSummaryUseCase.value()?.let {
+            if (getSummaryUseCase.isSuccessful())
+                postStatusUseCase.post(BuildStatus.SUCCESS, it, getSummaryUseCase.key())
             else
-                postStatusUseCase.failure(it, s.key())
+                postStatusUseCase.post(BuildStatus.FAILURE, it, getSummaryUseCase.key())
         }
     }
 }

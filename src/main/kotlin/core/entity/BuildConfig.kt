@@ -34,6 +34,7 @@ interface BuildConfig {
             coberturaReports,
             cpdReports
     ).joinToString(",").toFileList()
+    fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted
 }
 
 open class BuildConfigDefault : BuildConfig {
