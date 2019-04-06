@@ -5,13 +5,13 @@ import io.reactivex.Observable
 
 
 open class PostStatusUseCase(
-        val all : List<PostStatusUseCase.Datasource>,
+        val sources : List<PostStatusUseCase.Datasource>,
         val config: BuildConfig,
-        val messages: MutableList<Message>) {
-    val sources by lazy { filterInvalidSources() }
+        private val messages: MutableList<Message>) {
+    private val validSources by lazy { removeInvalid() }
 
     open fun post(status : BuildStatus, message: String, key: String) {
-        sources.forEach { source ->
+        validSources.forEach { source ->
             source.post(status, message, key).subscribe { isSuccess ->
                 if (!isSuccess) {
                     val error = "${source.name().toUpperCase()} post failed, add -i for full logs"
@@ -21,21 +21,22 @@ open class PostStatusUseCase(
         }
     }
 
-    fun filterInvalidSources() : List<PostStatusUseCase.Datasource> {
-        return if (config.isPostActivated) {
-            val remote : PostStatusUseCase.Datasource? = all.firstOrNull { it.isRemote() }
+    fun removeInvalid() : List<PostStatusUseCase.Datasource> {
+        var list = sources.filter { it.isActive() }
+        if (config.isPostActivated) {
+            val remote = list.firstOrNull { it.isRemote() }
             if (remote == null) {
                 messages.add(ErrorMessage("No recognized post config was found"))
             } else if (!config.isAllCommitted()) {
                 messages.add(ErrorMessage("You must commit all changes before posting checks to ${remote.name()}"))
-                return all.filter { !it.isRemote() }
+                list = list.filter { !it.isRemote() }
             } else {
                 messages.add(InfoMessage("Posting to ${remote.name()}"))
             }
-            all
         } else {
-            all.filter { !it.isRemote() }
+            list = list.filter { !it.isRemote() }
         }
+        return list
     }
 
     interface Datasource {

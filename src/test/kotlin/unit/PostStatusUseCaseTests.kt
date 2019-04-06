@@ -19,6 +19,8 @@ class PostStatusUseCaseTests {
         val usecase = PostStatusUseCase(listOf(datasource), mock(), mock())
         val message = "build in progress"
         When calling datasource.name() itReturns "asdf"
+        When calling datasource.isActive() itReturns true
+        When calling datasource.isRemote() itReturns false
         When calling datasource.post(BuildStatus.PENDING, message, key) itReturns Observable.just(true)
         usecase.post(BuildStatus.PENDING, message, key)
         Verify on datasource that datasource.post(BuildStatus.PENDING, message, key) was called
@@ -33,7 +35,7 @@ class PostStatusUseCaseTests {
         config.isPostActivated = false
         val messageQueue : MutableList<Message> = mutableListOf()
 
-        val list = PostStatusUseCase(listOf(source1, source2), config, messageQueue).filterInvalidSources()
+        val list = PostStatusUseCase(listOf(source1, source2), config, messageQueue).removeInvalid()
 
         list.contains(source2) shouldBe false
         messageQueue.size shouldBe 0
@@ -46,7 +48,7 @@ class PostStatusUseCaseTests {
         config.isPostActivated = true
         val messageQueue : MutableList<Message> = mutableListOf()
 
-        PostStatusUseCase(listOf(source1), config, messageQueue).filterInvalidSources()
+        PostStatusUseCase(listOf(source1), config, messageQueue).removeInvalid()
 
         messageQueue.size shouldBe 1
     }
@@ -56,28 +58,30 @@ class PostStatusUseCaseTests {
         val source1 = ConsoleDatasource()
         val source2 : PostStatusUseCase.Datasource = mock()
         When calling source2.isRemote() itReturns true
+        When calling source2.isActive() itReturns true
         val config : BuildConfig = BuildConfigDefault()
         config.isPostActivated = true
         config.git.isAllCommitted = false
         val messageQueue : MutableList<Message> = mutableListOf()
 
-        val list = PostStatusUseCase(listOf(source1, source2), config, messageQueue).filterInvalidSources()
+        val list = PostStatusUseCase(listOf(source1, source2), config, messageQueue).removeInvalid()
 
         list.contains(source2) shouldBe false
         messageQueue.size shouldBe 1
     }
 
     @Test
-    fun `when post is activated and there are no uncommitted changes, then show a message`() {
+    fun `when post is activated and there are all changes are committed, then show a message`() {
         val source1 = ConsoleDatasource()
         val source2 : PostStatusUseCase.Datasource = mock()
         When calling source2.isRemote() itReturns true
+        When calling source2.isActive() itReturns true
         val config : BuildConfig = BuildConfigDefault()
         config.isPostActivated = true
         config.git.isAllCommitted = true
         val messageQueue : MutableList<Message> = mutableListOf()
 
-        val list = PostStatusUseCase(listOf(source1, source2), config, messageQueue).filterInvalidSources()
+        val list = PostStatusUseCase(listOf(source1, source2), config, messageQueue).removeInvalid()
 
         list.contains(source2) shouldBe true
         messageQueue.size shouldBe 1

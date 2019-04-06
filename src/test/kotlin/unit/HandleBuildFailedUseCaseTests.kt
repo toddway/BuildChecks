@@ -29,20 +29,17 @@ class HandleBuildFailedUseCaseTests {
 
     @Test
     fun `when there are one or more summaries, post status for each type`() {
-        val statusDatasource : PostStatusUseCase.Datasource = mock()
-        val setBuildStatus = PostStatusUseCase(listOf(statusDatasource), mock(), mock())
+        val setBuildStatus : PostStatusUseCase = mock()
         val summaries = listOf(
                 GetCoverageSummaryUseCase(listOf(mock(), mock()), CreateJacocoMap()),
                 GetLintSummaryUseCase(listOf(mock())),
                 GetCoverageSummaryUseCase("".toDocumentList(), CreateCoberturaMap())
         )
         val usecase = HandleBuildFailedUseCase(setBuildStatus, summaries)
-        When calling statusDatasource.name() itReturns "asdf"
-        When calling statusDatasource.post(any(), any(), any()) itReturns Observable.just(true)
 
         usecase.invoke()
 
-        verify(statusDatasource, times(2)).post(any(), any(), any())
+        verify(setBuildStatus, times(2)).post(any(), any(), any())
 
     }
 }

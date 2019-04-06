@@ -1,14 +1,15 @@
 package data
 
-import core.datasource.StatsDatasource
+
 import core.entity.BuildStatus
 import core.entity.ErrorMessage
 import core.entity.InfoMessage
 import core.entity.Stats
+import core.usecase.PostStatsUseCase
 import core.usecase.PostStatusUseCase
 import io.reactivex.Observable
 
-class ConsoleDatasource : PostStatusUseCase.Datasource, StatsDatasource {
+class ConsoleDatasource : PostStatusUseCase.Datasource, PostStatsUseCase.Datasource {
     override fun isRemote() = false
 
     override fun post(status: BuildStatus, message: String, key: String): Observable<Boolean> {
