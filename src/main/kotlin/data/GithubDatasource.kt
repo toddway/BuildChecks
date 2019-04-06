@@ -1,57 +1,48 @@
 package data
 
-import core.datasource.StatusDatasource
+import core.entity.BuildConfig
+import core.entity.BuildStatus
+import core.usecase.PostStatusUseCase
 import io.reactivex.Observable
 import okhttp3.ResponseBody
+import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-class GithubDatasource(
-        val service: GithubService,
-        val hash : String,
-        val url : String
-) : StatusDatasource {
-    override fun name(): String {
-        return "Github"
+class GithubDatasource(retrofit: Retrofit, val config : BuildConfig) : PostStatusUseCase.Datasource {
+    override fun isRemote() = true
+
+    override fun post(status: BuildStatus, message: String, key: String): Observable<Boolean> {
+        val body = GithubBuildStatusBody(status.githubFormat(), key, message, config.buildUrl)
+        return service.postBuildStatus(config.git.commitHash, body).map { true }.onErrorReturn { false }
     }
 
-    override fun postPendingStatus(message: String, key: String): Observable<Boolean> {
-        return postStatus("pending", message, key)
+    private val service = retrofit.create(Service::class.java)
+
+    override fun isActive(): Boolean {
+        return config.isPostActivated && config.baseUrl.contains("github")
     }
 
-    override fun postFailureStatus(message: String, key: String): Observable<Boolean> {
-        return postStatus("failure", message, key)
+    override fun name() = "Github"
+
+    interface Service {
+        @Headers("Accept: application/json", "User-Agent: gradle build")
+        @POST("statuses/{hash}")
+        fun postBuildStatus(@Path("hash") hash : String, @Body body : GithubBuildStatusBody) : Observable<ResponseBody>
     }
 
-    override fun postSuccessStatus(message: String, key: String): Observable<Boolean> {
-        return postStatus("success", message, key)
-    }
-
-    fun postStatus(status: String, message: String, key: String) : Observable<Boolean> {
-        val body = GithubBuildStatusBody(status, key, message, url)
-        return service.postBuildStatus(hash, body).map { true }.onErrorReturn { false }
-    }
-}
-
-interface GithubService {
-    @Headers(
-            "Accept: application/json",
-            "User-Agent: gradle build"
+    data class GithubBuildStatusBody(
+            val state : String = "",
+            val context : String = "",
+            var description : String = "",
+            var target_url : String? = null
     )
-    @POST("statuses/{hash}")
-    fun postBuildStatus(@Path("hash") hash : String, @Body body : GithubBuildStatusBody) : Observable<ResponseBody>
 }
 
-fun createGithubService(baseUrl : String, authorization : String): GithubService {
-    return retrofit(baseUrl, authorization).create(GithubService::class.java)
+fun BuildStatus.githubFormat() = when(this) {
+    BuildStatus.FAILURE -> "failure"
+    BuildStatus.PENDING -> "pending"
+    BuildStatus.SUCCESS -> "success"
 }
-
-
-data class GithubBuildStatusBody(
-        val state : String = "",
-        val context : String = "",
-        var description : String = "",
-        var target_url : String? = null
-)

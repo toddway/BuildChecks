@@ -7,7 +7,7 @@ class GetDurationSummaryUseCase(val config : BuildConfig) : GetSummaryUseCase{
         return config.isSuccess
     }
 
-    override fun summary(): String? {
+    override fun value(): String? {
         return config.completedMessage()
     }
 

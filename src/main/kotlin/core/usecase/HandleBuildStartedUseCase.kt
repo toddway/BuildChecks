@@ -1,6 +1,7 @@
 package core.usecase
 
 import core.entity.BuildConfig
+import core.entity.BuildStatus
 
 class HandleBuildStartedUseCase(
         val postStatusUseCase: PostStatusUseCase,
@@ -9,7 +10,7 @@ class HandleBuildStartedUseCase(
     fun invoke() {
         if (config.isPluginActivated) {
             config.reportFiles().forEach { it.delete() }
-            postStatusUseCase.pending(config.startedMessage(), "build")
+            postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), "build")
         }
     }
 }

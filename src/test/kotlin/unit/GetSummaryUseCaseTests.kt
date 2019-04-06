@@ -22,8 +22,8 @@ class GetSummaryUseCaseTests {
 
         summaries.forEach {
             it.key().isNotBlank() shouldBe true
-            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summary().isNullOrBlank())
-            println("${it.key()} - ${it.summary()}")
+            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.value().isNullOrBlank())
+            println("${it.key()} - ${it.value()}")
         }
     }
 
@@ -37,7 +37,7 @@ class GetSummaryUseCaseTests {
 
         summaries.forEach {
             it.key().isNotBlank() shouldBe true
-            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.summary().isNullOrBlank())
+            Assert.assertTrue("${it.javaClass} summary was null or blank", !it.value().isNullOrBlank())
         }
     }
 

@@ -1,6 +1,6 @@
 package gradle
 import core.entity.BuildConfigDefault
-import data.DI
+import data.IoC
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -10,7 +10,7 @@ open class BuildChecksPlugin : Plugin<Project> {
         project.createPostChecksTask()
         project.createPrintChecksTask()
         project.createChecksReportTask()
-        val di = DI(project.createBuildChecksConfig())
+        val di = IoC(project.createBuildChecksConfig())
 
         project.gradle.taskGraph.whenReady {
             di.config.taskName = project.taskNameString()

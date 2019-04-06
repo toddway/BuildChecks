@@ -1,7 +1,6 @@
 package unit
 
 import core.entity.Stats
-import core.datasource.StatsDatasource
 import core.usecase.PostStatsUseCase
 import io.reactivex.Observable
 import org.amshove.kluent.*
@@ -11,7 +10,7 @@ class PostStatsUseCaseTests {
 
     @Test
     fun `when metrics, post them`() {
-        val datasource : StatsDatasource = mock()
+        val datasource : PostStatsUseCase.Datasource = mock()
         val usecase = PostStatsUseCase(listOf(datasource))
         val metrics = Stats(
                 1.1,

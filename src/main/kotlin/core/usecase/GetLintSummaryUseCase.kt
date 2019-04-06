@@ -18,7 +18,7 @@ open class GetLintSummaryUseCase(
         return "lint"
     }
 
-    override fun summary(): String? {
+    override fun value(): String? {
         return violationMap.toViolationSummary(maxViolations)
     }
 

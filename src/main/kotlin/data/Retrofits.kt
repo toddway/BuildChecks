@@ -34,12 +34,10 @@ fun retrofit(baseUrl : String, authorization : String): Retrofit {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
     authClient.networkInterceptors().add(overrideCacheControlInterceptor)
 
-    val retrofit = Retrofit.Builder()
+    return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .baseUrl(baseUrl)
             .client(authClient.build())
             .build()
-
-    return retrofit
 }

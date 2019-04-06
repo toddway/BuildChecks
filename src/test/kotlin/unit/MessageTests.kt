@@ -1,4 +1,0 @@
-package unit
-
-class MessageTests {
-}

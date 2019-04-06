@@ -3,7 +3,6 @@ package unit
 import core.entity.BuildConfigDefault
 import core.usecase.HandleBuildStartedUseCase
 import core.usecase.PostStatusUseCase
-import data.GithubDatasource
 import org.amshove.kluent.*
 import org.junit.Test
 
@@ -18,21 +17,21 @@ class HandleBuildStartedUseCaseTests {
 
         usecase.invoke()
 
-        VerifyNotCalled on postBuildStatus that postBuildStatus.pending(any(), any()) was called
+        VerifyNotCalled on postBuildStatus that postBuildStatus.post(any(), any(), any()) was called
     }
 
     @Test
-    fun `when the build is started and the plugin is activated, post a pending build status and delete report files`() {
+    fun `when the build is started and the plugin is activated, post a build status`() {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = BuildConfigDefault()
         config.isPluginActivated = true
         config.isPostActivated = true
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
-        When calling postBuildStatus.datasources itReturns listOf(GithubDatasource(mock(), "", ""))
+        //When calling postBuildStatus.sources itReturns listOf(ConsoleDatasource())
 
         usecase.invoke()
 
-        Verify on postBuildStatus that postBuildStatus.pending(any(), any()) was called
+        Verify on postBuildStatus that postBuildStatus.post(any(), any(), any()) was called
     }
 }
 

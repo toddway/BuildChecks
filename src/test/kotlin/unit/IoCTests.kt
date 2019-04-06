@@ -1,10 +1,10 @@
 package unit
 
 import core.entity.BuildConfigDefault
-import data.DI
+import data.IoC
 import org.junit.Test
 
-class DITests {
+class IoCTests {
     @Test
     fun `can call public methods`() {
         val config = BuildConfigDefault()
@@ -12,7 +12,7 @@ class DITests {
         config.baseUrl = "http://bitbucket"
         config.allowUncommittedChanges = true
         config.statsBaseUrl = "http://stats"
-        val di = DI(config)
+        val di = IoC(config)
         di.handleBuildFinishedUseCase()
         di.handleBuildStartedUseCase()
     }
