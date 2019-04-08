@@ -20,7 +20,7 @@ and [initialize it for your project](https://guides.gradle.org/creating-new-grad
 Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildchecks" version "1.7"
+        id "com.toddway.buildchecks" version "1.8"
     }
 
 ## Usage
@@ -61,20 +61,42 @@ To configure the details of your build output and your source control system, ad
 All example properties below are optional.
 
     buildChecks {
-        baseUrl = "https://api.github.com/repos/<owner>/<repo>" //tested with https://bitbucket.<your server> and https://api.github.com/repos/<owner>/<repo>
-        authorization = "Bearer <your repo token>" //Generate this on the Github or Bitbucket website for your project
+        baseUrl = "https://api.github.com/repos/<owner>/<repo>" 
+        authorization = "Basic <your generated token>"
         buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
         androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
         checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
         jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
         coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
-        minCoveragePercent = 80 //minimum threshold for test coverage
-        maxLintViolations = 5 //maximum threshold for lint violations
+        minCoveragePercent = 80 
+        maxLintViolations = 5 
      }
 
-## TODO
-- custom check summaries from text files
-- run checks on changed files only?
+#### baseUrl
+Github - `https://api.github.com/repos/<owner>/<repo>`
+
+Bitbucket (REST 2.0) - `https://api.bitbucket.org/2.0/repositories/<owner>/<repo>/`
+
+Bitbucket Server (REST 1.0) - `https://bitbucket.yourserver.com`
+
+
+#### authorization
+Generate basic authorization for Github (or Bitbucket) with this command:
+
+    curl -v -u username:password github.com
+    
+Then find the following line and use the result in your BuildChecks config. 
+
+    > Authorization: Basic <your generated token>
+
+Instead of using your actual account password in the curl command, Github and Bitbucket both offer safer substitutes.  
+ 
+Github - Your profile image -> Settings -> Developer Settings -> Personal Access Tokens.
+
+Bitbucket - Your profile image -> Bitbucket settings -> App passwords. 
+
+Bitbucket Server - Your profile image -> Manage account -> Personal access tokens.
+
 
 
 License
@@ -93,3 +115,4 @@ License
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+    

@@ -2,9 +2,9 @@ package data
 
 import core.entity.BuildConfig
 import core.usecase.PostStatusUseCase
-import retrofit2.Retrofit
 
-fun BuildConfig.buildPostStatusDatasources(retrofit: Retrofit) : List<PostStatusUseCase.Datasource> {
+fun BuildConfig.buildPostStatusDatasources() : List<PostStatusUseCase.Datasource> {
+    val retrofit by lazy { retrofit(baseUrl, authorization) }
     return listOf(
             ConsoleDatasource(),
             GithubDatasource(retrofit, this),

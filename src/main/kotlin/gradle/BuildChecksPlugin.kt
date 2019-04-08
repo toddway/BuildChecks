@@ -1,6 +1,5 @@
 package gradle
 import core.entity.BuildConfigDefault
-import data.IoC
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -10,18 +9,18 @@ open class BuildChecksPlugin : Plugin<Project> {
         project.createPostChecksTask()
         project.createPrintChecksTask()
         project.createChecksReportTask()
-        val di = IoC(project.createBuildChecksConfig())
+        val factory = UseCaseFactory(project.createBuildChecksConfig())
 
         project.gradle.taskGraph.whenReady {
-            di.config.taskName = project.taskNameString()
-            di.config.isPostActivated = project.isPostChecksActivated()
-            di.config.isPluginActivated = project.isPluginActivated()
-            di.handleBuildStartedUseCase().invoke()
+            factory.config.taskName = project.taskNameString()
+            factory.config.isPostActivated = project.isPostChecksActivated()
+            factory.config.isPluginActivated = project.isPluginActivated()
+            factory.handleBuildStartedUseCase().invoke()
         }
 
         project.gradle.buildFinished {
-            di.config.isSuccess = it.failure == null
-            di.handleBuildFinishedUseCase().invoke()
+            factory.config.isSuccess = it.failure == null
+            factory.handleBuildFinishedUseCase().invoke()
         }
     }
 }
