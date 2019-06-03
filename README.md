@@ -1,5 +1,7 @@
 A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).  E.g.:
 
+[ ![Gradle Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/toddway/buildchecks/com.toddway.buildchecks.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugin) ](https://bintray.com/toddway/maven/shelf/_latestVersion)
+
 
     BUILD SUCCESSFUL in 11s
     9 actionable tasks: 7 executed, 2 up-to-date
@@ -20,7 +22,7 @@ and [initialize it for your project](https://guides.gradle.org/creating-new-grad
 Then add the following to the build.gradle file at the root of your project:
 
     plugins {
-        id "com.toddway.buildchecks" version "1.8"
+        id "com.toddway.buildchecks" version "$buildchecks_version"
     }
 
 ## Usage
