@@ -1,0 +1,19 @@
+apply plugin: "com.gradle.plugin-publish"
+
+version = "1.9"
+group = "com.toddway"
+jar.baseName = "buildChecks"
+
+pluginBundle {
+    website = "https://github.com/toddway/BuildChecks"
+    vcsUrl = "https://github.com/toddway/BuildChecks.git"
+    description = "post summaries of code analyzer output to GitHub or BitBucket"
+    tags = ["build checks"]
+
+    plugins {
+        buildChecks {
+            id = "com.toddway.buildchecks"
+            displayName = "Build Checks"
+        }
+    }
+}

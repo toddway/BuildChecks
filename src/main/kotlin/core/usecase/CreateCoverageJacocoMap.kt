@@ -5,7 +5,7 @@ import core.children
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 
-class CreateJacocoMap : CreateCoverageMap {
+class CreateCoverageJacocoMap : CreateCoverageMap {
     override fun from(document: Document): Map<String?, Pair<Int, Int>> {
         return document.toJacocoMap()
     }

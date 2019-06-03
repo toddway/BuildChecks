@@ -9,17 +9,12 @@ open class GetCoverageSummaryUseCase(
         val documents: List<Document>,
         val createCoverageMap: CreateCoverageMap,
         val minCoveragePercent : Double? = null) : GetSummaryUseCase {
-    override fun isSuccessful(): Boolean {
-        return minCoveragePercent?.isNotGreaterThan(percent()) ?: true
-    }
-
-    override fun key(): String {
-        return "test"
-    }
+    override fun isSuccessful(): Boolean = minCoveragePercent?.isNotGreaterThan(percent()) ?: true
+    override fun key(): String = "test"
 
     override fun value(): String? {
         var summary = percent()?.let { "$it% coverage" }
-        if (!summary.isNullOrBlank()) minCoveragePercent?.let { summary += ", threshold is $minCoveragePercent%" }
+        if (!summary.isNullOrBlank()) minCoveragePercent?.let { summary += ", min is $minCoveragePercent%" }
         return summary
     }
 

@@ -5,13 +5,11 @@ import core.children
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
-class CreateCoberturaMap : CreateCoverageMap {
+class CreateCoverageCoberturaMap : CreateCoverageMap {
     override fun from(document: Document): Map<String?, Pair<Int, Int>> {
         return document.toCoburturaMap()
     }
-
 }
-
 
 fun Document.toCoburturaMap(): Map<String?, Pair<Int, Int>> {
     val root = childNodes.children().find { it is Element }
