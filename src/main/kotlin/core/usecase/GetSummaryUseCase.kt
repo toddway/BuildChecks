@@ -2,6 +2,7 @@ package core.usecase
 
 import core.entity.BuildConfig
 import core.entity.BuildStatus
+import core.entity.Stats
 import core.toDocumentList
 
 interface GetSummaryUseCase {
@@ -12,12 +13,10 @@ interface GetSummaryUseCase {
 }
 
 fun List<GetSummaryUseCase>.postAll(postStatusUseCase: PostStatusUseCase) {
-    forEach { getSummaryUseCase ->
-        getSummaryUseCase.value()?.let {
-            if (getSummaryUseCase.isSuccessful())
-                postStatusUseCase.post(BuildStatus.SUCCESS, it, getSummaryUseCase.key())
-            else
-                postStatusUseCase.post(BuildStatus.FAILURE, it, getSummaryUseCase.key())
+    forEach { summary ->
+        summary.value()?.let {
+            val result = if (summary.isSuccessful()) BuildStatus.SUCCESS else BuildStatus.FAILURE
+            postStatusUseCase.post(result, it, summary.key())
         }
     }
 }
@@ -27,11 +26,11 @@ fun BuildConfig.buildGetSummaryUseCases(): List<GetSummaryUseCase> {
             GetDurationSummaryUseCase(this),
             GetCoverageSummaryUseCase(
                     coberturaReports.toDocumentList(),
-                    CreateCoberturaMap(),
+                    CreateCoverageCoberturaMap(),
                     minCoveragePercent),
             GetCoverageSummaryUseCase(
                     jacocoReports.toDocumentList(),
-                    CreateJacocoMap(),
+                    CreateCoverageJacocoMap(),
                     minCoveragePercent),
             GetLintSummaryUseCase(
                     androidLintReports.toDocumentList()
@@ -39,5 +38,19 @@ fun BuildConfig.buildGetSummaryUseCases(): List<GetSummaryUseCase> {
                             + cpdReports.toDocumentList(),
                     maxLintViolations
             )
+    )
+}
+
+fun BuildConfig.stats(summaries : List<GetSummaryUseCase>) : Stats {
+    val lintUseCase = summaries.find { it is GetLintSummaryUseCase } as GetLintSummaryUseCase
+    val coverageUseCase = summaries.find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase
+    return Stats(
+            coverageUseCase.percent() ?: 0.0,
+            lintUseCase.asTotal() ?: 0,
+            duration(),
+            coverageUseCase.lines() ?: 0,
+            git.commitDate,
+            git.commitHash,
+            git.commitBranch
     )
 }

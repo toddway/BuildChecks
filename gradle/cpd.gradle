@@ -1,0 +1,29 @@
+apply plugin: 'cpd'
+
+cpd {
+    language = 'kotlin'
+    toolVersion = '6.13.0'
+}
+
+cpdCheck {
+    group = "verification"
+
+    ignoreFailures true
+
+    def classes = fileTree("$projectDir/src/main/java")
+    classes += fileTree("$projectDir/src/main/kotlin")
+    source = classes
+
+    skipLexicalErrors true
+
+    reports {
+        xml {
+            enabled = true
+            destination = file("$projectDir/build/reports/cpd.xml")
+        }
+        text {
+            enabled = true
+            destination = file("$projectDir/build/reports/cpd.html")
+        }
+    }
+}

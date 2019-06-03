@@ -12,6 +12,7 @@ interface BuildConfig {
     var coberturaReports : String
     var maxLintViolations : Int?
     var minCoveragePercent : Double?
+    var maxDuration : Double?
     var allowUncommittedChanges : Boolean
     var baseUrl : String
     var authorization : String
@@ -38,6 +39,7 @@ interface BuildConfig {
 }
 
 open class BuildConfigDefault : BuildConfig {
+    override var maxDuration: Double? = null
     override var cpdReports: String = ""
     override var git: GitConfig = GitConfigDefault()
     override var allowUncommittedChanges: Boolean = false

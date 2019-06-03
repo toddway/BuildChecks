@@ -16,7 +16,7 @@ class GetSummaryUseCaseTests {
 
         val summaries : List<GetSummaryUseCase> = listOf(
                 GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toDocumentList() +  "./src/test/testFiles/detekt-checkstyle.xml".toDocumentList()),
-                GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument()), CreateJacocoMap()),
+                GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument()), CreateCoverageJacocoMap()),
                 GetTextSummaryUseCase(File("./src/test/testFiles/hello.txt"))
         )
 
@@ -31,7 +31,7 @@ class GetSummaryUseCaseTests {
     fun`when there are invalid report documents, summaries are generated`() {
         val summaries : List<GetSummaryUseCase> = listOf(
                 GetLintSummaryUseCase(listOf(File("./src/test/testFiles/coverage.xml").toDocument(), File("./src/test/testFiles/coverage.xml").toDocument())),
-                GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/cobertura-coverage.xml").toDocument()), CreateJacocoMap()),
+                GetCoverageSummaryUseCase(listOf(File("./src/test/testFiles/cobertura-coverage.xml").toDocument()), CreateCoverageJacocoMap()),
                 GetTextSummaryUseCase(File("./src/test/testFiles/coverage.xml"))
         )
 

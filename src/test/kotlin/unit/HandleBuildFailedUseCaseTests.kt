@@ -15,7 +15,7 @@ class HandleBuildFailedUseCaseTests {
         val datasource : PostStatusUseCase.Datasource = mock()
         val setBuildStatus = PostStatusUseCase(listOf(datasource), mock(), mock())
         val summaries = listOf(
-                GetCoverageSummaryUseCase(listOf(), CreateJacocoMap()),
+                GetCoverageSummaryUseCase(listOf(), CreateCoverageJacocoMap()),
                 GetLintSummaryUseCase(listOf())
         )
         val usecase = HandleBuildFailedUseCase(setBuildStatus, summaries)
@@ -31,9 +31,9 @@ class HandleBuildFailedUseCaseTests {
     fun `when there are one or more summaries, post status for each type`() {
         val setBuildStatus : PostStatusUseCase = mock()
         val summaries = listOf(
-                GetCoverageSummaryUseCase(listOf(mock(), mock()), CreateJacocoMap()),
+                GetCoverageSummaryUseCase(listOf(mock(), mock()), CreateCoverageJacocoMap()),
                 GetLintSummaryUseCase(listOf(mock())),
-                GetCoverageSummaryUseCase("".toDocumentList(), CreateCoberturaMap())
+                GetCoverageSummaryUseCase("".toDocumentList(), CreateCoverageCoberturaMap())
         )
         val usecase = HandleBuildFailedUseCase(setBuildStatus, summaries)
 

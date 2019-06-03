@@ -10,30 +10,18 @@ import org.w3c.dom.Node
 open class GetLintSummaryUseCase(
         val documents: List<Document>,
         val maxViolations : Int? = null) : GetSummaryUseCase {
-    override fun isSuccessful(): Boolean {
-        return maxViolations?.isNotLessThan(asTotal()) ?: true
-    }
-
-    override fun key(): String {
-        return "lint"
-    }
-
-    override fun value(): String? {
-        return violationMap.toViolationSummary(maxViolations)
-    }
-
+    override fun isSuccessful(): Boolean = maxViolations?.isNotLessThan(asTotal()) ?: true
+    override fun key(): String = "lint"
+    override fun value(): String? = violationMap.toViolationSummary(maxViolations)
     private val violationMap: Map<String?, List<Node>>? by lazy { documents.toViolationMap() }
-
-    fun asTotal(): Int? {
-        return violationMap?.entryChildrenSum()
-    }
+    fun asTotal(): Int? = violationMap?.entryChildrenSum()
 }
 
 fun Map<String?, List<Node>>?.toViolationSummary(maxViolations: Int?) : String? {
     return this?.let {
         val violationTypes = flatMap { e -> listOf("${e.value.count()} ${e.key?.toLowerCase()}") }.toMutableList()
         var summary = "" + entryChildrenSum() + " violations " + "(" + violationTypes.joinToString(", ") + ")"
-        maxViolations?.let { summary += ", threshold is $maxViolations" }
+        maxViolations?.let { summary += ", max is $maxViolations" }
         return summary
     }
 }
