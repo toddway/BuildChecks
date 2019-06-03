@@ -66,12 +66,13 @@ All example properties below are optional.
         baseUrl = "https://api.github.com/repos/<owner>/<repo>" 
         authorization = "Basic <your generated token>"
         buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
-        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths to your Android lint xml reports
-        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths to Checkstyle xml reports
-        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated apths to your JaCoCo xml reports
-        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths to Cobertura xml reports (also supported by Istanbul)
+        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths
+        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths
+        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated paths
+        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths
         minCoveragePercent = 80 
-        maxLintViolations = 5 
+        maxLintViolations = 5
+        maxDuration = 60 //in seconds
      }
 
 #### baseUrl
