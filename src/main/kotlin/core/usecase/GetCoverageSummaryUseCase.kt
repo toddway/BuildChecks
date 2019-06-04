@@ -1,8 +1,7 @@
 package core.usecase
 
-import core.isNotGreaterThan
-import core.percentage
-import core.round
+import core.*
+import core.entity.BuildConfig
 import org.w3c.dom.Document
 
 open class GetCoverageSummaryUseCase(
@@ -13,8 +12,9 @@ open class GetCoverageSummaryUseCase(
     override fun key(): String = "test"
 
     override fun value(): String? {
-        var summary = percent()?.let { "$it% coverage" }
-        if (!summary.isNullOrBlank()) minCoveragePercent?.let { summary += ", min is $minCoveragePercent%" }
+        var summary = percent()?.let { "$it% coverage in ${documents.size} reports" }
+        if (!summary.isNullOrBlank())
+            minCoveragePercent?.let { summary += ", min is $minCoveragePercent%" }
         return summary
     }
 
@@ -41,4 +41,22 @@ open class GetCoverageSummaryUseCase(
             sums.first + sums.second
         }
     }
+
+    companion object
 }
+
+
+fun GetCoverageSummaryUseCase.Companion.buildCoburtera(config: BuildConfig) : GetCoverageSummaryUseCase = with(config) {
+    return GetCoverageSummaryUseCase(
+            coberturaReports.toFileList(config.log).toDocumentList(),
+            CreateCoverageCoberturaMap(),
+            minCoveragePercent)
+}
+
+fun GetCoverageSummaryUseCase.Companion.buildJacoco(config: BuildConfig) : GetCoverageSummaryUseCase = with(config) {
+    return GetCoverageSummaryUseCase(
+            jacocoReports.toFileList(config.log).toDocumentList(),
+            CreateCoverageJacocoMap(),
+            minCoveragePercent)
+}
+

@@ -12,5 +12,6 @@ class PostStatsUseCase(val datasources: List<PostStatsUseCase.Datasource>) {
 
     interface Datasource {
         fun postStats(stats: Stats): Observable<Boolean>
+        companion object
     }
 }

@@ -1,5 +1,8 @@
 package core
 
+import core.entity.ErrorMessage
+import core.entity.InfoMessage
+import core.entity.Log
 import java.io.File
 import java.io.IOException
 import java.math.BigDecimal
@@ -39,8 +42,20 @@ fun String.runCommand(workingDir: File): String? {
 
 fun String.run() = runCommand(File("."))?.trim()
 
-fun String.toFileList(): List<File> {
-    return split(",").map { File(it.trim()) }.filter { it.exists() }
+fun String.toFileList(log: Log? = null): List<File> {
+    return split(",")
+            .filter { it.trim().isNotEmpty() }
+            .map {
+                val f = File(it.trim())
+                log?.let { log ->
+                    if (f.exists())
+                        log.info(InfoMessage("BuildChecks found: ${f.absolutePath}").toString())
+                    else
+                        log.error(ErrorMessage("BuildChecks could not find: ${f.absolutePath}").toString())
+                }
+                f
+            }
+            .filter { it.exists() }
 }
 
 fun Number.isNotGreaterThan(number: Number?): Boolean {

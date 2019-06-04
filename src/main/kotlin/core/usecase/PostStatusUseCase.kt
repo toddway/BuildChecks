@@ -44,5 +44,6 @@ open class PostStatusUseCase(
         fun name() : String
         fun isActive() : Boolean
         fun isRemote() : Boolean
+        companion object
     }
 }

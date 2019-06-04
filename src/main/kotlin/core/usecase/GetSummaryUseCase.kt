@@ -3,7 +3,6 @@ package core.usecase
 import core.entity.BuildConfig
 import core.entity.BuildStatus
 import core.entity.Stats
-import core.toDocumentList
 
 interface GetSummaryUseCase {
     fun value() : String?
@@ -21,24 +20,15 @@ fun List<GetSummaryUseCase>.postAll(postStatusUseCase: PostStatusUseCase) {
     }
 }
 
-fun BuildConfig.buildGetSummaryUseCases(): List<GetSummaryUseCase> {
-    return listOf(
-            GetDurationSummaryUseCase(this),
-            GetCoverageSummaryUseCase(
-                    coberturaReports.toDocumentList(),
-                    CreateCoverageCoberturaMap(),
-                    minCoveragePercent),
-            GetCoverageSummaryUseCase(
-                    jacocoReports.toDocumentList(),
-                    CreateCoverageJacocoMap(),
-                    minCoveragePercent),
-            GetLintSummaryUseCase(
-                    androidLintReports.toDocumentList()
-                            + checkstyleReports.toDocumentList()
-                            + cpdReports.toDocumentList(),
-                    maxLintViolations
-            )
-    )
+fun GetSummaryUseCase.Companion.buildList(config: BuildConfig) : List<GetSummaryUseCase> {
+    return with(config) {
+         listOf(
+                GetDurationSummaryUseCase(this),
+                GetCoverageSummaryUseCase.buildCoburtera(config),
+                GetCoverageSummaryUseCase.buildJacoco(config),
+                GetLintSummaryUseCase.build(config)
+        )
+    }
 }
 
 fun BuildConfig.stats(summaries : List<GetSummaryUseCase>) : Stats {

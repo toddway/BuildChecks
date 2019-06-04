@@ -1,5 +1,7 @@
 package gradle
 import core.entity.BuildConfigDefault
+import core.entity.Log
+import data.Instances
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -9,18 +11,19 @@ open class BuildChecksPlugin : Plugin<Project> {
         project.createPostChecksTask()
         project.createPrintChecksTask()
         val config = project.createBuildChecksConfig()
-        val factory = UseCaseFactory(config)
+        val instances = Instances(config)
 
         project.gradle.taskGraph.whenReady {
             config.taskName = project.taskNameString()
             config.isPostActivated = project.isPostChecksActivated()
             config.isPluginActivated = project.isPluginActivated()
-            factory.handleBuildStartedUseCase().invoke()
+            config.log = Log(project.logger)
+            instances.handleBuildStartedUseCase.invoke()
         }
 
         project.gradle.buildFinished {
             config.isSuccess = it.failure == null
-            factory.handleBuildFinishedUseCase().invoke()
+            instances.handleBuildFinishedUseCase.invoke()
         }
     }
 }
@@ -32,4 +35,3 @@ fun Project.taskNameString() = gradle.startParameter.taskNames.joinToString(" ")
 fun Project.createBuildChecksConfig() = extensions.create("buildChecks", BuildConfigDefault::class.java)
 fun Project.createPostChecksTask() = tasks.create("postChecks", PostChecksTask::class.java)
 fun Project.createPrintChecksTask() = tasks.create("printChecks", PrintChecksTask::class.java)
-//fun Project.createChecksReportTask() = tasks.create("checks", ChecksReportTask::class.java)

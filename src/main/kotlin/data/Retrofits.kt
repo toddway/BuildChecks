@@ -8,8 +8,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
-const val size10Mb = 10 * 1024 * 1024
-val okCache10Mb = Cache(File("/tmp"), size10Mb.toLong())
+const val SIZE_10MB = (10 * 1024 * 1024).toLong()
+val okCache10Mb = Cache(File("/tmp"), SIZE_10MB)
 
 val overrideCacheControlInterceptor : Interceptor = Interceptor { chain ->
     val isOverride = chain.request().header("X-override-cache-control") == "true"

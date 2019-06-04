@@ -23,9 +23,9 @@ fun File.toDocument() : Document {
     return db.parse(this)
 }
 
-fun String.toDocumentList(): List<Document> {
-    return toFileList().map { it.toDocument() }
-}
+fun String.toDocumentList() = toFileList().toDocumentList()
+fun List<File>.toDocumentList() = map { it.toDocument() }
+
 
 fun NodeList.children() = object : Iterable<Node> {
     override fun iterator() = object : Iterator<Node> {

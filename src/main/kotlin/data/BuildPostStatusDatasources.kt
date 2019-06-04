@@ -12,3 +12,13 @@ fun BuildConfig.buildPostStatusDatasources() : List<PostStatusUseCase.Datasource
             BitBucket2Datasource(retrofit, this)
     )
 }
+
+fun PostStatusUseCase.Datasource.Companion.buildList(config: BuildConfig) : List<PostStatusUseCase.Datasource> {
+    val retrofit by lazy { retrofit(config.baseUrl, config.authorization) }
+    return listOf(
+            ConsoleDatasource(),
+            GithubDatasource(retrofit, config),
+            BitBucket1Datasource(retrofit, config),
+            BitBucket2Datasource(retrofit, config)
+    )
+}

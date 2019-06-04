@@ -26,7 +26,7 @@ class GetLintSummaryUseCaseTests {
         map?.get("error")?.count() shouldEqual 7
         map?.get("warning")?.count() shouldEqual 409
         map?.get("info")?.count() shouldEqual 5
-        println(map?.toViolationSummary(34))
+        println(map?.toViolationSummary(34, docs.size))
     }
 }
 

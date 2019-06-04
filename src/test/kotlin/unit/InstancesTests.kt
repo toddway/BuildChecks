@@ -1,10 +1,10 @@
 package unit
 
 import core.entity.BuildConfigDefault
-import gradle.UseCaseFactory
+import data.Instances
 import org.junit.Test
 
-class UseCaseFactoryTests {
+class InstancesTests {
     @Test
     fun `can call public methods`() {
         val config = BuildConfigDefault()
@@ -12,8 +12,8 @@ class UseCaseFactoryTests {
         config.baseUrl = "http://bitbucket"
         config.allowUncommittedChanges = true
         config.statsBaseUrl = "http://stats"
-        val di = UseCaseFactory(config)
-        di.handleBuildFinishedUseCase()
-        di.handleBuildStartedUseCase()
+        val di = Instances(config)
+        di.handleBuildFinishedUseCase
+        di.handleBuildStartedUseCase
     }
 }
