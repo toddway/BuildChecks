@@ -25,10 +25,10 @@ fun buildRetrofitStatsDatasource(baseUrl : String, authorization : String): Retr
     return RetrofitStatsDatasource(retrofit(baseUrl, authorization).create(RetrofitBuildStatsService::class.java))
 }
 
-fun BuildConfig.buildPostStatsDatasources() : List<PostStatsUseCase.Datasource> {
+fun PostStatsUseCase.Datasource.Companion.buildList(config: BuildConfig) : List<PostStatsUseCase.Datasource> {
     val datasources = mutableListOf<PostStatsUseCase.Datasource>()
-    if (statsBaseUrl.isNotBlank()) {
-        datasources.add(buildRetrofitStatsDatasource(statsBaseUrl, ""))
+    if (config.statsBaseUrl.isNotBlank()) {
+        datasources.add(buildRetrofitStatsDatasource(config.statsBaseUrl, ""))
     }
     return datasources
 }

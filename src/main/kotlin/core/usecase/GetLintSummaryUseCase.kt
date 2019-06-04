@@ -1,9 +1,7 @@
 package core.usecase
 
-import core.attr
-import core.children
-import core.entryChildrenSum
-import core.isNotLessThan
+import core.*
+import core.entity.BuildConfig
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
@@ -12,15 +10,21 @@ open class GetLintSummaryUseCase(
         val maxViolations : Int? = null) : GetSummaryUseCase {
     override fun isSuccessful(): Boolean = maxViolations?.isNotLessThan(asTotal()) ?: true
     override fun key(): String = "lint"
-    override fun value(): String? = violationMap.toViolationSummary(maxViolations)
+    override fun value(): String? = violationMap.toViolationSummary(maxViolations, documents.size)
     private val violationMap: Map<String?, List<Node>>? by lazy { documents.toViolationMap() }
     fun asTotal(): Int? = violationMap?.entryChildrenSum()
+    companion object
 }
 
-fun Map<String?, List<Node>>?.toViolationSummary(maxViolations: Int?) : String? {
+fun Map<String?, List<Node>>?.toViolationSummary(maxViolations: Int?, numDocuments : Int) : String? {
     return this?.let {
         val violationTypes = flatMap { e -> listOf("${e.value.count()} ${e.key?.toLowerCase()}") }.toMutableList()
-        var summary = "" + entryChildrenSum() + " violations " + "(" + violationTypes.joinToString(", ") + ")"
+        val sum = entryChildrenSum()
+        var summary = ""
+        summary +=
+                if (sum == 0) "0 violations"
+                else "$sum violations " + "(" + violationTypes.joinToString(", ") + ")"
+        summary += " in $numDocuments reports"
         maxViolations?.let { summary += ", max is $maxViolations" }
         return summary
     }
@@ -40,4 +44,9 @@ fun Node.deriveViolationKey() : String {
             else -> it.toLowerCase()
         }
     } ?: "unknown"
+}
+
+fun GetLintSummaryUseCase.Companion.build(config: BuildConfig) : GetLintSummaryUseCase = with(config) {
+    val files = androidLintReports.toFileList(config.log) + checkstyleReports.toFileList(config.log) + cpdReports.toFileList(config.log)
+    return GetLintSummaryUseCase(files.toDocumentList(), maxLintViolations)
 }

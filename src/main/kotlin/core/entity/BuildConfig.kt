@@ -10,9 +10,7 @@ interface BuildConfig {
     var checkstyleReports : String
     var jacocoReports : String
     var coberturaReports : String
-    var maxLintViolations : Int?
-    var minCoveragePercent : Double?
-    var maxDuration : Double?
+    var cpdReports: String
     var allowUncommittedChanges : Boolean
     var baseUrl : String
     var authorization : String
@@ -23,7 +21,11 @@ interface BuildConfig {
     var isPluginActivated: Boolean
     var isSuccess: Boolean
     var git : GitConfig
-    var cpdReports: String
+
+    var maxLintViolations : Int?
+    var minCoveragePercent : Double?
+    var maxDuration : Double?
+    var log: Log?
 
     fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)
     fun startedMessage() = "gradle $taskName - in progress"
@@ -39,6 +41,7 @@ interface BuildConfig {
 }
 
 open class BuildConfigDefault : BuildConfig {
+    override var log: Log? = null
     override var maxDuration: Double? = null
     override var cpdReports: String = ""
     override var git: GitConfig = GitConfigDefault()
@@ -55,7 +58,7 @@ open class BuildConfigDefault : BuildConfig {
     override var authorization  = ""
     override var buildStartTime = Date()
     override var statsBaseUrl = ""
-    override var taskName = ""
+    override var taskName = "default"
     override var isPostActivated = false
     override var isPluginActivated = false
 }
