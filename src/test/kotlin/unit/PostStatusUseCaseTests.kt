@@ -1,6 +1,5 @@
 package unit
 import core.entity.BuildConfig
-import core.entity.BuildConfigDefault
 import core.entity.BuildStatus
 import core.entity.Message
 import core.usecase.PostStatusUseCase
@@ -16,7 +15,7 @@ class PostStatusUseCaseTests {
     @Test
     fun `when post is called, pass parameters to datasource`() {
         val datasource : PostStatusUseCase.Datasource = mock()
-        val usecase = PostStatusUseCase(listOf(datasource), mock(), mock())
+        val usecase = PostStatusUseCase(listOf(datasource), BuildConfig(), mock())
         val message = "build in progress"
         When calling datasource.name() itReturns "asdf"
         When calling datasource.isActive() itReturns true
@@ -31,7 +30,7 @@ class PostStatusUseCaseTests {
         val source1 = ConsoleDatasource()
         val source2 : PostStatusUseCase.Datasource = mock()
         When calling source2.isRemote() itReturns true
-        val config : BuildConfig = BuildConfigDefault()
+        val config = BuildConfig()
         config.isPostActivated = false
         val messageQueue : MutableList<Message> = mutableListOf()
 
@@ -44,7 +43,7 @@ class PostStatusUseCaseTests {
     @Test
     fun `when post is activated and there are no remote datasources, show a message`() {
         val source1 = ConsoleDatasource()
-        val config : BuildConfig = BuildConfigDefault()
+        val config = BuildConfig()
         config.isPostActivated = true
         val messageQueue : MutableList<Message> = mutableListOf()
 
@@ -59,7 +58,7 @@ class PostStatusUseCaseTests {
         val source2 : PostStatusUseCase.Datasource = mock()
         When calling source2.isRemote() itReturns true
         When calling source2.isActive() itReturns true
-        val config : BuildConfig = BuildConfigDefault()
+        val config : BuildConfig = BuildConfig()
         config.isPostActivated = true
         config.git.isAllCommitted = false
         val messageQueue : MutableList<Message> = mutableListOf()
@@ -76,7 +75,7 @@ class PostStatusUseCaseTests {
         val source2 : PostStatusUseCase.Datasource = mock()
         When calling source2.isRemote() itReturns true
         When calling source2.isActive() itReturns true
-        val config : BuildConfig = BuildConfigDefault()
+        val config : BuildConfig = BuildConfig()
         config.isPostActivated = true
         config.git.isAllCommitted = true
         val messageQueue : MutableList<Message> = mutableListOf()

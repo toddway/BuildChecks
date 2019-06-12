@@ -1,4 +1,4 @@
-package func
+package integration
 
 class GithubDatasourceIntegrationTests {
 

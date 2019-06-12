@@ -1,6 +1,6 @@
 package unit
 
-import core.toDocumentList
+import core.toDocuments
 import core.usecase.GetLintSummaryUseCase
 import core.usecase.toViolationMap
 import core.usecase.toViolationSummary
@@ -12,7 +12,7 @@ class GetLintSummaryUseCaseTests {
 
     @Test
     fun `when there is a valid report document, the summary is returned`() {
-        val usecase = GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toDocumentList())
+        val usecase = GetLintSummaryUseCase(listOf("./src/test/testFiles/lint-results-prodRelease.xml").toDocuments())
         val v = usecase.value()
         println(v)
         v shouldNotBe null
@@ -20,7 +20,10 @@ class GetLintSummaryUseCaseTests {
 
     @Test
     fun `when it`() {
-        val docs = "./src/test/testFiles/lint-results-prodRelease.xml, ./src/test/testFiles/detekt-checkstyle.xml, ./src/test/testFiles/cpdCheck-swift.xml".toDocumentList()
+        val docs = listOf(
+                "./src/test/testFiles/lint-results-prodRelease.xml",
+                "./src/test/testFiles/detekt-checkstyle.xml",
+                "./src/test/testFiles/cpdCheck-swift.xml").toDocuments()
         val map = docs.toViolationMap()
         map?.get("clones")?.count() shouldEqual 2
         map?.get("error")?.count() shouldEqual 7

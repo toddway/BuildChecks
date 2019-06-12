@@ -27,7 +27,7 @@ open class PostStatusUseCase(
             val remote = list.firstOrNull { it.isRemote() }
             if (remote == null) {
                 messages.add(ErrorMessage("No recognized post config was found"))
-            } else if (!config.isAllCommitted()) {
+            } else if (!config.isAllowedToPost()) {
                 messages.add(ErrorMessage("You must commit all changes before posting checks to ${remote.name()}"))
                 list = list.filter { !it.isRemote() }
             } else {

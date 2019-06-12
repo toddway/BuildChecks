@@ -1,4 +1,4 @@
-package func
+package integration
 
 import core.entity.Stats
 import data.buildRetrofitStatsDatasource

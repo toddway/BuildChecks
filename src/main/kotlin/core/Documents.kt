@@ -1,5 +1,6 @@
 package core
 
+import core.entity.Log
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -23,9 +24,7 @@ fun File.toDocument() : Document {
     return db.parse(this)
 }
 
-fun String.toDocumentList() = toFileList().toDocumentList()
-fun List<File>.toDocumentList() = map { it.toDocument() }
-
+fun Iterable<String>.toDocuments(log : Log? = null) = toFiles(log).map { it.toDocument() }
 
 fun NodeList.children() = object : Iterable<Node> {
     override fun iterator() = object : Iterator<Node> {

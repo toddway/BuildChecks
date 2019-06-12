@@ -4,9 +4,16 @@ buildChecks {
     baseUrl = System.properties["baseUrl"]
     authorization = System.properties["auth"]
     buildUrl = System.properties["buildUrl"]
-    jacocoReports = "$projectDir/build/reports/testJacoco/testJacoco.xml"
-    checkstyleReports = "$projectDir/build/reports/detekt.xml"
-    cpdReports = "$projectDir/build/reports/cpd.xml"
+    jacocoReports = [
+            "$projectDir/build/reports/testJacoco/testJacoco.xml"
+    ]
+    checkstyleReports = [
+            "$projectDir/build/reports/detekt.xml"
+    ]
+    cpdReports = [
+            "$projectDir/build/reports/cpd.xml",
+            "$projectDir/build/reports/testJacoco/testJacoco.xml"
+    ]
     minCoveragePercent = 50
     maxLintViolations = 5
     maxDuration = 60

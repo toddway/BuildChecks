@@ -1,12 +1,11 @@
 package data
 
 import core.entity.BuildConfig
-import core.entity.BuildConfigDefault
 import core.entity.Message
 import core.usecase.*
 
 
-class Instances(val config : BuildConfig = BuildConfigDefault()) {
+class Instances(var config : BuildConfig) {
     private val messages = mutableListOf<Message>()
 
     private val getSummaryUseCases by lazy {

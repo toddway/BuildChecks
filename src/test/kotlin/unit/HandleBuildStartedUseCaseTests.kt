@@ -1,6 +1,6 @@
 package unit
 
-import core.entity.BuildConfigDefault
+import core.entity.BuildConfig
 import core.usecase.HandleBuildStartedUseCase
 import core.usecase.PostStatusUseCase
 import org.amshove.kluent.*
@@ -11,7 +11,7 @@ class HandleBuildStartedUseCaseTests {
     @Test
     fun `when the plugin is disabled, nothing is posted`() {
         val postBuildStatus : PostStatusUseCase = mock()
-        val config = BuildConfigDefault()
+        val config = BuildConfig()
         config.isPluginActivated = false
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
 
@@ -23,7 +23,7 @@ class HandleBuildStartedUseCaseTests {
     @Test
     fun `when the build is started and the plugin is activated, post a build status`() {
         val postBuildStatus : PostStatusUseCase = mock()
-        val config = BuildConfigDefault()
+        val config = BuildConfig()
         config.isPluginActivated = true
         config.isPostActivated = true
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)

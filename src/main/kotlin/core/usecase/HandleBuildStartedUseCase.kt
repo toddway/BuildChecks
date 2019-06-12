@@ -9,7 +9,7 @@ class HandleBuildStartedUseCase(
 ) {
     fun invoke() {
         if (config.isPluginActivated) {
-            config.reportFiles().forEach { it.delete() }
+            config.allReports().forEach { it.delete() }
             postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), "build")
         }
     }

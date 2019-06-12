@@ -2,7 +2,8 @@ package unit
 
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
-import core.toDocumentList
+import core.entity.BuildConfig
+import core.toDocuments
 import core.usecase.*
 import io.reactivex.Observable
 import org.amshove.kluent.*
@@ -13,7 +14,7 @@ class HandleBuildFailedUseCaseTests {
     @Test
     fun `when there are no summaries, there are no calls and no errors`() {
         val datasource : PostStatusUseCase.Datasource = mock()
-        val setBuildStatus = PostStatusUseCase(listOf(datasource), mock(), mock())
+        val setBuildStatus = PostStatusUseCase(listOf(datasource), BuildConfig(), mock())
         val summaries = listOf(
                 GetCoverageSummaryUseCase(listOf(), CreateCoverageJacocoMap()),
                 GetLintSummaryUseCase(listOf())
@@ -33,7 +34,7 @@ class HandleBuildFailedUseCaseTests {
         val summaries = listOf(
                 GetCoverageSummaryUseCase(listOf(mock(), mock()), CreateCoverageJacocoMap()),
                 GetLintSummaryUseCase(listOf(mock())),
-                GetCoverageSummaryUseCase("".toDocumentList(), CreateCoverageCoberturaMap())
+                GetCoverageSummaryUseCase(listOf("").toDocuments(), CreateCoverageCoberturaMap())
         )
         val usecase = HandleBuildFailedUseCase(setBuildStatus, summaries)
 

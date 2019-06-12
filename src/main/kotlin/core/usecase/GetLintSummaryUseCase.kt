@@ -47,6 +47,6 @@ fun Node.deriveViolationKey() : String {
 }
 
 fun GetLintSummaryUseCase.Companion.build(config: BuildConfig) : GetLintSummaryUseCase = with(config) {
-    val files = androidLintReports.toFileList(config.log) + checkstyleReports.toFileList(config.log) + cpdReports.toFileList(config.log)
-    return GetLintSummaryUseCase(files.toDocumentList(), maxLintViolations)
+    val list = androidLintReports + checkstyleReports + cpdReports
+    return GetLintSummaryUseCase(list.toDocuments(config.log), maxLintViolations)
 }
