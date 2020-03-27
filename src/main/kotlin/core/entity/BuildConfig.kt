@@ -40,13 +40,14 @@ interface BuildConfig {
     fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted
 }
 
+//gradle config cannot be a data class
 open class BuildConfigDefault : BuildConfig {
     override var log: Log? = null
     override var maxDuration: Double? = null
     override var cpdReports: String = ""
     override var git: GitConfig = GitConfigDefault()
     override var allowUncommittedChanges: Boolean = false
-    override var isSuccess: Boolean = false
+    override var isSuccess: Boolean = true
     override var maxLintViolations: Int? = null
     override var minCoveragePercent: Double? = null
     override var buildUrl  = ""

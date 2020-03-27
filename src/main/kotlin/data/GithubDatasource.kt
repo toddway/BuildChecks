@@ -6,10 +6,7 @@ import core.usecase.PostStatusUseCase
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
-import retrofit2.http.Body
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 class GithubDatasource(retrofit: Retrofit, val config : BuildConfig) : PostStatusUseCase.Datasource {
     override fun isRemote() = true
@@ -31,13 +28,23 @@ class GithubDatasource(retrofit: Retrofit, val config : BuildConfig) : PostStatu
         @Headers("Accept: application/json", "User-Agent: gradle build")
         @POST("statuses/{hash}")
         fun postBuildStatus(@Path("hash") hash : String, @Body body : GithubBuildStatusBody) : Observable<ResponseBody>
+
+        @Headers("Accept: application/json", "User-Agent: gradle build")
+        @GET("statuses/{hash}")
+        fun getBuildStatus(@Path("hash") hash : String) : Observable<List<GithubBuildStatusBody>>
     }
 
+    @SuppressWarnings("ConstructorParameterNaming")
     data class GithubBuildStatusBody(
             val state : String = "",
             val context : String = "",
             var description : String = "",
-            var target_url : String? = null
+            var target_url : String? = null,
+            var created_at : String? = null
+    )
+
+    data class GetBody (
+        var description : String? = null
     )
 }
 

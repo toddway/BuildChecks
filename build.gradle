@@ -12,7 +12,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
         classpath "de.aaschmid:gradle-cpd-plugin:2.0-SNAPSHOT"
-        classpath "com.toddway:buildChecks:1.9"
+        classpath "com.toddway:buildChecks:1.11"
 
         //these are here because they're dependencies of the buildChecks.jar file
         classpath 'io.reactivex.rxjava2:rxjava:2.1.14'
@@ -20,6 +20,7 @@ buildscript {
         classpath "com.squareup.retrofit2:converter-gson:$retrofitVersion"
         classpath "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
         classpath "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+        classpath "com.jakewharton.picnic:picnic:0.3.0"
     }
 }
 
@@ -33,10 +34,11 @@ apply from: 'gradle/cpd.gradle'
 apply from: 'gradle/detekt.gradle'
 apply from: 'gradle/buildChecks.gradle'
 
-task allChecks {
+task checks {
     dependsOn 'cpdCheck'
     dependsOn 'detekt'
     dependsOn 'testJacoco'
+    finalizedBy 'printChecks'
 }
 
 task copyJar(type: Copy) {
@@ -45,7 +47,7 @@ task copyJar(type: Copy) {
     rename { "buildChecks.jar" }
 }
 build.dependsOn(copyJar)
-publishPlugins.dependsOn(allChecks)
+publishPlugins.dependsOn(checks)
 
 test {
     //ignoreFailures true
@@ -74,6 +76,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation "com.jakewharton.picnic:picnic:0.3.0"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.nhaarman:mockito-kotlin:1.5.0'

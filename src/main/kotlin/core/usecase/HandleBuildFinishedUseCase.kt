@@ -4,18 +4,16 @@ import core.entity.BuildConfig
 import core.entity.Message
 
 class HandleBuildFinishedUseCase(
-        private val handleBuildFailedUseCase: HandleBuildFailedUseCase,
-        private val handleBuildSuccessUseCase: HandleBuildSuccessUseCase,
+        private val postStatusUseCase: PostStatusUseCase,
+        private val postStatsUseCase: PostStatsUseCase,
+        private val getSummaryUseCases: List<GetSummaryUseCase>,
         private val config: BuildConfig,
         private val messageQueue : MutableList<Message>
 ) {
     fun invoke() {
         if (config.isPluginActivated) {
-            if (config.isSuccess) {
-                handleBuildSuccessUseCase.invoke()
-            } else {
-                handleBuildFailedUseCase.invoke()
-            }
+            getSummaryUseCases.postAll(postStatusUseCase)
+            postStatsUseCase.invoke(config.stats(getSummaryUseCases))
             messageQueue.distinct().forEach { println(it.toString()) }
         }
     }

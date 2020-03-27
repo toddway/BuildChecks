@@ -1,29 +1,30 @@
 package gradle
 import core.entity.BuildConfigDefault
 import core.entity.Log
-import data.Instances
+import data.Registry
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 open class BuildChecksPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.createPostChecksTask()
-        project.createPrintChecksTask()
-        val config = project.createBuildChecksConfig()
-        val instances = Instances(config)
+        val registry = Registry(project.createBuildChecksConfig())
+        listOf(project.createPostChecksTask(), project.createPrintChecksTask()).forEach { it.doLast {
+            registry.provideHandleUnsuccessfulSummariesUseCase().invoke()
+        } }
+        project.createChecksReportTask().registry = registry
 
         project.gradle.taskGraph.whenReady {
-            config.taskName = project.taskNameString()
-            config.isPostActivated = project.isPostChecksActivated()
-            config.isPluginActivated = project.isPluginActivated()
-            config.log = Log(project.logger)
-            instances.handleBuildStartedUseCase.invoke()
+            registry.config.taskName = project.taskNameString()
+            registry.config.isPostActivated = project.isPostChecksActivated()
+            registry.config.isPluginActivated = project.isPluginActivated()
+            registry.config.log = Log(project.logger)
+            registry.provideHandleBuildStartedUseCase().invoke()
         }
 
         project.gradle.buildFinished {
-            config.isSuccess = it.failure == null
-            instances.handleBuildFinishedUseCase.invoke()
+            registry.config.isSuccess = it.failure == null
+            registry.provideHandleBuildFinishedUseCase().invoke()
         }
     }
 }
@@ -35,3 +36,4 @@ fun Project.taskNameString() = gradle.startParameter.taskNames.joinToString(" ")
 fun Project.createBuildChecksConfig() = extensions.create("buildChecks", BuildConfigDefault::class.java)
 fun Project.createPostChecksTask() = tasks.create("postChecks", PostChecksTask::class.java)
 fun Project.createPrintChecksTask() = tasks.create("printChecks", PrintChecksTask::class.java)
+fun Project.createChecksReportTask() = tasks.create("checksReport", ChecksReportTask::class.java)

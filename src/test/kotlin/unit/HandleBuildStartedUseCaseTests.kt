@@ -1,9 +1,11 @@
 package unit
 
 import core.entity.BuildConfigDefault
+import core.entity.Log
 import core.usecase.HandleBuildStartedUseCase
 import core.usecase.PostStatusUseCase
 import org.amshove.kluent.*
+import org.junit.Assert
 import org.junit.Test
 
 class HandleBuildStartedUseCaseTests {
@@ -13,11 +15,13 @@ class HandleBuildStartedUseCaseTests {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = BuildConfigDefault()
         config.isPluginActivated = false
+        config.log = Log(mock())
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
 
         usecase.invoke()
 
         VerifyNotCalled on postBuildStatus that postBuildStatus.post(any(), any(), any()) was called
+        Assert.assertEquals(null, config.log)
     }
 
     @Test
@@ -26,12 +30,13 @@ class HandleBuildStartedUseCaseTests {
         val config = BuildConfigDefault()
         config.isPluginActivated = true
         config.isPostActivated = true
+        config.log = Log(mock())
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
-        //When calling postBuildStatus.sources itReturns listOf(ConsoleDatasource())
 
         usecase.invoke()
 
         Verify on postBuildStatus that postBuildStatus.post(any(), any(), any()) was called
+        Assert.assertNotEquals(null, config.log)
     }
 }
 

@@ -11,6 +11,8 @@ class HandleBuildStartedUseCase(
         if (config.isPluginActivated) {
             config.reportFiles().forEach { it.delete() }
             postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), "build")
+        } else {
+            config.log = null
         }
     }
 }

@@ -5,7 +5,7 @@ import io.reactivex.Observable
 
 
 open class PostStatusUseCase(
-        val sources : List<PostStatusUseCase.Datasource>,
+        val sources : List<Datasource>,
         val config: BuildConfig,
         private val messages: MutableList<Message>) {
     private val validSources by lazy { removeInvalid() }
@@ -21,7 +21,7 @@ open class PostStatusUseCase(
         }
     }
 
-    fun removeInvalid() : List<PostStatusUseCase.Datasource> {
+    fun removeInvalid() : List<Datasource> {
         var list = sources.filter { it.isActive() }
         if (config.isPostActivated) {
             val remote = list.firstOrNull { it.isRemote() }

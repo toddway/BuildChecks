@@ -26,23 +26,26 @@ Then add the following to the build.gradle file at the root of your project:
     }
 
 ## Usage
-To print build checks only to the console, run the `printChecks` Gradle task
+To print build checks only to the console, add `printChecks` to a Gradle task (likely one that generates supported lint and coverage reports).  For example:
 
-    ./gradlew printChecks
+    task checks {
+        dependsOn 'testDebugUnitTestCoverage'
+        dependsOn 'lintDebug'
+        dependsOn 'cpdCheck'
+        dependsOn 'detekt'
+        finalizedBy ':printChecks'
+    }
 
-To post build checks to your remote source control system, run the `postChecks` Gradle task
+To post build checks to your remote source control system, add `postChecks`:
 
-    ./gradlew postChecks
+    task checks {
+        dependsOn 'testDebugUnitTestCoverage'
+        dependsOn 'lintDebug'
+        dependsOn 'cpdCheck'
+        dependsOn 'detekt'
+        finalizedBy ':postChecks'
+    }
 
-You will most likely want to attach the `postChecks` task to some other command that builds your project and runs your lint and coverage tools.
-If you're already using a Gradle task for this (e.g. `build`, `assemble`, `myCustomTask`),
-you can make postChecks depend on your task. In your build.gradle:
-
-    postChecks.dependsOn(myCustomTask)
-
-Then calling `postChecks` will automatically activate `myCustomTask`:
-
-    ./gradlew postChecks
 
 If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
 you can attach postChecks by letting Gradle execute your command.
@@ -53,7 +56,7 @@ Gradle lets you define custom executables like this:
         commandLine 'npm', 'deploy'
     }
 
-    postChecks.dependsOn(myCustomTask)
+    myCustomTask.finalizedBy(postChecks)
 
 
 The exit value of the external command (0 or 1) will determine if success or failure is posted for the build.
