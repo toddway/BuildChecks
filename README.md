@@ -73,6 +73,7 @@ All example properties below are optional.
         minCoveragePercent = 80 
         maxLintViolations = 5
         maxDuration = 60 //in seconds
+        allowUncommittedChanges = true
      }
 
 #### baseUrl
