@@ -8,11 +8,6 @@ import java.io.IOException
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 
-fun Pair<Int, Int>.percentage(): Double {
-    return if (first == 0 && second == 0) 0.0
-        else ((first.toDouble() / (second + first)) * HUNDRED)
-}
-
 const val THOUSAND = 1000.0
 const val HUNDRED = 100
 const val COMMAND_TIMEOUT : Long = 60
@@ -73,3 +68,9 @@ fun Int.blankOrNum() : String = if (this == 0) "" else "$this"
 fun <T, V> Map<V?, List<T>>.entryChildrenSum(): Int {
     return flatMap { entry -> listOf(entry.value.count()) }.sum()
 }
+
+fun File.isXML() = name.toLowerCase().endsWith(".xml")
+fun File.isIndexHTML() = name.toLowerCase() == "index.html"
+fun File.containsIndexHTML() = listFiles()?.any { it.isIndexHTML() }  ?: false
+fun File.findReportFiles() : List<File> = walkTopDown().onEnter { !it.parentFile.containsIndexHTML() }.filter { !it.isDirectory }.toList()
+fun List<File>.toXmlDocuments() = filter { it.isXML() }.toDocumentList()

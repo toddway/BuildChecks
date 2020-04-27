@@ -11,8 +11,8 @@ A Gradle plugin to post summaries from code analyzers to [GitHub](https://develo
     ✔ Posting to GITHUB
 
 
-The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint)
-supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul)
+The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint, CPD)
+supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul, Slather, CPD, Checkstyle)
 
 ## Installation
 If you're not already using Gradle on your project,
@@ -69,10 +69,7 @@ All example properties below are optional.
         baseUrl = "https://api.github.com/repos/<owner>/<repo>" 
         authorization = "Basic <your generated token>"
         buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
-        androidLintReports = "$projectDir/build/reports/lint-results-prodRelease.xml" //comma seperated paths
-        checkstyleReports = "$projectDir/build/reports/detekt-checkstyle.xml" //comma separated paths
-        jacocoReports = "$projectDir/build/reports/jacoco/coverage/coverage.xml" //comma seperated paths
-        coberturaReports = "$projectDir/functions/coverage/cobertura-coverage.xml" //comma separated paths
+        reports = "$projectDir/build/reports" //comma separated paths to reports, all descendant files will be scanned
         minCoveragePercent = 80 
         maxLintViolations = 5
         maxDuration = 60 //in seconds

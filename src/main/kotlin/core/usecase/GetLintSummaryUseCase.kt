@@ -24,7 +24,6 @@ fun Map<String?, List<Node>>?.toViolationSummary(maxViolations: Int?, numDocumen
         summary +=
                 if (sum == 0) "0 violations"
                 else "$sum violations " + "(" + violationTypes.joinToString(", ") + ")"
-        summary += " in $numDocuments reports"
         maxViolations?.let { summary += ", max is $maxViolations" }
         return summary
     }
@@ -32,11 +31,12 @@ fun Map<String?, List<Node>>?.toViolationSummary(maxViolations: Int?, numDocumen
 
 fun List<Document>.toViolationMap(): Map<String?, List<Node>>? {
     return if (isEmpty()) null
-    else children(listOf("issue", "error", "duplication")).groupBy { it.deriveViolationKey() }
+    else children(listOf("issue", "error", "duplication", "violation")).groupBy { it.deriveViolationKey() }
 }
 
 fun Node.deriveViolationKey() : String {
     return if (nodeName == "duplication") "clones"
+    else if (nodeName == "violation") "error"
     else attr("severity")?.let {
         when (it.toLowerCase()) {
             "fatal" -> "error"
@@ -46,7 +46,6 @@ fun Node.deriveViolationKey() : String {
     } ?: "unknown"
 }
 
-fun GetLintSummaryUseCase.Companion.build(config: BuildConfig) : GetLintSummaryUseCase = with(config) {
-    val files = androidLintReports.toFileList(config.log) + checkstyleReports.toFileList(config.log) + cpdReports.toFileList(config.log)
-    return GetLintSummaryUseCase(files.toDocumentList(), maxLintViolations)
+fun List<Document>.buildLint(maxLintViolations : Int?) : GetLintSummaryUseCase {
+    return GetLintSummaryUseCase(this, maxLintViolations)
 }

@@ -19,7 +19,7 @@ class GetLintSummaryUseCaseTests {
     }
 
     @Test
-    fun `when it`() {
+    fun `when a map is created from multiple report files, then the counts of each violation type are accurate`() {
         val docs = "./src/test/testFiles/lint-results-prodRelease.xml, ./src/test/testFiles/detekt-checkstyle.xml, ./src/test/testFiles/cpdCheck-swift.xml".toDocumentList()
         val map = docs.toViolationMap()
         map?.get("clones")?.count() shouldEqual 2
@@ -27,6 +27,12 @@ class GetLintSummaryUseCaseTests {
         map?.get("warning")?.count() shouldEqual 409
         map?.get("info")?.count() shouldEqual 5
         println(map?.toViolationSummary(34, docs.size))
+    }
+
+    @Test
+    fun `when a pmd map is created, the error count is correct`() {
+        val map = "./src/test/testFiles/pmd.xml".toDocumentList().toViolationMap()
+        map?.get("error")?.count() shouldEqual 2
     }
 }
 

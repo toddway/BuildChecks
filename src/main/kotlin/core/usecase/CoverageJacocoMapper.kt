@@ -5,13 +5,13 @@ import core.children
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
 
-class CreateCoverageJacocoMap : CreateCoverageMap {
-    override fun from(document: Document): Map<String?, Pair<Int, Int>> {
+class CoverageJacocoMapper : CoverageMapper {
+    override fun from(document: Document): Map<String?, CoverageCounts> {
         return document.toJacocoMap()
     }
 }
 
-fun Document.toJacocoMap(): Map<String?, Pair<Int, Int>> {
+fun Document.toJacocoMap(): Map<String?, CoverageCounts> {
     val nodeList : NodeList = getElementsByTagName("method") ?: return mapOf()
 
     val counterMap = nodeList.children().flatMap { it.childNodes.children() }.groupBy { it.attr("type") }
@@ -19,13 +19,13 @@ fun Document.toJacocoMap(): Map<String?, Pair<Int, Int>> {
     val statsMap = counterMap.mapValues {entry ->
         val covered = entry.value.sumBy { it.attr("covered")?.toIntOrNull() ?: 0 }
         val missed = entry.value.sumBy { it.attr("missed")?.toIntOrNull()  ?: 0 }
-        Pair(covered, missed)
+        CoverageCounts(covered, missed)
     }
 
     val linePlusBranchMap = statsMap.filter { entry -> entry.key == "LINE" || entry.key == "BRANCH" }
-    val linePlusBranchPair = Pair(
-            linePlusBranchMap.values.sumBy { it.first },
-            linePlusBranchMap.values.sumBy { it.second }
+    val linePlusBranchPair = CoverageCounts(
+            linePlusBranchMap.values.sumBy { it.covered },
+            linePlusBranchMap.values.sumBy { it.missed }
     )
 
     val reportMap = statsMap.toMutableMap()

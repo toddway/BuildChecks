@@ -1,62 +1,49 @@
 package core.usecase
 
-import core.*
-import core.entity.BuildConfig
+import core.isNotGreaterThan
+import core.round
 import org.w3c.dom.Document
+import java.text.NumberFormat
 
 open class GetCoverageSummaryUseCase(
         val documents: List<Document>,
-        val createCoverageMap: CreateCoverageMap,
+        val coverageMapper: CoverageMapper,
         val minCoveragePercent : Double? = null) : GetSummaryUseCase {
+    val map by lazy { documents.toCoverageMaps(coverageMapper) }
     override fun isSuccessful(): Boolean = minCoveragePercent?.isNotGreaterThan(percent()) ?: true
     override fun key(): String = "test"
 
     override fun value(): String? {
-        var summary = percent()?.let { "$it% coverage in ${documents.size} reports" }
-        if (!summary.isNullOrBlank())
-            minCoveragePercent?.let { summary += ", min is $minCoveragePercent%" }
-        return summary
+        return percent()?.let { percent ->
+            val count = NumberFormat.getIntegerInstance().format(map.countsOf("LINE + BRANCH").total())
+            val prefix = "$percent% coverage ($count lines+branches)"
+            minCoveragePercent?.let { "$prefix, min is $it%" } ?: prefix
+        }
     }
 
     fun percent(): Double? {
-        return if (documents.isEmpty()) null
-        else documents.let {
-            val list = it.map { createCoverageMap.from(it) }.map { it["LINE + BRANCH"] }
-            val sums = Pair(
-                    list.sumBy { it?.first ?: 0},
-                    list.sumBy { it?.second ?: 0 }
-            )
-            sums.percentage().round(2)
+        return if (documents.isEmpty()) null else {
+            map.countsOf("LINE + BRANCH")
+                    .percentCovered()
+                    .let {
+                        val rounded = it.round(2)
+                        if (rounded <= 0) null else rounded
+                    }
         }
     }
 
     fun lines(): Int? {
-        return if (documents.isEmpty()) null
-        else documents.let {
-            val list = it.map { createCoverageMap.from(it) }.map { it["LINE"] }
-            val sums = Pair(
-                    list.sumBy { it?.first ?: 0 },
-                    list.sumBy { it?.second ?: 0 }
-            )
-            sums.first + sums.second
+        return if (documents.isEmpty()) null else {
+            map.countsOf("LINE").total()
         }
     }
-
-    companion object
 }
 
-
-fun GetCoverageSummaryUseCase.Companion.buildCoburtera(config: BuildConfig) : GetCoverageSummaryUseCase = with(config) {
-    return GetCoverageSummaryUseCase(
-            coberturaReports.toFileList(config.log).toDocumentList(),
-            CreateCoverageCoberturaMap(),
-            minCoveragePercent)
+fun List<Document>.buildCobertura(minCoveragePercent: Double?) : GetCoverageSummaryUseCase {
+    return GetCoverageSummaryUseCase(this, CoverageCoberturaMapper(), minCoveragePercent)
 }
 
-fun GetCoverageSummaryUseCase.Companion.buildJacoco(config: BuildConfig) : GetCoverageSummaryUseCase = with(config) {
-    return GetCoverageSummaryUseCase(
-            jacocoReports.toFileList(config.log).toDocumentList(),
-            CreateCoverageJacocoMap(),
-            minCoveragePercent)
+fun List<Document>.buildJacoco(minCoveragePercent: Double?) : GetCoverageSummaryUseCase {
+    return GetCoverageSummaryUseCase(this, CoverageJacocoMapper(), minCoveragePercent)
 }
 

@@ -3,6 +3,8 @@ package core.usecase
 import core.entity.BuildConfig
 import core.entity.BuildStatus
 import core.entity.Stats
+import core.toXmlDocuments
+import java.io.File
 
 interface GetSummaryUseCase {
     fun value() : String?
@@ -20,15 +22,13 @@ fun List<GetSummaryUseCase>.postAll(postStatusUseCase: PostStatusUseCase) {
     }
 }
 
-fun GetSummaryUseCase.Companion.buildList(config: BuildConfig) : List<GetSummaryUseCase> {
-    return with(config) {
-         listOf(
-                GetDurationSummaryUseCase(this),
-                GetCoverageSummaryUseCase.buildCoburtera(config),
-                GetCoverageSummaryUseCase.buildJacoco(config),
-                GetLintSummaryUseCase.build(config)
-        )
-    }
+fun List<File>.summaries(config : BuildConfig) : List<GetSummaryUseCase> {
+    return listOf(
+            GetDurationSummaryUseCase(config),
+            toXmlDocuments().buildCobertura(config.minCoveragePercent),
+            toXmlDocuments().buildJacoco(config.minCoveragePercent),
+            toXmlDocuments().buildLint(config.maxLintViolations)
+    )
 }
 
 fun BuildConfig.stats(summaries : List<GetSummaryUseCase>) : Stats {

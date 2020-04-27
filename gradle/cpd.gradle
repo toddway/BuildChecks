@@ -23,7 +23,7 @@ cpdCheck {
         }
         text {
             enabled = true
-            destination = file("$projectDir/build/reports/cpd.html")
+            destination = file("$projectDir/build/reports/cpd.txt")
         }
     }
 }

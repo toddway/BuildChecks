@@ -1,16 +1,14 @@
 package core.entity
 
+import core.findReportFiles
 import core.round
 import core.toFileList
+import java.io.File
 import java.util.*
 
 interface BuildConfig {
     var buildUrl : String
-    var androidLintReports : String
-    var checkstyleReports : String
-    var jacocoReports : String
-    var coberturaReports : String
-    var cpdReports: String
+    var reports : String
     var allowUncommittedChanges : Boolean
     var baseUrl : String
     var authorization : String
@@ -30,31 +28,22 @@ interface BuildConfig {
     fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)
     fun startedMessage() = "gradle $taskName - in progress"
     fun completedMessage() = "${duration()}s for gradle $taskName"
-    fun reportFiles() = listOf(
-            androidLintReports,
-            checkstyleReports,
-            jacocoReports,
-            coberturaReports,
-            cpdReports
-    ).joinToString(",").toFileList()
     fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted
+    fun reportDirs() = reports.toFileList(log)
+    fun reportFiles() : List<File> = reportDirs().flatMap { it.findReportFiles() }
 }
 
 //gradle config cannot be a data class
 open class BuildConfigDefault : BuildConfig {
+    override var reports: String = ""
     override var log: Log? = null
     override var maxDuration: Double? = null
-    override var cpdReports: String = ""
     override var git: GitConfig = GitConfigDefault()
     override var allowUncommittedChanges: Boolean = false
     override var isSuccess: Boolean = true
     override var maxLintViolations: Int? = null
     override var minCoveragePercent: Double? = null
     override var buildUrl  = ""
-    override var androidLintReports  = ""
-    override var jacocoReports  = ""
-    override var checkstyleReports  = ""
-    override var coberturaReports = ""
     override var baseUrl  = ""
     override var authorization  = ""
     override var buildStartTime = Date()

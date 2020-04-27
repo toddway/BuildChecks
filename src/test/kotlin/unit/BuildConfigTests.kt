@@ -2,6 +2,7 @@ package unit
 
 import core.entity.BuildConfigDefault
 import core.entity.GitConfigDefault
+import core.toXmlDocuments
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe
 import org.junit.Test
@@ -12,13 +13,9 @@ class BuildConfigTests {
     fun `set all config props`() {
         val config = BuildConfigDefault()
         config.allowUncommittedChanges = false
-        config.androidLintReports = "asdf"
         config.authorization = "Asdfd"
         config.baseUrl = "Asdfd"
         config.buildUrl = "ASdfsadf"
-        config.checkstyleReports = "adsf"
-        config.coberturaReports = "Asdf"
-        config.cpdReports = "ADSf"
         config.isPostActivated = true
         config.isPluginActivated = true
         config.isSuccess = false
@@ -29,21 +26,20 @@ class BuildConfigTests {
         config.git = GitConfigDefault()
         config.taskName = "adfs"
         config.buildStartTime = Date()
-
     }
 
     @Test
     fun `when valid file paths are configured, reportFiles returns a list of File objects for each`() {
         val config = BuildConfigDefault()
-        config.jacocoReports = "./src/test/testFiles/lint-results-prodRelease.xml, ./src/test/testFiles/detekt-checkstyle.xml, ./src/test/testFiles/cpdCheck-swift.xml"
-        config.reportFiles().count() shouldEqual 3
+        config.reports = "./src/test/testFiles"
+        config.reportFiles().toXmlDocuments().size shouldEqual 11
     }
 
     @Test
     fun `when invalid file paths are configured, reportFiles returns no File objects`() {
         val config = BuildConfigDefault()
-        config.jacocoReports = "./src/test/testFiles/sdfdf.xml, ./src/test/testFiles/sdfd.xml, "
-        config.reportFiles().count() shouldEqual 0
+        config.reports = "./src/test/testFiles/nowhere"
+        config.reportFiles().toXmlDocuments().size shouldEqual 0
     }
 
     @Test

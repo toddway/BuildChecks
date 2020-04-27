@@ -1,7 +1,7 @@
 package unit
 
 import core.entity.BuildConfigDefault
-import data.Registry
+import Registry
 import org.junit.Test
 
 class RegistryTests {

@@ -1,18 +1,15 @@
-package data
-
 import core.entity.BuildConfig
 import core.entity.BuildConfigDefault
 import core.entity.Message
 import core.usecase.*
+import data.buildList
 
 
 class Registry(val config : BuildConfig = BuildConfigDefault()) {
     private val messages = mutableListOf<Message>()
 
-
-
     fun provideGetSummaryUseCases() =
-            GetSummaryUseCase.buildList(config)
+            config.reportFiles().summaries(config)
 
     fun providePostStatsUseCase() =
             PostStatsUseCase(PostStatsUseCase.Datasource.buildList(config))
