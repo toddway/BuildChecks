@@ -60,6 +60,7 @@ class PostStatusUseCaseTests {
         When calling source2.isRemote() itReturns true
         When calling source2.isActive() itReturns true
         val config : BuildConfig = BuildConfigDefault()
+        config.allowUncommittedChanges = false
         config.isPostActivated = true
         config.git.isAllCommitted = false
         val messageQueue : MutableList<Message> = mutableListOf()

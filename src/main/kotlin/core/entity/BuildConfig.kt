@@ -39,7 +39,7 @@ open class BuildConfigDefault : BuildConfig {
     override var log: Log? = null
     override var maxDuration: Double? = null
     override var git: GitConfig = GitConfigDefault()
-    override var allowUncommittedChanges: Boolean = false
+    override var allowUncommittedChanges: Boolean = true
     override var isSuccess: Boolean = true
     override var maxLintViolations: Int? = null
     override var minCoveragePercent: Double? = null
