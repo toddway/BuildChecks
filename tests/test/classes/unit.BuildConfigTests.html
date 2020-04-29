@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">3.239s</div>
+<div class="counter">5.573s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">test</td>
-<td class="success">3.239s</td>
+<td class="success">5.573s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -87,12 +87,354 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>git branch -d artifacts exit value: 1 error: branch 'artifacts' not found.
+<pre>git config --get remote.origin.url exit value: 0 
+https://github.com/toddway/BuildChecks.git
+
+git clone https://github.com/toddway/BuildChecks.git /tmp/buildChecks --branch artifacts --depth 1 exit value: 128 Cloning into '/tmp/buildChecks'...
+warning: Could not find remote branch artifacts to clone.
+fatal: Remote branch artifacts not found in upstream origin
 
 
-git push origin --delete artifacts exit value: 0 To https://github.com/toddway/BuildChecks.git
- - [deleted]         artifacts
+git config --get remote.origin.url exit value: 0 
+https://github.com/toddway/BuildChecks.git
 
+git clone https://github.com/toddway/BuildChecks.git /tmp/buildChecks --depth 1 exit value: 0 Cloning into '/tmp/buildChecks'...
+
+
+git checkout --orphan artifacts exit value: 0 Switched to a new branch 'artifacts'
+
+
+git rm -rf . exit value: 0 
+rm '.gitignore'
+rm 'README.md'
+rm 'build.gradle'
+rm 'gradle/buildChecks.gradle'
+rm 'gradle/cpd.gradle'
+rm 'gradle/detekt-config.yml'
+rm 'gradle/detekt.gradle'
+rm 'gradle/jacocoJavaLibrary.gradle'
+rm 'gradle/publish.gradle'
+rm 'gradle/wrapper/gradle-wrapper.jar'
+rm 'gradle/wrapper/gradle-wrapper.properties'
+rm 'gradlew'
+rm 'gradlew.bat'
+rm 'libs/buildChecks.jar'
+rm 'src/main/kotlin/Registry.kt'
+rm 'src/main/kotlin/core/Documents.kt'
+rm 'src/main/kotlin/core/Utils.kt'
+rm 'src/main/kotlin/core/entity/BuildConfig.kt'
+rm 'src/main/kotlin/core/entity/BuildStatus.kt'
+rm 'src/main/kotlin/core/entity/GitConfig.kt'
+rm 'src/main/kotlin/core/entity/Log.kt'
+rm 'src/main/kotlin/core/entity/Message.kt'
+rm 'src/main/kotlin/core/entity/Stats.kt'
+rm 'src/main/kotlin/core/usecase/CoverageCoberturaMapper.kt'
+rm 'src/main/kotlin/core/usecase/CoverageJacocoMapper.kt'
+rm 'src/main/kotlin/core/usecase/CoverageMapper.kt'
+rm 'src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt'
+rm 'src/main/kotlin/core/usecase/GetDurationSummaryUseCase.kt'
+rm 'src/main/kotlin/core/usecase/GetLintSummaryUseCase.kt'
+rm 'src/main/kotlin/core/usecase/GetSummaryUseCase.kt'
+rm 'src/main/kotlin/core/usecase/GetTextSummaryUseCase.kt'
+rm 'src/main/kotlin/core/usecase/HandleBuildFinishedUseCase.kt'
+rm 'src/main/kotlin/core/usecase/HandleBuildStartedUseCase.kt'
+rm 'src/main/kotlin/core/usecase/HandleUnsuccessfulSummariesUseCase.kt'
+rm 'src/main/kotlin/core/usecase/PostStatsUseCase.kt'
+rm 'src/main/kotlin/core/usecase/PostStatusUseCase.kt'
+rm 'src/main/kotlin/data/BitBucket1Datasource.kt'
+rm 'src/main/kotlin/data/BitBucket2Datasource.kt'
+rm 'src/main/kotlin/data/BuildPostStatusDatasources.kt'
+rm 'src/main/kotlin/data/ConsoleDatasource.kt'
+rm 'src/main/kotlin/data/GithubDatasource.kt'
+rm 'src/main/kotlin/data/RetrofitStatsDatasource.kt'
+rm 'src/main/kotlin/data/Retrofits.kt'
+rm 'src/main/kotlin/gradle/BuildChecksPlugin.kt'
+rm 'src/main/kotlin/gradle/PostChecksTask.kt'
+rm 'src/main/kotlin/gradle/PrintChecksTask.kt'
+rm 'src/main/resources/META-INF/gradle-plugins/com.toddway.buildchecks.properties'
+rm 'src/test/kotlin/func/BitBucket1DatasourceIntegrationTests.kt'
+rm 'src/test/kotlin/func/GithubDatasourceIntegrationTests.kt'
+rm 'src/test/kotlin/func/ReportTests.kt'
+rm 'src/test/kotlin/func/RetrofitBuildMetricDatasourceIntegrationTests.kt'
+rm 'src/test/kotlin/unit/BuildConfigTests.kt'
+rm 'src/test/kotlin/unit/GetCoverageMapTests.kt'
+rm 'src/test/kotlin/unit/GetLintSummaryUseCaseTests.kt'
+rm 'src/test/kotlin/unit/GetSummaryUseCaseTests.kt'
+rm 'src/test/kotlin/unit/HandleBuildFinishedUseCaseTests.kt'
+rm 'src/test/kotlin/unit/HandleBuildStartedUseCaseTests.kt'
+rm 'src/test/kotlin/unit/HandleUnsuccessfulSummariesUseCaseTests.kt'
+rm 'src/test/kotlin/unit/PostStatsUseCaseTests.kt'
+rm 'src/test/kotlin/unit/PostStatusUseCaseTests.kt'
+rm 'src/test/kotlin/unit/RegistryTests.kt'
+rm 'src/test/kotlin/unit/StatsTests.kt'
+rm 'src/test/kotlin/unit/UtilTests.kt'
+rm 'src/test/testFiles/cobertura-coverage.xml'
+rm 'src/test/testFiles/coverage.xml'
+rm 'src/test/testFiles/cpdCheck-swift.xml'
+rm 'src/test/testFiles/cpdCheck-ts.xml'
+rm 'src/test/testFiles/detekt-checkstyle.xml'
+rm 'src/test/testFiles/hello.txt'
+rm 'src/test/testFiles/lint-results-prodRelease.xml'
+rm 'src/test/testFiles/pmd.xml'
+rm 'src/test/testFiles/reports/coverage/coverage.xml'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/BuildKonfig.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/Clock.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/DiskStorage.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/DiskStorage.kt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/DiskStorageKt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/FileStorage.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/GsonSerializer.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/GsonSerializer.kt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/KotlinxSerializer.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/KotlinxSerializer.kt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/MoshiSerializer.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/MoshiSerializer.kt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/Shelf$Companion.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/Shelf$Item.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/Shelf.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/Shelf.kt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/ShelfKt.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/index.html'
+rm 'src/test/testFiles/reports/coverage/html/com.toddway.shelf/index.source.html'
+rm 'src/test/testFiles/reports/coverage/html/index.html'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/branchfc.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/branchnc.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/branchpc.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/bundle.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/class.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/down.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/greenbar.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/group.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/method.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/package.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/prettify.css'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/prettify.js'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/redbar.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/report.css'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/report.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/session.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/sort.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/sort.js'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/source.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-resources/up.gif'
+rm 'src/test/testFiles/reports/coverage/html/jacoco-sessions.html'
+rm 'src/test/testFiles/reports/cpd/cpdCheck.text'
+rm 'src/test/testFiles/reports/cpd/cpdCheck.xml'
+rm 'src/test/testFiles/reports/detekt-checkstyle.xml'
+rm 'src/test/testFiles/reports/detekt-plain.txt'
+rm 'src/test/testFiles/reports/detekt-report.html'
+rm 'src/test/testFiles/reports/karma.xml'
+rm 'src/test/testFiles/reports/tests/jsTest/css/base-style.css'
+rm 'src/test/testFiles/reports/tests/jsTest/css/style.css'
+rm 'src/test/testFiles/reports/tests/jsTest/index.html'
+rm 'src/test/testFiles/reports/tests/jsTest/js/report.js'
+rm 'src/test/testFiles/reports/tests/jvmTest/classes/com.toddway.shelf.JvmTests.html'
+rm 'src/test/testFiles/reports/tests/jvmTest/classes/com.toddway.shelf.ShelfTests.html'
+rm 'src/test/testFiles/reports/tests/jvmTest/css/base-style.css'
+rm 'src/test/testFiles/reports/tests/jvmTest/css/style.css'
+rm 'src/test/testFiles/reports/tests/jvmTest/index.html'
+rm 'src/test/testFiles/reports/tests/jvmTest/js/report.js'
+rm 'src/test/testFiles/reports/tests/jvmTest/packages/com.toddway.shelf.html'
+
+git clean -d -f exit value: 0 
+
+git add . exit value: 0 
+
+git commit -m &quot;71.97=coverage,1263=lines+branches,7=violations,7.5=duration,1588014385=date,master=branch,9ea65a0070dd0fad0b882c9657122ea0a844bcd4&quot; exit value: 0 
+[artifacts (root-commit) e11af47] &quot;71.97=coverage,1263=lines+branches,7=violations,7.5=duration,1588014385=date,master=branch,9ea65a0070dd0fad0b882c9657122ea0a844bcd4&quot;
+ 183 files changed, 4188 insertions(+)
+ create mode 100644 buildChecks.csv
+ create mode 100644 buildChecks.html
+ create mode 100644 cpd.txt
+ create mode 100644 cpd.xml
+ create mode 100644 detekt.html
+ create mode 100644 detekt.xml
+ create mode 100644 testJacoco/html/core.entity/BuildConfig$DefaultImpls.html
+ create mode 100644 testJacoco/html/core.entity/BuildConfig.kt.html
+ create mode 100644 testJacoco/html/core.entity/BuildConfigDefault.html
+ create mode 100644 testJacoco/html/core.entity/ErrorMessage.html
+ create mode 100644 testJacoco/html/core.entity/GitConfig.kt.html
+ create mode 100644 testJacoco/html/core.entity/GitConfigDefault.html
+ create mode 100644 testJacoco/html/core.entity/GitConfigKt.html
+ create mode 100644 testJacoco/html/core.entity/InfoMessage.html
+ create mode 100644 testJacoco/html/core.entity/Log.html
+ create mode 100644 testJacoco/html/core.entity/Log.kt.html
+ create mode 100644 testJacoco/html/core.entity/Message.html
+ create mode 100644 testJacoco/html/core.entity/Message.kt.html
+ create mode 100644 testJacoco/html/core.entity/Stats.html
+ create mode 100644 testJacoco/html/core.entity/Stats.kt.html
+ create mode 100644 testJacoco/html/core.entity/index.html
+ create mode 100644 testJacoco/html/core.entity/index.source.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageCoberturaMapper.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageCoberturaMapper.kt.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageCoberturaMapperKt.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageCounts.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageJacocoMapper.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageJacocoMapper.kt.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageJacocoMapperKt.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageMapper.kt.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageMapperKt.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageMultiMapper.html
+ create mode 100644 testJacoco/html/core.usecase/CoverageMultiMapper.kt.html
+ create mode 100644 testJacoco/html/core.usecase/GetCoverageSummaryUseCase$map$2.html
+ create mode 100644 testJacoco/html/core.usecase/GetCoverageSummaryUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/GetCoverageSummaryUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/GetCoverageSummaryUseCaseKt.html
+ create mode 100644 testJacoco/html/core.usecase/GetDurationSummaryUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/GetDurationSummaryUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/GetLintSummaryUseCase$violationMap$2.html
+ create mode 100644 testJacoco/html/core.usecase/GetLintSummaryUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/GetLintSummaryUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/GetLintSummaryUseCaseKt.html
+ create mode 100644 testJacoco/html/core.usecase/GetSummaryUseCase$Companion.html
+ create mode 100644 testJacoco/html/core.usecase/GetSummaryUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/GetSummaryUseCaseKt.html
+ create mode 100644 testJacoco/html/core.usecase/GetTextSummaryUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/GetTextSummaryUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildFinishedUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildFinishedUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildFinishedUseCaseKt$htmlReport$1.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildFinishedUseCaseKt$htmlReport$2.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildFinishedUseCaseKt.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildStartedUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/HandleBuildStartedUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/HandleUnsuccessfulSummariesUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/HandleUnsuccessfulSummariesUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatsUseCase$Datasource$Companion.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatsUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatsUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatusUseCase$Datasource$Companion.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatusUseCase$post$$inlined$forEach$lambda$1.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatusUseCase$validSources$2.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatusUseCase.html
+ create mode 100644 testJacoco/html/core.usecase/PostStatusUseCase.kt.html
+ create mode 100644 testJacoco/html/core.usecase/index.html
+ create mode 100644 testJacoco/html/core.usecase/index.source.html
+ create mode 100644 testJacoco/html/core/Documents.kt.html
+ create mode 100644 testJacoco/html/core/DocumentsKt$children$1$iterator$1.html
+ create mode 100644 testJacoco/html/core/DocumentsKt$children$1.html
+ create mode 100644 testJacoco/html/core/DocumentsKt$toDocument$1.html
+ create mode 100644 testJacoco/html/core/DocumentsKt.html
+ create mode 100644 testJacoco/html/core/Utils.kt.html
+ create mode 100644 testJacoco/html/core/UtilsKt$findReportFiles$1.html
+ create mode 100644 testJacoco/html/core/UtilsKt$findReportFiles$2.html
+ create mode 100644 testJacoco/html/core/UtilsKt.html
+ create mode 100644 testJacoco/html/core/index.html
+ create mode 100644 testJacoco/html/core/index.source.html
+ create mode 100644 testJacoco/html/data/BitBucket1Datasource$post$1.html
+ create mode 100644 testJacoco/html/data/BitBucket1Datasource$post$2.html
+ create mode 100644 testJacoco/html/data/BitBucket1Datasource$service$2.html
+ create mode 100644 testJacoco/html/data/BitBucket1Datasource.html
+ create mode 100644 testJacoco/html/data/BitBucket1Datasource.kt.html
+ create mode 100644 testJacoco/html/data/BitBucket1DatasourceKt.html
+ create mode 100644 testJacoco/html/data/BitBucket2Datasource$post$1.html
+ create mode 100644 testJacoco/html/data/BitBucket2Datasource$post$2.html
+ create mode 100644 testJacoco/html/data/BitBucket2Datasource$service$2.html
+ create mode 100644 testJacoco/html/data/BitBucket2Datasource.html
+ create mode 100644 testJacoco/html/data/BitBucket2Datasource.kt.html
+ create mode 100644 testJacoco/html/data/BitbucketBuildStatusBody.html
+ create mode 100644 testJacoco/html/data/BuildPostStatusDatasources.kt.html
+ create mode 100644 testJacoco/html/data/BuildPostStatusDatasourcesKt$buildList$retrofit$2.html
+ create mode 100644 testJacoco/html/data/BuildPostStatusDatasourcesKt.html
+ create mode 100644 testJacoco/html/data/ConsoleDatasource$post$1.html
+ create mode 100644 testJacoco/html/data/ConsoleDatasource$postStats$1.html
+ create mode 100644 testJacoco/html/data/ConsoleDatasource.html
+ create mode 100644 testJacoco/html/data/ConsoleDatasource.kt.html
+ create mode 100644 testJacoco/html/data/ConsoleDatasourceKt.html
+ create mode 100644 testJacoco/html/data/GithubDatasource$GetBody.html
+ create mode 100644 testJacoco/html/data/GithubDatasource$GithubBuildStatusBody.html
+ create mode 100644 testJacoco/html/data/GithubDatasource$post$1.html
+ create mode 100644 testJacoco/html/data/GithubDatasource$post$2.html
+ create mode 100644 testJacoco/html/data/GithubDatasource.html
+ create mode 100644 testJacoco/html/data/GithubDatasource.kt.html
+ create mode 100644 testJacoco/html/data/GithubDatasourceKt.html
+ create mode 100644 testJacoco/html/data/RetrofitStatsDatasource$postStats$1.html
+ create mode 100644 testJacoco/html/data/RetrofitStatsDatasource$postStats$2.html
+ create mode 100644 testJacoco/html/data/RetrofitStatsDatasource.html
+ create mode 100644 testJacoco/html/data/RetrofitStatsDatasource.kt.html
+ create mode 100644 testJacoco/html/data/RetrofitStatsDatasourceKt.html
+ create mode 100644 testJacoco/html/data/Retrofits.kt.html
+ create mode 100644 testJacoco/html/data/RetrofitsKt$overrideCacheControlInterceptor$1.html
+ create mode 100644 testJacoco/html/data/RetrofitsKt$retrofit$authHeaderInterceptor$1.html
+ create mode 100644 testJacoco/html/data/RetrofitsKt.html
+ create mode 100644 testJacoco/html/data/index.html
+ create mode 100644 testJacoco/html/data/index.source.html
+ create mode 100644 testJacoco/html/default/Registry.html
+ create mode 100644 testJacoco/html/default/Registry.kt.html
+ create mode 100644 testJacoco/html/default/index.html
+ create mode 100644 testJacoco/html/default/index.source.html
+ create mode 100644 testJacoco/html/func/BitBucket1DatasourceIntegrationTests.html
+ create mode 100644 testJacoco/html/func/GithubDatasourceIntegrationTests.html
+ create mode 100644 testJacoco/html/func/ReportTests$test$1.html
+ create mode 100644 testJacoco/html/func/ReportTests.html
+ create mode 100644 testJacoco/html/func/RetrofitBuildMetricDatasourceIntegrationTests.html
+ create mode 100644 testJacoco/html/func/index.html
+ create mode 100644 testJacoco/html/func/index.source.html
+ create mode 100644 testJacoco/html/gradle/BuildChecksPlugin$apply$$inlined$forEach$lambda$1.html
+ create mode 100644 testJacoco/html/gradle/BuildChecksPlugin$apply$2.html
+ create mode 100644 testJacoco/html/gradle/BuildChecksPlugin$apply$3.html
+ create mode 100644 testJacoco/html/gradle/BuildChecksPlugin.html
+ create mode 100644 testJacoco/html/gradle/BuildChecksPlugin.kt.html
+ create mode 100644 testJacoco/html/gradle/BuildChecksPluginKt.html
+ create mode 100644 testJacoco/html/gradle/PostChecksTask.html
+ create mode 100644 testJacoco/html/gradle/PostChecksTask.kt.html
+ create mode 100644 testJacoco/html/gradle/PrintChecksTask.html
+ create mode 100644 testJacoco/html/gradle/PrintChecksTask.kt.html
+ create mode 100644 testJacoco/html/gradle/index.html
+ create mode 100644 testJacoco/html/gradle/index.source.html
+ create mode 100644 testJacoco/html/index.html
+ create mode 100644 testJacoco/html/jacoco-resources/branchfc.gif
+ create mode 100644 testJacoco/html/jacoco-resources/branchnc.gif
+ create mode 100644 testJacoco/html/jacoco-resources/branchpc.gif
+ create mode 100644 testJacoco/html/jacoco-resources/bundle.gif
+ create mode 100644 testJacoco/html/jacoco-resources/class.gif
+ create mode 100644 testJacoco/html/jacoco-resources/down.gif
+ create mode 100644 testJacoco/html/jacoco-resources/greenbar.gif
+ create mode 100644 testJacoco/html/jacoco-resources/group.gif
+ create mode 100644 testJacoco/html/jacoco-resources/method.gif
+ create mode 100644 testJacoco/html/jacoco-resources/package.gif
+ create mode 100644 testJacoco/html/jacoco-resources/prettify.css
+ create mode 100644 testJacoco/html/jacoco-resources/prettify.js
+ create mode 100644 testJacoco/html/jacoco-resources/redbar.gif
+ create mode 100644 testJacoco/html/jacoco-resources/report.css
+ create mode 100644 testJacoco/html/jacoco-resources/report.gif
+ create mode 100644 testJacoco/html/jacoco-resources/session.gif
+ create mode 100644 testJacoco/html/jacoco-resources/sort.gif
+ create mode 100644 testJacoco/html/jacoco-resources/sort.js
+ create mode 100644 testJacoco/html/jacoco-resources/source.gif
+ create mode 100644 testJacoco/html/jacoco-resources/up.gif
+ create mode 100644 testJacoco/html/jacoco-sessions.html
+ create mode 100644 testJacoco/html/unit/BuildConfigTests.html
+ create mode 100644 testJacoco/html/unit/BuildConfigTestsKt.html
+ create mode 100644 testJacoco/html/unit/GetCoverageMapTests.html
+ create mode 100644 testJacoco/html/unit/GetLintSummaryUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/GetSummaryUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/HandleBuildFinishedUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/HandleBuildStartedUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/HandleUnsuccessfulSummariesUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/PostStatsUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/PostStatusUseCaseTests.html
+ create mode 100644 testJacoco/html/unit/RegistryTests.html
+ create mode 100644 testJacoco/html/unit/StatsTests.html
+ create mode 100644 testJacoco/html/unit/UtilTests.html
+ create mode 100644 testJacoco/html/unit/index.html
+ create mode 100644 testJacoco/html/unit/index.source.html
+ create mode 100644 testJacoco/testJacoco.xml
+ create mode 100644 tests/test/classes/unit.BuildConfigTests.html
+ create mode 100644 tests/test/css/base-style.css
+ create mode 100644 tests/test/css/style.css
+ create mode 100644 tests/test/index.html
+ create mode 100644 tests/test/js/report.js
+ create mode 100644 tests/test/packages/unit.html
+
+git push --set-upstream origin artifacts exit value: 0 remote: 
+remote: Create a pull request for 'artifacts' on GitHub by visiting:        
+remote:      https://github.com/toddway/BuildChecks/pull/new/artifacts        
+remote: 
+To https://github.com/toddway/BuildChecks.git
+ * [new branch]      artifacts -&gt; artifacts
+
+Branch 'artifacts' set up to track remote branch 'artifacts' from 'origin'.
 
 </pre>
 </span>
@@ -105,7 +447,7 @@ git push origin --delete artifacts exit value: 0 To https://github.com/toddway/B
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 5.4.1</a> at Apr 29, 2020 7:48:56 AM</p>
+<a href="http://www.gradle.org">Gradle 5.4.1</a> at Apr 29, 2020 7:53:58 AM</p>
 </div>
 </div>
 </body>
