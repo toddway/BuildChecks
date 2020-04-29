@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt">
+	<error line="16" column="1" severity="warning" message="The function runCommand is too long. The maximum length is 20." source="detekt.LongMethod" />
+	<error line="22" column="34" severity="warning" message="Using a spread operator causes a full copy of the array to be created before calling a method has a very high performance penalty." source="detekt.SpreadOperator" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/entity/BuildConfig.kt">
+	<error line="10" column="1" severity="warning" message="The interface BuildConfig is too complex. Consider splitting it up." source="detekt.ComplexInterface" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/GetLintSummaryUseCase.kt">
+	<error line="34" column="35" severity="warning" message="Multiple occurrences of the same string literal within a single file detected." source="detekt.StringLiteralDuplication" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt">
+	<error line="18" column="79" severity="warning" message="Multiple occurrences of the same string literal within a single file detected." source="detekt.StringLiteralDuplication" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/entity/GitConfig.kt">
+	<error line="29" column="102" severity="warning" message="This expression contains a magic number. Consider defining it to a well named constant." source="detekt.MagicNumber" />
+</file>
+</checkstyle>

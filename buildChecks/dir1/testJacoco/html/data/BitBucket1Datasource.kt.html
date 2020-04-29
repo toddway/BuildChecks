@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BitBucket1Datasource.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">data</a> &gt; <span class="el_source">BitBucket1Datasource.kt</span></div><h1>BitBucket1Datasource.kt</h1><pre class="source lang-java linenums">package data
+
+import core.entity.BuildConfig
+import core.entity.BuildStatus
+import core.usecase.PostStatusUseCase
+import io.reactivex.Observable
+import okhttp3.ResponseBody
+import retrofit2.Retrofit
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Path
+
+<span class="pc" id="L13">class BitBucket1Datasource(retrofit: Retrofit, val config : BuildConfig) : PostStatusUseCase.Datasource {</span>
+<span class="nc" id="L14">    override fun isRemote() = true</span>
+
+    override fun post(status: BuildStatus, message: String, key: String): Observable&lt;Boolean&gt; {
+<span class="nc" id="L17">        val body = BitbucketBuildStatusBody(status.bitbucketFormat(), key, message, config.buildUrl, &quot;&quot;)</span>
+<span class="nc" id="L18">        return service.postBuildStatus(config.git.commitHash, body).map { true }.onErrorReturn { false }</span>
+    }
+
+    override fun isActive(): Boolean {
+<span class="nc bnc" id="L22" title="All 6 branches missed.">        return config.isPostActivated &amp;&amp; config.baseUrl.contains(&quot;bitbucket&quot;) &amp;&amp; !config.baseUrl.contains(&quot;2.0/&quot;)</span>
+    }
+
+<span class="pc" id="L25">    private val service by lazy { retrofit.create(Service::class.java) }</span>
+
+<span class="nc" id="L27">    override fun name() = &quot;Bitbucket&quot;</span>
+
+    interface Service {
+        @POST(&quot;rest/build-status/1.0/commits/{hash}&quot;)
+        fun postBuildStatus(@Path(&quot;hash&quot;) hash : String, @Body body : BitbucketBuildStatusBody)
+                : Observable&lt;ResponseBody&gt;
+    }
+}
+
+<span class="nc" id="L36">data class BitbucketBuildStatusBody(</span>
+<span class="nc" id="L37">        val state : String = &quot;&quot;,</span>
+<span class="nc" id="L38">        val key : String = &quot;&quot;,</span>
+<span class="nc" id="L39">        val name : String = &quot;&quot;,</span>
+<span class="nc" id="L40">        var url : String? = null,</span>
+<span class="nc" id="L41">        var description : String? = null</span>
+)
+
+<span class="nc bnc" id="L44" title="All 3 branches missed.">fun BuildStatus.bitbucketFormat() = when(this) {</span>
+<span class="nc" id="L45">    BuildStatus.FAILURE -&gt; &quot;FAILED&quot;</span>
+<span class="nc" id="L46">    BuildStatus.PENDING -&gt; &quot;INPROGRESS&quot;</span>
+<span class="nc" id="L47">    BuildStatus.SUCCESS -&gt; &quot;SUCCESSFUL&quot;</span>
+<span class="nc" id="L48">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

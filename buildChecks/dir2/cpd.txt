@@ -1,0 +1,14 @@
+Found a 10 line (114 tokens) duplication in the following files: 
+Starting at line 13 of /Users/tway/dev/BuildChecks/src/main/kotlin/data/BitBucket1Datasource.kt
+Starting at line 13 of /Users/tway/dev/BuildChecks/src/main/kotlin/data/BitBucket2Datasource.kt
+
+class BitBucket1Datasource(retrofit: Retrofit, val config : BuildConfig) : PostStatusUseCase.Datasource {
+    override fun isRemote() = true
+
+    override fun post(status: BuildStatus, message: String, key: String): Observable<Boolean> {
+        val body = BitbucketBuildStatusBody(status.bitbucketFormat(), key, message, config.buildUrl, "")
+        return service.postBuildStatus(config.git.commitHash, body).map { true }.onErrorReturn { false }
+    }
+
+    override fun isActive(): Boolean {
+        return config.isPostActivated && config.baseUrl.contains("bitbucket") && !config.baseUrl.contains("2.0/")
