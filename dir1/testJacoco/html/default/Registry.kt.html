@@ -9,7 +9,7 @@ import data.buildList
 <span class="fc" id="L9">    private val messages = mutableListOf&lt;Message&gt;()</span>
 
     fun provideGetSummaryUseCases() =
-<span class="fc" id="L12">            config.reportFiles().summaries(config)</span>
+<span class="fc" id="L12">            config.reportFiles().toSummaries(config)</span>
 
     fun providePostStatsUseCase() =
 <span class="fc" id="L15">            PostStatsUseCase(PostStatsUseCase.Datasource.buildList(config))</span>

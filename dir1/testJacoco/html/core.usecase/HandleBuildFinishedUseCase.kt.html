@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HandleBuildFinishedUseCase.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">core.usecase</a> &gt; <span class="el_source">HandleBuildFinishedUseCase.kt</span></div><h1>HandleBuildFinishedUseCase.kt</h1><pre class="source lang-java linenums">package core.usecase
 
+import core.*
 import core.entity.*
-import core.findReportFiles
-import core.isHtmlOrTxt
-import core.isIndexHTML
-import core.isXML
 import java.io.File
 
-<span class="fc" id="L10">class HandleBuildFinishedUseCase(</span>
+<span class="fc" id="L7">class HandleBuildFinishedUseCase(</span>
         private val postStatusUseCase: PostStatusUseCase,
         private val postStatsUseCase: PostStatsUseCase,
         private val getSummaryUseCases: List&lt;GetSummaryUseCase&gt;,
@@ -15,56 +12,44 @@ import java.io.File
         private val messageQueue : MutableList&lt;Message&gt;
 ) {
     fun invoke() {
-<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (config.isPluginActivated) {</span>
-<span class="fc" id="L19">            getSummaryUseCases.postStatuses(postStatusUseCase)</span>
-<span class="fc" id="L20">            getSummaryUseCases.toStats(config).let { postStatsUseCase.invoke(it) }</span>
-<span class="pc" id="L21">            messageQueue.distinct().forEach { println(it.toString()) }</span>
-<span class="fc" id="L22">            config.writeReports()</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">        if (config.isPluginActivated) {</span>
+<span class="fc" id="L16">            getSummaryUseCases.postStatuses(postStatusUseCase)</span>
+<span class="fc" id="L17">            getSummaryUseCases.toStats(config).let { postStatsUseCase.invoke(it) }</span>
+<span class="pc" id="L18">            messageQueue.distinct().forEach { println(it.toString()) }</span>
+<span class="fc" id="L19">            config.buildSummaryReports()</span>
         }
-<span class="fc" id="L24">    }</span>
+<span class="fc" id="L21">    }</span>
 }
 
-fun BuildConfig.writeReports() {
-<span class="fc" id="L28">    val firstDir = reportDirs().firstOrNull()</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">    if (firstDir != null) {</span>
-<span class="fc" id="L30">        val reportFiles = reportDirs().flatMap { it.findReportFiles() }</span>
-<span class="fc bfc" id="L31" title="All 2 branches covered.">        val xmlPairs = reportFiles.filter { it.isXML() }.toNameToPathPairs(firstDir)</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        val htmlPairs = reportFiles.filter { it.isHtmlOrTxt() }.toNameToPathPairs(firstDir)</span>
-<span class="fc" id="L33">        val summaries = reportFiles.summaries(this)</span>
+fun BuildConfig.buildSummaryReports() {
+<span class="fc" id="L25">    val dirs = reportDirs()</span>
+<span class="fc" id="L26">    val artifactsDir = dirs.copyInto(artifactsDir())</span>
+<span class="fc" id="L27">    val files = artifactsDir.findReportFiles()</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">    val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">    val htmlPairs = files.filter { it.isHtmlOrTxt() }.toNameAndPathPairs(artifactsDir)</span>
+<span class="fc" id="L30">    val summaries = files.toSummaries(this)</span>
 
-<span class="fc" id="L35">        File(firstDir, &quot;buildChecks.html&quot;).apply {</span>
-<span class="fc" id="L36">            writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, git))</span>
-<span class="fc" id="L37">            println(InfoMessage(&quot;Browse reports at &quot; + absoluteFile.toURI()))</span>
-<span class="fc" id="L38">        }</span>
+<span class="fc" id="L32">    File(artifactsDir, &quot;buildChecks.html&quot;).apply {</span>
+<span class="fc" id="L33">        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, git))</span>
+<span class="fc" id="L34">        println(InfoMessage(&quot;Browse reports at &quot; + absoluteFile.toURI()))</span>
+<span class="fc" id="L35">    }</span>
 
-<span class="fc" id="L40">        File(firstDir, &quot;buildChecks.csv&quot;).apply {</span>
-<span class="fc" id="L41">            writeText(summaries.toStats(this@writeReports).toString())</span>
-<span class="fc" id="L42">        }</span>
-    }
-<span class="fc" id="L44">}</span>
+<span class="fc" id="L37">    File(artifactsDir, &quot;buildChecks.csv&quot;).apply {</span>
+<span class="fc" id="L38">        writeText(summaries.toStats(this@buildSummaryReports).toString())</span>
+<span class="fc" id="L39">    }</span>
+<span class="fc" id="L40">}</span>
 
-<span class="fc" id="L46">fun List&lt;File&gt;.toNameToPathPairs(relativeRootDir : File) = map {</span>
-<span class="fc bfc" id="L47" title="All 2 branches covered.">    val name = if (it.isIndexHTML()) it.parentFile.relativeTo(relativeRootDir).path else it.name</span>
-<span class="fc" id="L48">    name to it.relativeTo(relativeRootDir)</span>
-<span class="fc" id="L49">}</span>
 
-<span class="pc bpc" id="L51" title="2 of 4 branches missed.">fun List&lt;GetSummaryUseCase&gt;.toMessages() = filter { it.value() != null }.map { s -&gt;</span>
-<span class="pc bpc" id="L52" title="1 of 2 branches missed.">    s.value()?.let {</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (s.isSuccessful()) InfoMessage(it)</span>
-<span class="pc" id="L54">        else ErrorMessage(it)</span>
-<span class="fc" id="L55">    }</span>
-<span class="fc" id="L56">}</span>
-
-<span class="fc" id="L58">fun htmlReport(messages: List&lt;Message?&gt;, htmlPairs: List&lt;Pair&lt;String, File&gt;&gt;, xmlPairs: List&lt;Pair&lt;String, File&gt;&gt;, git: GitConfig) = &quot;&quot;&quot;</span>
+<span class="fc" id="L43">fun htmlReport(messages: List&lt;Message?&gt;, htmlPairs: List&lt;Pair&lt;String, File&gt;&gt;, xmlPairs: List&lt;Pair&lt;String, File&gt;&gt;, git: GitConfig) = &quot;&quot;&quot;</span>
 &lt;html&gt;
 &lt;style&gt;body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}&lt;/style&gt;
 &lt;body&gt;
-&lt;h1&gt;Build Checks&lt;/h1&gt;
-<span class="fc" id="L63">${messages.joinToString(&quot;\n&quot;) { &quot;$it&lt;br/&gt;&quot; }}</span>
-<span class="fc" id="L64">&lt;ul&gt;${htmlPairs.joinToString(&quot;\n&quot;) { &quot;&lt;li&gt;&lt;a href=\&quot;${it.second}\&quot;&gt;${it.first}&lt;/a&gt;&lt;/li&gt;&quot; }}&lt;/ul&gt;</span>
-<span class="fc" id="L65">From ${git.summary()}&lt;br/&gt;</span>
-<span class="fc" id="L66">${xmlPairs.map { &quot;${it.second}&quot; }.joinToString(&quot;, &quot;)}</span>
+&lt;h1&gt;Build Checks Summary Report&lt;/h1&gt;
+<span class="fc" id="L48">${messages.joinToString(&quot;\n&quot;) { &quot;$it&lt;br/&gt;&quot; }}</span>
+<span class="fc" id="L49">&lt;ul&gt;${htmlPairs.joinToString(&quot;\n&quot;) { &quot;&lt;li&gt;&lt;a href=\&quot;${it.second}\&quot;&gt;${it.first}&lt;/a&gt;&lt;/li&gt;&quot; }}&lt;/ul&gt;</span>
+<span class="fc" id="L50">From ${git.summary()}&lt;br/&gt;</span>
+<span class="fc" id="L51">${xmlPairs.map { &quot;${it.second}&quot; }.joinToString(&quot;, &quot;)}</span>
 &lt;/body&gt;
 &lt;/html&gt;
-<span class="fc" id="L69">&quot;&quot;&quot;.trimIndent()</span>
+<span class="fc" id="L54">&quot;&quot;&quot;.trimIndent()</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

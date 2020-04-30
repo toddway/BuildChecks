@@ -15,7 +15,7 @@ import java.text.NumberFormat
 
     override fun value(): String? {
 <span class="pc bpc" id="L17" title="1 of 2 branches missed.">        return percent()?.let { percent -&gt;</span>
-<span class="fc" id="L18">            val count = NumberFormat.getIntegerInstance().format(map.countsOf(&quot;LINE + BRANCH&quot;).total())</span>
+<span class="fc" id="L18">            val count = NumberFormat.getIntegerInstance().format(map.countsOf(LINE_PLUS_BRANCH).total())</span>
 <span class="fc" id="L19">            val prefix = &quot;$percent% coverage ($count lines+branches)&quot;</span>
 <span class="pc bpc" id="L20" title="3 of 4 branches missed.">            minCoveragePercent?.let { &quot;$prefix, min is $it%&quot; } ?: prefix</span>
         }
@@ -23,7 +23,7 @@ import java.text.NumberFormat
 
     fun percent(): Double? {
 <span class="pc bpc" id="L25" title="1 of 2 branches missed.">        return if (documents.isEmpty()) null else {</span>
-<span class="fc" id="L26">            map.countsOf(&quot;LINE + BRANCH&quot;)</span>
+<span class="fc" id="L26">            map.countsOf(LINE_PLUS_BRANCH)</span>
 <span class="fc" id="L27">                    .percentCovered()</span>
 <span class="fc" id="L28">                    .let {</span>
 <span class="fc" id="L29">                        val rounded = it.round(2)</span>
@@ -32,9 +32,9 @@ import java.text.NumberFormat
         }
     }
 
-    fun lines(): Int? {
+    fun linesPlusBranches(): Int? {
 <span class="pc bpc" id="L36" title="1 of 2 branches missed.">        return if (documents.isEmpty()) null else {</span>
-<span class="fc" id="L37">            map.countsOf(&quot;LINE + BRANCH&quot;).total()</span>
+<span class="fc" id="L37">            map.countsOf(LINE_PLUS_BRANCH).total()</span>
         }
     }
 }
@@ -53,4 +53,5 @@ fun List&lt;Document&gt;.buildCoverage(minCoveragePercent: Double?) : GetCoverag
 <span class="fc" id="L53">    return GetCoverageSummaryUseCase(this, CoverageMultiMapper(mappers), minCoveragePercent)</span>
 }
 
+const val LINE_PLUS_BRANCH = &quot;LINE + BRANCH&quot;
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuildConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">core.entity</a> &gt; <span class="el_source">BuildConfig.kt</span></div><h1>BuildConfig.kt</h1><pre class="source lang-java linenums">package core.entity
 
 import core.findReportFiles
+import core.firstDir
 import core.round
 import core.toFileList
 import java.io.File
 import java.util.*
 
+@Suppress(&quot;ComplexInterface&quot;)
 interface BuildConfig {
     var buildUrl : String
     var reports : String
@@ -19,38 +21,42 @@ interface BuildConfig {
     var isPluginActivated: Boolean
     var isSuccess: Boolean
     var git : GitConfig
-
     var maxLintViolations : Int?
     var minCoveragePercent : Double?
     var maxDuration : Double?
     var log: Log?
+    var artifactsPath : String
+    var artifactsBranch : String
 
-<span class="fc" id="L28">    fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)</span>
-<span class="fc" id="L29">    fun startedMessage() = &quot;gradle $taskName - in progress&quot;</span>
-<span class="fc" id="L30">    fun completedMessage() = &quot;${duration()}s for gradle $taskName&quot;</span>
-<span class="pc bpc" id="L31" title="1 of 4 branches missed.">    fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted</span>
-<span class="fc" id="L32">    fun reportDirs() = reports.toFileList(log)</span>
-<span class="fc" id="L33">    fun reportFiles() : List&lt;File&gt; = reportDirs().flatMap { it.findReportFiles() }</span>
+<span class="fc" id="L31">    fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)</span>
+<span class="fc" id="L32">    fun startedMessage() = &quot;gradle $taskName - in progress&quot;</span>
+<span class="fc" id="L33">    fun completedMessage() = &quot;${duration()}s for gradle $taskName&quot;</span>
+<span class="pc bpc" id="L34" title="1 of 4 branches missed.">    fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted</span>
+<span class="fc" id="L35">    fun reportDirs() = reports.toFileList(log)</span>
+<span class="fc" id="L36">    fun reportFiles() : List&lt;File&gt; = reportDirs().flatMap { it.findReportFiles() }</span>
+<span class="fc bfc" id="L37" title="All 4 branches covered.">    fun artifactsDir() = if (artifactsPath.isNotBlank()) File(artifactsPath) else File(reportDirs().firstDir(), &quot;buildChecks&quot;)</span>
 }
 
-//gradle config cannot be a data class
-<span class="fc" id="L37">open class BuildConfigDefault : BuildConfig {</span>
-<span class="fc" id="L38">    override var reports: String = &quot;&quot;</span>
-<span class="fc" id="L39">    override var log: Log? = null</span>
-<span class="pc" id="L40">    override var maxDuration: Double? = null</span>
-<span class="fc" id="L41">    override var git: GitConfig = GitConfigDefault()</span>
-<span class="fc" id="L42">    override var allowUncommittedChanges: Boolean = true</span>
-<span class="fc" id="L43">    override var isSuccess: Boolean = true</span>
-<span class="fc" id="L44">    override var maxLintViolations: Int? = null</span>
-<span class="fc" id="L45">    override var minCoveragePercent: Double? = null</span>
-<span class="pc" id="L46">    override var buildUrl  = &quot;&quot;</span>
-<span class="fc" id="L47">    override var baseUrl  = &quot;&quot;</span>
-<span class="fc" id="L48">    override var authorization  = &quot;&quot;</span>
-<span class="fc" id="L49">    override var buildStartTime = Date()</span>
-<span class="fc" id="L50">    override var statsBaseUrl = &quot;&quot;</span>
-<span class="fc" id="L51">    override var taskName = &quot;default&quot;</span>
-<span class="fc" id="L52">    override var isPostActivated = false</span>
-<span class="fc" id="L53">    override var isPluginActivated = false</span>
+//gradle config cannot be a data class, must be open
+<span class="fc" id="L41">open class BuildConfigDefault : BuildConfig {</span>
+<span class="fc" id="L42">    override var reports: String = &quot;&quot;</span>
+<span class="fc" id="L43">    override var log: Log? = null</span>
+<span class="pc" id="L44">    override var maxDuration: Double? = null</span>
+<span class="fc" id="L45">    override var git: GitConfig = GitConfigDefault()</span>
+<span class="fc" id="L46">    override var allowUncommittedChanges: Boolean = true</span>
+<span class="fc" id="L47">    override var isSuccess: Boolean = true</span>
+<span class="fc" id="L48">    override var maxLintViolations: Int? = null</span>
+<span class="fc" id="L49">    override var minCoveragePercent: Double? = null</span>
+<span class="pc" id="L50">    override var buildUrl  = &quot;&quot;</span>
+<span class="fc" id="L51">    override var baseUrl  = &quot;&quot;</span>
+<span class="fc" id="L52">    override var authorization  = &quot;&quot;</span>
+<span class="fc" id="L53">    override var buildStartTime = Date()</span>
+<span class="fc" id="L54">    override var statsBaseUrl = &quot;&quot;</span>
+<span class="fc" id="L55">    override var taskName = &quot;default&quot;</span>
+<span class="fc" id="L56">    override var isPostActivated = false</span>
+<span class="fc" id="L57">    override var isPluginActivated = false</span>
+<span class="fc" id="L58">    override var artifactsPath : String = &quot;&quot;</span>
+<span class="pc" id="L59">    override var artifactsBranch : String = &quot;artifacts&quot;</span>
 }
 
 

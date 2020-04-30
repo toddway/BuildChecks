@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.371s</div>
+<div class="counter">0.384s</div>
 <p>duration</p>
 </div>
 </td>
@@ -63,9 +63,6 @@
 <li>
 <a href="#tab0">Tests</a>
 </li>
-<li>
-<a href="#tab1">Standard output</a>
-</li>
 </ul>
 <div id="tab0" class="tab">
 <h2>Tests</h2>
@@ -79,7 +76,7 @@
 </thead>
 <tr>
 <td class="success">when post is activated and there are all changes are committed, then show a message</td>
-<td class="success">0.056s</td>
+<td class="success">0.047s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
@@ -89,158 +86,20 @@
 </tr>
 <tr>
 <td class="success">when post is activated and there are uncommitted changes, then remove remote datasources and show a message</td>
-<td class="success">0.052s</td>
+<td class="success">0.047s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">when post is called, pass parameters to datasource</td>
-<td class="success">0.130s</td>
+<td class="success">0.141s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">when post is not activated, then remove remote datasources</td>
-<td class="success">0.086s</td>
+<td class="success">0.102s</td>
 <td class="success">passed</td>
 </tr>
 </table>
-</div>
-<div id="tab1" class="tab">
-<h2>Standard output</h2>
-<span class="code">
-<pre>git rev-parse HEAD exit value: 0 
-9ea65a0070dd0fad0b882c9657122ea0a844bcd4
-
-git rev-parse --short HEAD exit value: 0 
-9ea65a0
-
-git show -s --format=%ct exit value: 0 
-1588014385
-
-git symbolic-ref -q --short HEAD exit value: 0 
-master
-
-git status -s exit value: 0 
- M build.gradle
- M gradle/buildChecks.gradle
- M libs/buildChecks.jar
- M src/main/kotlin/core/Documents.kt
- M src/main/kotlin/core/Utils.kt
- M src/main/kotlin/core/entity/GitConfig.kt
- M src/main/kotlin/core/entity/Stats.kt
-AM src/main/kotlin/core/usecase/CoverageMultiMapper.kt
- M src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt
- M src/main/kotlin/core/usecase/GetSummaryUseCase.kt
- M src/main/kotlin/core/usecase/HandleBuildFinishedUseCase.kt
- M src/main/kotlin/data/BuildPostStatusDatasources.kt
-AM src/main/kotlin/gradle/PushArtifacts.kt
- M src/test/kotlin/unit/BuildConfigTests.kt
- M src/test/kotlin/unit/GetLintSummaryUseCaseTests.kt
- M src/test/kotlin/unit/GetSummaryUseCaseTests.kt
-?? projectFilesBackup/
-?? src/test/testFiles/buildChecks.csv
-?? src/test/testFiles/buildChecks.html
-
-git rev-parse HEAD exit value: 0 
-9ea65a0070dd0fad0b882c9657122ea0a844bcd4
-
-git rev-parse --short HEAD exit value: 0 
-9ea65a0
-
-git show -s --format=%ct exit value: 0 
-1588014385
-
-git symbolic-ref -q --short HEAD exit value: 0 
-master
-
-git status -s exit value: 0 
- M build.gradle
- M gradle/buildChecks.gradle
- M libs/buildChecks.jar
- M src/main/kotlin/core/Documents.kt
- M src/main/kotlin/core/Utils.kt
- M src/main/kotlin/core/entity/GitConfig.kt
- M src/main/kotlin/core/entity/Stats.kt
-AM src/main/kotlin/core/usecase/CoverageMultiMapper.kt
- M src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt
- M src/main/kotlin/core/usecase/GetSummaryUseCase.kt
- M src/main/kotlin/core/usecase/HandleBuildFinishedUseCase.kt
- M src/main/kotlin/data/BuildPostStatusDatasources.kt
-AM src/main/kotlin/gradle/PushArtifacts.kt
- M src/test/kotlin/unit/BuildConfigTests.kt
- M src/test/kotlin/unit/GetLintSummaryUseCaseTests.kt
- M src/test/kotlin/unit/GetSummaryUseCaseTests.kt
-?? projectFilesBackup/
-?? src/test/testFiles/buildChecks.csv
-?? src/test/testFiles/buildChecks.html
-
-git rev-parse HEAD exit value: 0 
-9ea65a0070dd0fad0b882c9657122ea0a844bcd4
-
-git rev-parse --short HEAD exit value: 0 
-9ea65a0
-
-git show -s --format=%ct exit value: 0 
-1588014385
-
-git symbolic-ref -q --short HEAD exit value: 0 
-master
-
-git status -s exit value: 0 
- M build.gradle
- M gradle/buildChecks.gradle
- M libs/buildChecks.jar
- M src/main/kotlin/core/Documents.kt
- M src/main/kotlin/core/Utils.kt
- M src/main/kotlin/core/entity/GitConfig.kt
- M src/main/kotlin/core/entity/Stats.kt
-AM src/main/kotlin/core/usecase/CoverageMultiMapper.kt
- M src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt
- M src/main/kotlin/core/usecase/GetSummaryUseCase.kt
- M src/main/kotlin/core/usecase/HandleBuildFinishedUseCase.kt
- M src/main/kotlin/data/BuildPostStatusDatasources.kt
-AM src/main/kotlin/gradle/PushArtifacts.kt
- M src/test/kotlin/unit/BuildConfigTests.kt
- M src/test/kotlin/unit/GetLintSummaryUseCaseTests.kt
- M src/test/kotlin/unit/GetSummaryUseCaseTests.kt
-?? projectFilesBackup/
-?? src/test/testFiles/buildChecks.csv
-?? src/test/testFiles/buildChecks.html
-
-git rev-parse HEAD exit value: 0 
-9ea65a0070dd0fad0b882c9657122ea0a844bcd4
-
-git rev-parse --short HEAD exit value: 0 
-9ea65a0
-
-git show -s --format=%ct exit value: 0 
-1588014385
-
-git symbolic-ref -q --short HEAD exit value: 0 
-master
-
-git status -s exit value: 0 
- M build.gradle
- M gradle/buildChecks.gradle
- M libs/buildChecks.jar
- M src/main/kotlin/core/Documents.kt
- M src/main/kotlin/core/Utils.kt
- M src/main/kotlin/core/entity/GitConfig.kt
- M src/main/kotlin/core/entity/Stats.kt
-AM src/main/kotlin/core/usecase/CoverageMultiMapper.kt
- M src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt
- M src/main/kotlin/core/usecase/GetSummaryUseCase.kt
- M src/main/kotlin/core/usecase/HandleBuildFinishedUseCase.kt
- M src/main/kotlin/data/BuildPostStatusDatasources.kt
-AM src/main/kotlin/gradle/PushArtifacts.kt
- M src/test/kotlin/unit/BuildConfigTests.kt
- M src/test/kotlin/unit/GetLintSummaryUseCaseTests.kt
- M src/test/kotlin/unit/GetSummaryUseCaseTests.kt
-?? projectFilesBackup/
-?? src/test/testFiles/buildChecks.csv
-?? src/test/testFiles/buildChecks.html
-
-</pre>
-</span>
 </div>
 </div>
 <div id="footer">
@@ -250,7 +109,7 @@ AM src/main/kotlin/gradle/PushArtifacts.kt
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 5.4.1</a> at Apr 29, 2020 8:15:47 AM</p>
+<a href="http://www.gradle.org">Gradle 5.4.1</a> at Apr 30, 2020 8:58:39 AM</p>
 </div>
 </div>
 </body>

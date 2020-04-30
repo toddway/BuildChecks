@@ -10,14 +10,11 @@ import java.io.File
 ) {
     fun invoke() {
 <span class="fc bfc" id="L12" title="All 2 branches covered.">        if (config.isPluginActivated) {</span>
-<span class="fc" id="L13">            config.reportDirs().forEach {</span>
-<span class="nc" id="L14">                File(it, &quot;buildChecks.html&quot;).delete()</span>
-<span class="nc" id="L15">                File(it, &quot;README.md&quot;).delete()</span>
-<span class="nc" id="L16">            }</span>
-<span class="fc" id="L17">            postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), &quot;build&quot;)</span>
+<span class="fc" id="L13">            config.artifactsDir().deleteRecursively()</span>
+<span class="fc" id="L14">            postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), &quot;build&quot;)</span>
         } else {
-<span class="fc" id="L19">            config.log = null</span>
+<span class="fc" id="L16">            config.log = null</span>
         }
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L18">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -45,62 +45,24 @@ h3 {
 
 <ul>
 <li>
-number of kt files: 33
+number of kt files: 35
 </li>
 <li>
 number of packages: 6
 </li>
 <li>
-number of classes: 46
+number of classes: 47
 </li>
 <li>
-number of functions: 142
+number of functions: 152
 </li>
 <li>
-number of properties: 112
+number of properties: 120
 </li>
 </ul>
 
 <h2>Findings</h2>
 <h3>complexity</h3>
-<div class="rule-container">
-<span class="rule">
-LongMethod
-</span>
-<span class="description">
-One method should have one responsibility. Long methods tend to handle many things at once. Prefer smaller methods to make them easier to understand.
-</span>
-</div>
-<ul>
-<li>
-<span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:19:1
-</span>
-<br />
-<span class="message">
-The function runCommand is too long. The maximum length is 20.
-</span>
-</li>
-</ul>
-<div class="rule-container">
-<span class="rule">
-ComplexInterface
-</span>
-<span class="description">
-An interface contains too many functions and properties. Large classes tend to handle many things at once. An interface should have one responsibility. Split up large interfaces into smaller ones that are easier to understand.
-</span>
-</div>
-<ul>
-<li>
-<span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/entity/BuildConfig.kt:9:1
-</span>
-<br />
-<span class="message">
-The interface BuildConfig is too complex. Consider splitting it up.
-</span>
-</li>
-</ul>
 <div class="rule-container">
 <span class="rule">
 StringLiteralDuplication
@@ -113,15 +75,6 @@ Multiple occurrences of the same string literal within a single file detected.
 <li>
 <span class="location">
 /Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/GetLintSummaryUseCase.kt:34:35
-</span>
-<br />
-<span class="message">
-Multiple occurrences of the same string literal within a single file detected.
-</span>
-</li>
-<li>
-<span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/GetCoverageSummaryUseCase.kt:18:79
 </span>
 <br />
 <span class="message">
@@ -141,7 +94,7 @@ Using a spread operator causes a full copy of the array to be created before cal
 <ul>
 <li>
 <span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:25:34
+/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:18:34
 </span>
 <br />
 <span class="message">
