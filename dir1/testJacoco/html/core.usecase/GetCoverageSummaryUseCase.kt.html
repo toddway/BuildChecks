@@ -14,7 +14,7 @@ import java.text.NumberFormat
 <span class="fc" id="L14">    override fun key(): String = &quot;test&quot;</span>
 
     override fun value(): String? {
-<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        return percent()?.let { percent -&gt;</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        return percent()?.let { percent -&gt;</span>
 <span class="fc" id="L18">            val count = NumberFormat.getIntegerInstance().format(map.countsOf(LINE_PLUS_BRANCH).total())</span>
 <span class="fc" id="L19">            val prefix = &quot;$percent% coverage ($count lines+branches)&quot;</span>
 <span class="pc bpc" id="L20" title="3 of 4 branches missed.">            minCoveragePercent?.let { &quot;$prefix, min is $it%&quot; } ?: prefix</span>
@@ -22,7 +22,7 @@ import java.text.NumberFormat
     }
 
     fun percent(): Double? {
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        return if (documents.isEmpty()) null else {</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        return if (documents.isEmpty()) null else {</span>
 <span class="fc" id="L26">            map.countsOf(LINE_PLUS_BRANCH)</span>
 <span class="fc" id="L27">                    .percentCovered()</span>
 <span class="fc" id="L28">                    .let {</span>
@@ -33,7 +33,7 @@ import java.text.NumberFormat
     }
 
     fun linesPlusBranches(): Int? {
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        return if (documents.isEmpty()) null else {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        return if (documents.isEmpty()) null else {</span>
 <span class="fc" id="L37">            map.countsOf(LINE_PLUS_BRANCH).total()</span>
         }
     }

@@ -12,12 +12,12 @@ import org.w3c.dom.Node
 <span class="fc" id="L12">    override fun key(): String = &quot;lint&quot;</span>
 <span class="fc" id="L13">    override fun value(): String? = violationMap.toViolationSummary(maxViolations, documents.size)</span>
 <span class="fc" id="L14">    private val violationMap: Map&lt;String?, List&lt;Node&gt;&gt;? by lazy { documents.toViolationMap() }</span>
-<span class="pc bpc" id="L15" title="1 of 2 branches missed.">    fun asTotal(): Int? = violationMap?.entryChildrenSum()</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">    fun asTotal(): Int? = violationMap?.entryChildrenSum()</span>
     companion object
 }
 
 fun Map&lt;String?, List&lt;Node&gt;&gt;?.toViolationSummary(maxViolations: Int?, numDocuments : Int) : String? {
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">    return this?.let {</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">    return this?.let {</span>
 <span class="pc bpc" id="L21" title="1 of 2 branches missed.">        val violationTypes = flatMap { e -&gt; listOf(&quot;${e.value.count()} ${e.key?.toLowerCase()}&quot;) }.toMutableList()</span>
 <span class="fc" id="L22">        val sum = entryChildrenSum()</span>
 <span class="fc" id="L23">        var summary = &quot;&quot;</span>
@@ -30,7 +30,7 @@ fun Map&lt;String?, List&lt;Node&gt;&gt;?.toViolationSummary(maxViolations: Int?
 }
 
 fun List&lt;Document&gt;.toViolationMap(): Map&lt;String?, List&lt;Node&gt;&gt;? {
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">    return if (isEmpty()) null</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">    return if (isEmpty()) null</span>
 <span class="fc" id="L34">    else children(listOf(&quot;issue&quot;, &quot;error&quot;, &quot;duplication&quot;, &quot;violation&quot;)).groupBy { it.deriveViolationKey() }</span>
 }
 

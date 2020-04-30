@@ -41,7 +41,7 @@ import java.io.File
 <span class="fc" id="L41">    name to it.relativeTo(relativeRootDir)</span>
 <span class="fc" id="L42">}</span>
 
-<span class="fc bfc" id="L44" title="All 4 branches covered.">fun File.isHtmlOrTxt() = name.toLowerCase().endsWith(&quot;.html&quot;) || name.toLowerCase().endsWith(&quot;.txt&quot;)</span>
+<span class="pc bpc" id="L44" title="1 of 8 branches missed.">fun File.isReadableFormat() : Boolean = name.toLowerCase().run { endsWith(&quot;.html&quot;) || endsWith(&quot;.txt&quot;) || endsWith(&quot;.text&quot;) || endsWith(&quot;.md&quot;)}</span>
 <span class="fc" id="L45">fun File.isXML() = name.toLowerCase().endsWith(&quot;.xml&quot;)</span>
 <span class="fc" id="L46">fun File.isIndexHTML() = name.toLowerCase() == &quot;index.html&quot;</span>
 <span class="pc bpc" id="L47" title="1 of 4 branches missed.">fun File.containsIndexHTML() = listFiles()?.any { it.isIndexHTML() }  ?: false</span>

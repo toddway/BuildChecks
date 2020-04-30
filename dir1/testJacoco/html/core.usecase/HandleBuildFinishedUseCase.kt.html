@@ -26,15 +26,15 @@ fun BuildConfig.buildSummaryReports() {
 <span class="fc" id="L26">    val artifactsDir = dirs.copyInto(artifactsDir())</span>
 <span class="fc" id="L27">    val files = artifactsDir.findReportFiles()</span>
 <span class="fc bfc" id="L28" title="All 2 branches covered.">    val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">    val htmlPairs = files.filter { it.isHtmlOrTxt() }.toNameAndPathPairs(artifactsDir)</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">    val htmlPairs = files.filter { it.isReadableFormat() }.toNameAndPathPairs(artifactsDir)</span>
 <span class="fc" id="L30">    val summaries = files.toSummaries(this)</span>
 
-<span class="fc" id="L32">    File(artifactsDir, &quot;buildChecks.html&quot;).apply {</span>
+<span class="fc" id="L32">    File(artifactsDir, &quot;index.html&quot;).apply {</span>
 <span class="fc" id="L33">        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, git))</span>
 <span class="fc" id="L34">        println(InfoMessage(&quot;Browse reports at &quot; + absoluteFile.toURI()))</span>
 <span class="fc" id="L35">    }</span>
 
-<span class="fc" id="L37">    File(artifactsDir, &quot;buildChecks.csv&quot;).apply {</span>
+<span class="fc" id="L37">    File(artifactsDir, &quot;stats.csv&quot;).apply {</span>
 <span class="fc" id="L38">        writeText(summaries.toStats(this@buildSummaryReports).toString())</span>
 <span class="fc" id="L39">    }</span>
 <span class="fc" id="L40">}</span>

@@ -33,10 +33,10 @@ fun List&lt;GetSummaryUseCase&gt;.toStats(config: BuildConfig) : Stats {
 <span class="pc bpc" id="L33" title="1 of 4 branches missed.">    val lintUseCase = find { it is GetLintSummaryUseCase } as GetLintSummaryUseCase</span>
 <span class="pc bpc" id="L34" title="1 of 4 branches missed.">    val coverageUseCase = find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase</span>
 <span class="fc" id="L35">    return Stats(</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">            coverageUseCase.percent() ?: 0.0,</span>
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            lintUseCase.asTotal() ?: 0,</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            coverageUseCase.percent() ?: 0.0,</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            lintUseCase.asTotal() ?: 0,</span>
 <span class="fc" id="L38">            config.duration(),</span>
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            coverageUseCase.linesPlusBranches() ?: 0,</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            coverageUseCase.linesPlusBranches() ?: 0,</span>
 <span class="fc" id="L40">            config.git.commitDate,</span>
 <span class="fc" id="L41">            config.git.commitHash,</span>
 <span class="fc" id="L42">            config.git.commitBranch</span>
@@ -44,7 +44,7 @@ fun List&lt;GetSummaryUseCase&gt;.toStats(config: BuildConfig) : Stats {
 }
 
 
-<span class="pc bpc" id="L47" title="2 of 4 branches missed.">fun List&lt;GetSummaryUseCase&gt;.toMessages() = filter { it.value() != null }.map { s -&gt;</span>
+<span class="fc bfc" id="L47" title="All 4 branches covered.">fun List&lt;GetSummaryUseCase&gt;.toMessages() = filter { it.value() != null }.map { s -&gt;</span>
 <span class="pc bpc" id="L48" title="1 of 2 branches missed.">    s.value()?.let {</span>
 <span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (s.isSuccessful()) InfoMessage(it)</span>
 <span class="pc" id="L50">        else ErrorMessage(it)</span>
