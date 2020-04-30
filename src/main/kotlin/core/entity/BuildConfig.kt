@@ -1,11 +1,13 @@
 package core.entity
 
 import core.findReportFiles
+import core.firstDir
 import core.round
 import core.toFileList
 import java.io.File
 import java.util.*
 
+@Suppress("ComplexInterface")
 interface BuildConfig {
     var buildUrl : String
     var reports : String
@@ -19,11 +21,12 @@ interface BuildConfig {
     var isPluginActivated: Boolean
     var isSuccess: Boolean
     var git : GitConfig
-
     var maxLintViolations : Int?
     var minCoveragePercent : Double?
     var maxDuration : Double?
     var log: Log?
+    var artifactsPath : String
+    var artifactsBranch : String
 
     fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)
     fun startedMessage() = "gradle $taskName - in progress"
@@ -31,9 +34,10 @@ interface BuildConfig {
     fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted
     fun reportDirs() = reports.toFileList(log)
     fun reportFiles() : List<File> = reportDirs().flatMap { it.findReportFiles() }
+    fun artifactsDir() = if (artifactsPath.isNotBlank()) File(artifactsPath) else File(reportDirs().firstDir(), "buildChecks")
 }
 
-//gradle config cannot be a data class
+//gradle config cannot be a data class, must be open
 open class BuildConfigDefault : BuildConfig {
     override var reports: String = ""
     override var log: Log? = null
@@ -51,6 +55,8 @@ open class BuildConfigDefault : BuildConfig {
     override var taskName = "default"
     override var isPostActivated = false
     override var isPluginActivated = false
+    override var artifactsPath : String = ""
+    override var artifactsBranch : String = "artifacts"
 }
 
 

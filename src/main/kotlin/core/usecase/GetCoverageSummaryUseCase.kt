@@ -15,7 +15,7 @@ open class GetCoverageSummaryUseCase(
 
     override fun value(): String? {
         return percent()?.let { percent ->
-            val count = NumberFormat.getIntegerInstance().format(map.countsOf("LINE + BRANCH").total())
+            val count = NumberFormat.getIntegerInstance().format(map.countsOf(LINE_PLUS_BRANCH).total())
             val prefix = "$percent% coverage ($count lines+branches)"
             minCoveragePercent?.let { "$prefix, min is $it%" } ?: prefix
         }
@@ -23,7 +23,7 @@ open class GetCoverageSummaryUseCase(
 
     fun percent(): Double? {
         return if (documents.isEmpty()) null else {
-            map.countsOf("LINE + BRANCH")
+            map.countsOf(LINE_PLUS_BRANCH)
                     .percentCovered()
                     .let {
                         val rounded = it.round(2)
@@ -32,9 +32,9 @@ open class GetCoverageSummaryUseCase(
         }
     }
 
-    fun lines(): Int? {
+    fun linesPlusBranches(): Int? {
         return if (documents.isEmpty()) null else {
-            map.countsOf("LINE").total()
+            map.countsOf(LINE_PLUS_BRANCH).total()
         }
     }
 }
@@ -47,3 +47,10 @@ fun List<Document>.buildJacoco(minCoveragePercent: Double?) : GetCoverageSummary
     return GetCoverageSummaryUseCase(this, CoverageJacocoMapper(), minCoveragePercent)
 }
 
+
+fun List<Document>.buildCoverage(minCoveragePercent: Double?) : GetCoverageSummaryUseCase {
+    val mappers = listOf(CoverageJacocoMapper(), CoverageCoberturaMapper())
+    return GetCoverageSummaryUseCase(this, CoverageMultiMapper(mappers), minCoveragePercent)
+}
+
+const val LINE_PLUS_BRANCH = "LINE + BRANCH"

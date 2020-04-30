@@ -1,8 +1,6 @@
 package core.usecase
 
-import core.entity.BuildConfig
-import core.entity.BuildStatus
-import core.entity.Stats
+import core.entity.*
 import core.toXmlDocuments
 import java.io.File
 
@@ -13,7 +11,7 @@ interface GetSummaryUseCase {
     companion object
 }
 
-fun List<GetSummaryUseCase>.postAll(postStatusUseCase: PostStatusUseCase) {
+fun List<GetSummaryUseCase>.postStatuses(postStatusUseCase: PostStatusUseCase) {
     forEach { summary ->
         summary.value()?.let {
             val result = if (summary.isSuccessful()) BuildStatus.SUCCESS else BuildStatus.FAILURE
@@ -22,25 +20,33 @@ fun List<GetSummaryUseCase>.postAll(postStatusUseCase: PostStatusUseCase) {
     }
 }
 
-fun List<File>.summaries(config : BuildConfig) : List<GetSummaryUseCase> {
+fun List<File>.toSummaries(config : BuildConfig) : List<GetSummaryUseCase> {
+    val xml = toXmlDocuments()
     return listOf(
             GetDurationSummaryUseCase(config),
-            toXmlDocuments().buildCobertura(config.minCoveragePercent),
-            toXmlDocuments().buildJacoco(config.minCoveragePercent),
-            toXmlDocuments().buildLint(config.maxLintViolations)
+            xml.buildCoverage(config.minCoveragePercent),
+            xml.buildLint(config.maxLintViolations)
     )
 }
 
-fun BuildConfig.stats(summaries : List<GetSummaryUseCase>) : Stats {
-    val lintUseCase = summaries.find { it is GetLintSummaryUseCase } as GetLintSummaryUseCase
-    val coverageUseCase = summaries.find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase
+fun List<GetSummaryUseCase>.toStats(config: BuildConfig) : Stats {
+    val lintUseCase = find { it is GetLintSummaryUseCase } as GetLintSummaryUseCase
+    val coverageUseCase = find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase
     return Stats(
             coverageUseCase.percent() ?: 0.0,
             lintUseCase.asTotal() ?: 0,
-            duration(),
-            coverageUseCase.lines() ?: 0,
-            git.commitDate,
-            git.commitHash,
-            git.commitBranch
+            config.duration(),
+            coverageUseCase.linesPlusBranches() ?: 0,
+            config.git.commitDate,
+            config.git.commitHash,
+            config.git.commitBranch
     )
+}
+
+
+fun List<GetSummaryUseCase>.toMessages() = filter { it.value() != null }.map { s ->
+    s.value()?.let {
+        if (s.isSuccessful()) InfoMessage(it)
+        else ErrorMessage(it)
+    }
 }

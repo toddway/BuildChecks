@@ -10,8 +10,8 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
-        classpath "com.toddway:buildChecks:1.11"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.11.0"
+        classpath "com.toddway:buildchecks:2.0"
 
         //these are here because they're dependencies of the buildChecks.jar file
         classpath 'io.reactivex.rxjava2:rxjava:2.1.14'

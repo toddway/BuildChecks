@@ -10,10 +10,7 @@ class HandleBuildStartedUseCase(
 ) {
     fun invoke() {
         if (config.isPluginActivated) {
-            config.reportDirs().forEach {
-                File(it, "buildChecks.html").delete()
-                File(it, "README.md").delete()
-            }
+            config.artifactsDir().deleteRecursively()
             postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), "build")
         } else {
             config.log = null

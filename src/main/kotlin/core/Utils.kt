@@ -1,12 +1,10 @@
 package core
 
-import core.entity.ErrorMessage
-import core.entity.InfoMessage
-import core.entity.Log
 import java.io.File
 import java.io.IOException
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
 const val THOUSAND = 1000.0
 const val HUNDRED = 100
@@ -17,8 +15,7 @@ fun Double.round(scale : Int) =
 
 fun String.runCommand(workingDir: File): String? {
     return try {
-        val parts = this.split("\\s".toRegex())
-        val proc = ProcessBuilder(*parts.toTypedArray())
+        val proc = ProcessBuilder(*toCommandArgs())
                 .directory(workingDir)
                 .redirectOutput(ProcessBuilder.Redirect.PIPE)
                 .redirectError(ProcessBuilder.Redirect.PIPE)
@@ -27,7 +24,10 @@ fun String.runCommand(workingDir: File): String? {
         proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)
         val v = proc.inputStream.bufferedReader().readText()
         proc.inputStream.bufferedReader().close()
-        //println("${this} exit value: ${proc.exitValue()}")
+        val e = proc.errorStream.bufferedReader().readText()
+        proc.errorStream.bufferedReader().close()
+        //println("${this} exit value: ${proc.exitValue()} $e")
+        //println(v)
         v
     } catch(e: IOException) {
         e.printStackTrace()
@@ -35,23 +35,14 @@ fun String.runCommand(workingDir: File): String? {
     }
 }
 
-fun String.run() = runCommand(File("."))?.trim()
-
-fun String.toFileList(log: Log? = null): List<File> {
-    return split(",")
-            .filter { it.trim().isNotEmpty() }
-            .map {
-                val f = File(it.trim())
-                log?.let { log ->
-                    if (f.exists())
-                        log.info(InfoMessage("BuildChecks found: ${f.absolutePath}").toString())
-                    else
-                        log.error(ErrorMessage("BuildChecks could not find: ${f.absolutePath}").toString())
-                }
-                f
-            }
-            .filter { it.exists() }
+fun String.toCommandArgs() : Array<String> {
+    val parts = mutableListOf<String>()
+    val m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(this)
+    while (m.find()) parts.add(m.group(1))
+    return parts.toTypedArray()
 }
+
+fun String.run() = runCommand(File("."))?.trim()
 
 fun Number.isNotGreaterThan(number: Number?): Boolean {
     if (number == null) return true
@@ -68,9 +59,3 @@ fun Int.blankOrNum() : String = if (this == 0) "" else "$this"
 fun <T, V> Map<V?, List<T>>.entryChildrenSum(): Int {
     return flatMap { entry -> listOf(entry.value.count()) }.sum()
 }
-
-fun File.isXML() = name.toLowerCase().endsWith(".xml")
-fun File.isIndexHTML() = name.toLowerCase() == "index.html"
-fun File.containsIndexHTML() = listFiles()?.any { it.isIndexHTML() }  ?: false
-fun File.findReportFiles() : List<File> = walkTopDown().onEnter { !it.parentFile.containsIndexHTML() }.filter { !it.isDirectory }.toList()
-fun List<File>.toXmlDocuments() = filter { it.isXML() }.toDocumentList()

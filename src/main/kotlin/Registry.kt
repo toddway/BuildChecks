@@ -9,7 +9,7 @@ class Registry(val config : BuildConfig = BuildConfigDefault()) {
     private val messages = mutableListOf<Message>()
 
     fun provideGetSummaryUseCases() =
-            config.reportFiles().summaries(config)
+            config.reportFiles().toSummaries(config)
 
     fun providePostStatsUseCase() =
             PostStatsUseCase(PostStatsUseCase.Datasource.buildList(config))

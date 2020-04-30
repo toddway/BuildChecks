@@ -1,5 +1,6 @@
 package unit
 
+import core.copyInto
 import core.entity.BuildConfigDefault
 import core.entity.GitConfigDefault
 import core.toXmlDocuments
@@ -26,6 +27,8 @@ class BuildConfigTests {
         config.git = GitConfigDefault()
         config.taskName = "adfs"
         config.buildStartTime = Date()
+        config.reports = "./src/test/testFiles"
+        config.artifactsPath = "./build/testFiles/buildChecks"
     }
 
     @Test
@@ -47,4 +50,13 @@ class BuildConfigTests {
         val config = BuildConfigDefault()
         config.completedMessage() shouldNotBe null
     }
+
+    @Test fun test() {
+        val config = BuildConfigDefault()
+        println(config.reportDirs().copyInto(config.artifactsDir()).path)
+    }
 }
+
+
+
+
