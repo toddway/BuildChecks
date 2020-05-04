@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Utils.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">core</a> &gt; <span class="el_source">Utils.kt</span></div><h1>Utils.kt</h1><pre class="source lang-java linenums">package core
+
+import core.entity.ErrorMessage
+import core.entity.InfoMessage
+import core.entity.Log
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.math.BigDecimal
+import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
+
+const val THOUSAND = 1000.0
+const val HUNDRED = 100
+const val COMMAND_TIMEOUT : Long = 5
+
+fun Double.round(scale : Int) =
+<span class="fc" id="L18">        BigDecimal(this).setScale(scale, BigDecimal.ROUND_HALF_UP).toDouble()</span>
+
+fun String.runCommand(workingDir: File, log : Log?): String? {
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">    log?.info(InfoMessage(&quot;Running command: $this&quot;).toString())</span>
+<span class="fc" id="L22">    return try {</span>
+<span class="fc" id="L23">        val proc = ProcessBuilder(&quot;bash&quot;, this)</span>
+<span class="fc" id="L24">                .directory(workingDir)</span>
+<span class="fc" id="L25">                .redirectOutput(ProcessBuilder.Redirect.PIPE)</span>
+<span class="fc" id="L26">                .redirectError(ProcessBuilder.Redirect.PIPE)</span>
+<span class="fc" id="L27">                .start()</span>
+<span class="fc" id="L28">        proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)</span>
+<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        proc.errorStream.readAndClose()?.also { log?.info(ErrorMessage(it.trim()).toString()) }</span>
+<span class="pc bpc" id="L30" title="3 of 4 branches missed.">        proc.inputStream.readAndClose()?.also { log?.debug(InfoMessage(it.trim()).toString()) }</span>
+<span class="nc" id="L31">    } catch(e: IOException) {</span>
+<span class="nc" id="L32">        e.printStackTrace()</span>
+<span class="nc" id="L33">        null</span>
+    }
+}
+
+fun InputStream.readAndClose() : String? {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">    val v = bufferedReader().readText()</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">    bufferedReader().close()</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    return if (v.isBlank()) null else v</span>
+}
+
+fun String.toCommandArgs() : Array&lt;String&gt; {
+<span class="nc" id="L44">    val parts = mutableListOf&lt;String&gt;()</span>
+<span class="nc" id="L45">    val m = Pattern.compile(&quot;([^\&quot;]\\S*|\&quot;.+?\&quot;)\\s*&quot;).matcher(this)</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">    while (m.find()) parts.add(m.group(1).replace(&quot;\&quot;&quot;, &quot;&quot;))</span>
+<span class="nc" id="L47">    return parts.toTypedArray()</span>
+}
+
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">fun String.run() = runCommand(File(&quot;.&quot;), null)?.trim()</span>
+
+fun Number.isNotGreaterThan(number: Number?): Boolean {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">    if (number == null) return true</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">    return this.toDouble() &lt;= number.toDouble()</span>
+}
+
+fun Number.isNotLessThan(number: Number?): Boolean {
+<span class="fc bfc" id="L58" title="All 2 branches covered.">    if (number == null) return true</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">    return this.toDouble() &gt;= number.toDouble()</span>
+}
+
+<span class="nc bnc" id="L62" title="All 2 branches missed.">fun Int.blankOrNum() : String = if (this == 0) &quot;&quot; else &quot;$this&quot;</span>
+
+fun &lt;T, V&gt; Map&lt;V?, List&lt;T&gt;&gt;.entryChildrenSum(): Int {
+<span class="fc" id="L65">    return flatMap { entry -&gt; listOf(entry.value.count()) }.sum()</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
