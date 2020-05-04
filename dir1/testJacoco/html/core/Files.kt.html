@@ -59,20 +59,15 @@ fun BuildConfig.writeSummaryReports(messageQueue: MutableList&lt;Message&gt;) {
 <span class="pc bpc" id="L59" title="1 of 2 branches missed.">    val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)</span>
 <span class="fc bfc" id="L60" title="All 2 branches covered.">    val htmlPairs = files.filter { it.isReadableFormat() }.toNameAndPathPairs(artifactsDir)</span>
 <span class="fc" id="L61">    val summaries = files.toSummaries(this)</span>
-<span class="fc" id="L62">    val chartHtml =</span>
-<span class="pc bpc" id="L63" title="2 of 4 branches missed.">            if (artifactsBranch.isNotBlank()) {</span>
-<span class="nc bnc" id="L64" title="All 2 branches missed.">                log?.info(InfoMessage(&quot;Building history chart from '$artifactsBranch' branch...&quot;).toString())</span>
-<span class="nc" id="L65">                historyChart(csvToMapsList(getCommitLog(tempDir(), artifactsBranch, log)))</span>
-            }
-<span class="fc" id="L67">            else &quot;&quot;</span>
+<span class="fc" id="L62">    val chartHtml = chartHtml()</span>
 
-<span class="fc" id="L69">    File(artifactsDir, &quot;index.html&quot;).apply {</span>
-<span class="fc" id="L70">        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml))</span>
-<span class="fc" id="L71">        messageQueue.add(InfoMessage(&quot;Browse reports at &quot; + absoluteFile.toURI()))</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L64">    File(artifactsDir, &quot;index.html&quot;).apply {</span>
+<span class="fc" id="L65">        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml))</span>
+<span class="fc" id="L66">        messageQueue.add(InfoMessage(&quot;Browse reports at &quot; + absoluteFile.toURI()))</span>
+<span class="fc" id="L67">    }</span>
 
-<span class="fc" id="L74">    File(artifactsDir, &quot;stats.csv&quot;).apply {</span>
-<span class="fc" id="L75">        writeText(summaries.toStats(this@writeSummaryReports).toString())</span>
-<span class="fc" id="L76">    }</span>
-<span class="fc" id="L77">}</span>
+<span class="fc" id="L69">    File(artifactsDir, &quot;stats.csv&quot;).apply {</span>
+<span class="fc" id="L70">        writeText(summaries.toStats(this@writeSummaryReports).toString())</span>
+<span class="fc" id="L71">    }</span>
+<span class="fc" id="L72">}</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -57,49 +57,12 @@ number of classes: 47
 number of functions: 160
 </li>
 <li>
-number of properties: 123
+number of properties: 124
 </li>
 </ul>
 
 <h2>Findings</h2>
 <h3>complexity</h3>
-<div class="rule-container">
-<span class="rule">
-LongMethod
-</span>
-<span class="description">
-One method should have one responsibility. Long methods tend to handle many things at once. Prefer smaller methods to make them easier to understand.
-</span>
-</div>
-<ul>
-<li>
-<span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/Files.kt:54:1
-</span>
-<br />
-<span class="message">
-The function writeSummaryReports is too long. The maximum length is 20.
-</span>
-</li>
-<li>
-<span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/HtmlReport.kt:25:1
-</span>
-<br />
-<span class="message">
-The function historyChart is too long. The maximum length is 20.
-</span>
-</li>
-<li>
-<span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/gradle/BuildChecksPlugin.kt:10:5
-</span>
-<br />
-<span class="message">
-The function apply is too long. The maximum length is 20.
-</span>
-</li>
-</ul>
 <div class="rule-container">
 <span class="rule">
 StringLiteralDuplication
@@ -119,6 +82,34 @@ Multiple occurrences of the same string literal within a single file detected.
 </span>
 </li>
 </ul>
+<div class="rule-container">
+<span class="rule">
+LongMethod
+</span>
+<span class="description">
+One method should have one responsibility. Long methods tend to handle many things at once. Prefer smaller methods to make them easier to understand.
+</span>
+</div>
+<ul>
+<li>
+<span class="location">
+/Users/tway/dev/BuildChecks/src/main/kotlin/core/HtmlReport.kt:27:1
+</span>
+<br />
+<span class="message">
+The function historyChart is too long. The maximum length is 20.
+</span>
+</li>
+<li>
+<span class="location">
+/Users/tway/dev/BuildChecks/src/main/kotlin/gradle/BuildChecksPlugin.kt:10:5
+</span>
+<br />
+<span class="message">
+The function apply is too long. The maximum length is 20.
+</span>
+</li>
+</ul>
 <h3>performance</h3>
 <div class="rule-container">
 <span class="rule">
@@ -131,7 +122,7 @@ Using a spread operator causes a full copy of the array to be created before cal
 <ul>
 <li>
 <span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:22:34
+/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:23:34
 </span>
 <br />
 <span class="message">
