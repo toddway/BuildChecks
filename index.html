@@ -2,9 +2,9 @@
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
 <h1>Build Checks Summary Report</h1>
-✔ 3.2s for gradle postChecks, max is 60.0s<br/>
-✔ 68.84% coverage (1,348 lines+branches), min is 50.0%<br/>
-✔ 5 violations (1 clones, 4 warning), max is 8<br/>
+✔ 3.12s for gradle pushArtifacts, max is 60.0s<br/>
+✔ 68.06% coverage (1,387 lines+branches), min is 50.0%<br/>
+✔ 7 violations (1 clones, 6 warning), max is 8<br/>
 <ul><li><a href="dir1/tests/test/index.html">dir1/tests/test</a></li>
 <li><a href="dir1/cpd.txt">cpd.txt</a></li>
 <li><a href="dir1/detekt.html">detekt.html</a></li>
@@ -19,10 +19,10 @@ function unixDate(stamp) {
 	return moment.unix(stamp).format(timeFormat);
 }
 
-var coverageData = [{ x:unixDate("1588014385"), y:69.75 },{ x:unixDate("1588014385"), y:70.99 },{ x:unixDate("1588014385"), y:70.87 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588255451"), y:70.6 }];
-var linePlusBranchData = [{ x:unixDate("1588014385"), y:1309 },{ x:unixDate("1588014385"), y:2568 },{ x:unixDate("1588014385"), y:2554 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588255451"), y:1313 }];
-var durationData = [{ x:unixDate("1588014385"), y:9.64 },{ x:unixDate("1588014385"), y:5.84 },{ x:unixDate("1588014385"), y:0.16 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588255451"), y:6.18 }];
-var violationData = [{ x:unixDate("1588014385"), y:4 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588255451"), y:4 }];
+var coverageData = [{ x:unixDate("1588014385"), y:69.75 },{ x:unixDate("1588014385"), y:70.99 },{ x:unixDate("1588014385"), y:70.87 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588255451"), y:70.6 },{ x:unixDate("1588598885"), y:68.84 }];
+var linePlusBranchData = [{ x:unixDate("1588014385"), y:1309 },{ x:unixDate("1588014385"), y:2568 },{ x:unixDate("1588014385"), y:2554 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588255451"), y:1313 },{ x:unixDate("1588598885"), y:1348 }];
+var durationData = [{ x:unixDate("1588014385"), y:9.64 },{ x:unixDate("1588014385"), y:5.84 },{ x:unixDate("1588014385"), y:0.16 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588255451"), y:6.18 },{ x:unixDate("1588598885"), y:3.2 }];
+var violationData = [{ x:unixDate("1588014385"), y:4 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588255451"), y:4 },{ x:unixDate("1588598885"), y:5 }];
 
 window.chartColor = {
 	red: 'rgb(255, 99, 132)',
