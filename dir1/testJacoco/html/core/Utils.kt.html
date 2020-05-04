@@ -20,14 +20,14 @@ fun Double.round(scale : Int) =
 fun String.runCommand(workingDir: File, log : Log?): String? {
 <span class="pc bpc" id="L21" title="1 of 2 branches missed.">    log?.info(InfoMessage(&quot;Running command: $this&quot;).toString())</span>
 <span class="fc" id="L22">    return try {</span>
-<span class="fc" id="L23">        val proc = ProcessBuilder(&quot;bash&quot;, this)</span>
+<span class="fc" id="L23">        val proc = ProcessBuilder(*toCommandArgs())</span>
 <span class="fc" id="L24">                .directory(workingDir)</span>
 <span class="fc" id="L25">                .redirectOutput(ProcessBuilder.Redirect.PIPE)</span>
 <span class="fc" id="L26">                .redirectError(ProcessBuilder.Redirect.PIPE)</span>
 <span class="fc" id="L27">                .start()</span>
 <span class="fc" id="L28">        proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)</span>
-<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        proc.errorStream.readAndClose()?.also { log?.info(ErrorMessage(it.trim()).toString()) }</span>
-<span class="pc bpc" id="L30" title="3 of 4 branches missed.">        proc.inputStream.readAndClose()?.also { log?.debug(InfoMessage(it.trim()).toString()) }</span>
+<span class="pc bpc" id="L29" title="3 of 4 branches missed.">        proc.errorStream.readAndClose()?.also { log?.info(ErrorMessage(it.trim()).toString()) }</span>
+<span class="pc bpc" id="L30" title="2 of 4 branches missed.">        proc.inputStream.readAndClose()?.also { log?.debug(InfoMessage(it.trim()).toString()) }</span>
 <span class="nc" id="L31">    } catch(e: IOException) {</span>
 <span class="nc" id="L32">        e.printStackTrace()</span>
 <span class="nc" id="L33">        null</span>
@@ -41,10 +41,10 @@ fun InputStream.readAndClose() : String? {
 }
 
 fun String.toCommandArgs() : Array&lt;String&gt; {
-<span class="nc" id="L44">    val parts = mutableListOf&lt;String&gt;()</span>
-<span class="nc" id="L45">    val m = Pattern.compile(&quot;([^\&quot;]\\S*|\&quot;.+?\&quot;)\\s*&quot;).matcher(this)</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">    while (m.find()) parts.add(m.group(1).replace(&quot;\&quot;&quot;, &quot;&quot;))</span>
-<span class="nc" id="L47">    return parts.toTypedArray()</span>
+<span class="fc" id="L44">    val parts = mutableListOf&lt;String&gt;()</span>
+<span class="fc" id="L45">    val m = Pattern.compile(&quot;([^\&quot;]\\S*|\&quot;.+?\&quot;)\\s*&quot;).matcher(this)</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">    while (m.find()) parts.add(m.group(1).replace(&quot;\&quot;&quot;, &quot;&quot;))</span>
+<span class="fc" id="L47">    return parts.toTypedArray()</span>
 }
 
 <span class="pc bpc" id="L50" title="1 of 2 branches missed.">fun String.run() = runCommand(File(&quot;.&quot;), null)?.trim()</span>

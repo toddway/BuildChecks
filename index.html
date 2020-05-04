@@ -2,9 +2,9 @@
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
 <h1>Build Checks Summary Report</h1>
-✔ 34.51s for gradle pushArtifacts, max is 60.0s<br/>
-✔ 68.75% coverage (1,405 lines+branches), min is 50.0%<br/>
-✔ 5 violations (1 clones, 4 warning), max is 8<br/>
+✔ 41.51s for gradle pushArtifacts, max is 60.0s<br/>
+✔ 69.25% coverage (1,405 lines+branches), min is 50.0%<br/>
+✔ 6 violations (1 clones, 5 warning), max is 8<br/>
 <ul><li><a href="dir1/tests/test/index.html">dir1/tests/test</a></li>
 <li><a href="dir1/cpd.txt">cpd.txt</a></li>
 <li><a href="dir1/detekt.html">detekt.html</a></li>
@@ -19,10 +19,10 @@ function unixDate(stamp) {
 	return moment.unix(stamp).format(timeFormat);
 }
 
-var coverageData = [{ x:unixDate("1588618983"), y:68.75 }];
-var linePlusBranchData = [{ x:unixDate("1588618983"), y:1405 }];
-var durationData = [{ x:unixDate("1588618983"), y:0.78 }];
-var violationData = [{ x:unixDate("1588618983"), y:5 }];
+var coverageData = [{ x:unixDate("1588618983"), y:68.75 },{ x:unixDate("1588618983"), y:68.75 }];
+var linePlusBranchData = [{ x:unixDate("1588618983"), y:1405 },{ x:unixDate("1588618983"), y:1405 }];
+var durationData = [{ x:unixDate("1588618983"), y:34.51 },{ x:unixDate("1588618983"), y:0.78 }];
+var violationData = [{ x:unixDate("1588618983"), y:5 },{ x:unixDate("1588618983"), y:5 }];
 
 window.chartColor = {
 	red: 'rgb(255, 99, 132)',

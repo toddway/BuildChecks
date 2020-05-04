@@ -24,6 +24,6 @@ interface GitConfig {
 <span class="pc bpc" id="L24" title="1 of 2 branches missed.">fun shortHash()  = &quot;git rev-parse --short HEAD&quot;.run() ?: &quot;&quot;</span>
 <span class="pc bpc" id="L25" title="1 of 2 branches missed.">fun commitDate() = &quot;git show -s --format=%ct&quot;.run()?.toLong() ?: 0</span>
 <span class="pc bpc" id="L26" title="1 of 2 branches missed.">fun commitBranch() = &quot;git symbolic-ref -q --short HEAD&quot;.run() ?: &quot;&quot;</span>
-<span class="pc bpc" id="L27" title="3 of 4 branches missed.">fun isAllCommitted() = &quot;git status -s&quot;.run()?.isEmpty() ?: false</span>
+<span class="pc bpc" id="L27" title="2 of 4 branches missed.">fun isAllCommitted() = &quot;git status -s&quot;.run()?.isEmpty() ?: false</span>
 <span class="fc" id="L28">fun GitConfig.summary() = &quot;$shortHash $commitBranch at ${SimpleDateFormat().format(Date(commitDate * 1000))}&quot;</span>
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
