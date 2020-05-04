@@ -28,6 +28,7 @@ class HandleBuildFinishedUseCaseTests {
         When calling statsDatasource.postStats(any()) itReturns Observable.just(true)
         When calling statsDatasource.postStats(any()) itReturns Observable.just(true)
         config.artifactsPath = "./build/testFiles/buildChecks"
+        config.artifactsBranch = ""
     }
 
     @Test

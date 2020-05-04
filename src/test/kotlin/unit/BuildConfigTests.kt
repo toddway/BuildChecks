@@ -1,6 +1,5 @@
 package unit
 
-import core.copyInto
 import core.entity.BuildConfigDefault
 import core.entity.GitConfigDefault
 import core.toXmlDocuments
@@ -53,9 +52,12 @@ class BuildConfigTests {
 
     @Test fun test() {
         val config = BuildConfigDefault()
-        println(config.reportDirs().copyInto(config.artifactsDir()).path)
+        //println(config.reportDirs().copyInto(config.artifactsDir()).path)
+        //val history = config.commitCsvsToHistoryMaps()
+        //println(history.jsArrayItemsFrom("coverage"))
     }
 }
+
 
 
 

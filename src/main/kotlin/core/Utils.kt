@@ -2,6 +2,7 @@ package core
 
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
@@ -22,11 +23,8 @@ fun String.runCommand(workingDir: File): String? {
                 .start()
 
         proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)
-        val v = proc.inputStream.bufferedReader().readText()
-        proc.inputStream.bufferedReader().close()
-        val e = proc.errorStream.bufferedReader().readText()
-        proc.errorStream.bufferedReader().close()
-        //println("${this} exit value: ${proc.exitValue()} $e")
+        val v = proc.inputStream.readAndClose()
+        //println("${this} exit value: ${proc.exitValue()} ${proc.errorStream.readAndClose()}")
         //println(v)
         v
     } catch(e: IOException) {
@@ -35,10 +33,16 @@ fun String.runCommand(workingDir: File): String? {
     }
 }
 
+fun InputStream.readAndClose() : String {
+    val v = bufferedReader().readText()
+    bufferedReader().close()
+    return v
+}
+
 fun String.toCommandArgs() : Array<String> {
     val parts = mutableListOf<String>()
     val m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(this)
-    while (m.find()) parts.add(m.group(1))
+    while (m.find()) parts.add(m.group(1).replace("\"", ""))
     return parts.toTypedArray()
 }
 

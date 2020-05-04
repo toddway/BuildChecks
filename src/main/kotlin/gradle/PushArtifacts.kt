@@ -17,8 +17,7 @@ open class PushArtifacts : DefaultTask() {
     @TaskAction
     fun taskAction() {
         registry?.config?.apply {
-            val tempDir = System.getProperty("java.io.tmpdir")
-            pushArtifacts(artifactsBranch, artifactsDir(), File(tempDir, "buildChecks"))
+            pushArtifacts(artifactsBranch, artifactsDir(), tempDir())
             println(InfoMessage("Artifacts pushed to ${gitUrl()}"))
         }
     }
@@ -31,7 +30,7 @@ fun pushArtifacts(branchName: String, sourceDir: File?, tempDir: File) {
     if (!tempDir.exists()) initOrphanBranch(tempDir, branchName)
     removeAll(tempDir)
     sourceDir.copyRecursively(tempDir)
-    commitAll(tempDir, File(sourceDir, "buildChecks.csv").readText())
+    commitAll(tempDir, File(sourceDir, "stats.csv").readText())
     "git push --set-upstream origin $branchName".runCommand(tempDir)
 }
 

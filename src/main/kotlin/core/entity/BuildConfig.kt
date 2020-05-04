@@ -35,6 +35,7 @@ interface BuildConfig {
     fun reportDirs() = reports.toFileList(log)
     fun reportFiles() : List<File> = reportDirs().flatMap { it.findReportFiles() }
     fun artifactsDir() = if (artifactsPath.isNotBlank()) File(artifactsPath) else File(reportDirs().firstDir(), "buildChecks")
+    fun tempDir() = File(System.getProperty("java.io.tmpdir"), "buildChecks")
 }
 
 //gradle config cannot be a data class, must be open

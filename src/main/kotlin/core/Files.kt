@@ -41,7 +41,7 @@ fun List<File>.toNameAndPathPairs(relativeRootDir : File) = map {
     name to it.relativeTo(relativeRootDir)
 }
 
-fun File.isHtmlOrTxt() = name.toLowerCase().endsWith(".html") || name.toLowerCase().endsWith(".txt")
+fun File.isReadableFormat() : Boolean = name.toLowerCase().run { endsWith(".html") || endsWith(".txt") || endsWith(".text") || endsWith(".md")}
 fun File.isXML() = name.toLowerCase().endsWith(".xml")
 fun File.isIndexHTML() = name.toLowerCase() == "index.html"
 fun File.containsIndexHTML() = listFiles()?.any { it.isIndexHTML() }  ?: false
