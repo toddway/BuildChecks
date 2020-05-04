@@ -1,7 +1,9 @@
 package unit
 
+import core.csvToMapsList
 import core.entity.BuildConfigDefault
 import core.entity.GitConfigDefault
+import core.jsArrayItemsFrom
 import core.toXmlDocuments
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe
@@ -52,6 +54,11 @@ class BuildConfigTests {
 
     @Test fun test() {
         val config = BuildConfigDefault()
+        val csv = """
+            aldkfja ldkj a push to 3454095834
+            70=coverage, 20=whatever, aldkfjad=date
+        """.trimIndent()
+        println(csvToMapsList(csv).jsArrayItemsFrom("coverage"))
         //println(config.reportDirs().copyInto(config.artifactsDir()).path)
         //val history = config.csvToMapsList()
         //println(history.jsArrayItemsFrom("coverage"))

@@ -1,8 +1,10 @@
 package core
 
 import core.entity.BuildConfig
+import core.entity.InfoMessage
 import core.entity.Message
 import core.entity.summary
+import getCommitLog
 import java.io.File
 
 
@@ -154,7 +156,7 @@ var chart = new Chart(document.getElementById('myChart').getContext('2d'), confi
 fun csvToMapsList(csv : String?) : List<Map<String, String>> {
     return csv?.lines()?.filter { it.isNotBlank() }?.map { row ->
         val rowMap = mutableMapOf<String, String>()
-        val cols = row.replace("\"", "").replace(" ","").split(",")
+        val cols = row.replace("\"", "").replace(", ",",").split(",")
         cols.forEach { col ->
             col.split("=").let {
                 if (it.size == 2) rowMap.put(it[1], it[0])
@@ -166,5 +168,18 @@ fun csvToMapsList(csv : String?) : List<Map<String, String>> {
 }
 
 fun List<Map<String, String>>.jsArrayItemsFrom(key : String) : String {
-    return joinToString(",") { "{ x:unixDate(\"${it["date"]}\"), y:${it[key]} }" }
+    return filter { it["date"] != null && it[key] != null }
+            .joinToString(",") { "{ x:unixDate(\"${it["date"]}\"), y:${it[key]} }" }
+}
+
+fun BuildConfig.chartHtml() : String {
+    return if (artifactsBranch.isNotBlank()) {
+        log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch...").toString())
+        val commits = getCommitLog(tempDir(), artifactsBranch, log)
+        log?.info(InfoMessage("Extract stat history from csv commit messages...").toString())
+        val mapsList = csvToMapsList(commits)
+        mapsList.forEach { log?.info(InfoMessage("$it").toString()) }
+        historyChart(mapsList)
+    }
+    else ""
 }

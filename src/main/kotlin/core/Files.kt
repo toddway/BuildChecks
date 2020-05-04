@@ -59,12 +59,7 @@ fun BuildConfig.writeSummaryReports(messageQueue: MutableList<Message>) {
     val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)
     val htmlPairs = files.filter { it.isReadableFormat() }.toNameAndPathPairs(artifactsDir)
     val summaries = files.toSummaries(this)
-    val chartHtml =
-            if (artifactsBranch.isNotBlank()) {
-                log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch...").toString())
-                historyChart(csvToMapsList(getCommitLog(tempDir(), artifactsBranch, log)))
-            }
-            else ""
+    val chartHtml = chartHtml()
 
     File(artifactsDir, "index.html").apply {
         writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml))

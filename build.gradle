@@ -42,7 +42,7 @@ task checks {
 }
 
 postChecks.dependsOn(checks)
-//postChecks.finalizedBy(pushArtifacts)
+postChecks.finalizedBy(pushArtifacts)
 
 task copyJar(type: Copy) {
     from "$buildDir/libs/buildChecks-${version}.jar"

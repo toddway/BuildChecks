@@ -12,12 +12,13 @@ import java.util.regex.Pattern
 
 const val THOUSAND = 1000.0
 const val HUNDRED = 100
-const val COMMAND_TIMEOUT : Long = 60
+const val COMMAND_TIMEOUT : Long = 5
 
 fun Double.round(scale : Int) =
         BigDecimal(this).setScale(scale, BigDecimal.ROUND_HALF_UP).toDouble()
 
 fun String.runCommand(workingDir: File, log : Log?): String? {
+    log?.info(InfoMessage("Running command: $this").toString())
     return try {
         val proc = ProcessBuilder(*toCommandArgs())
                 .directory(workingDir)
@@ -25,20 +26,11 @@ fun String.runCommand(workingDir: File, log : Log?): String? {
                 .redirectError(ProcessBuilder.Redirect.PIPE)
                 .start()
         proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)
-        val output = proc.inputStream.readAndClose()
-        logCommandStreams(this, output, proc.errorStream.readAndClose(), log)
-        output
+        proc.errorStream.readAndClose()?.also { log?.info(ErrorMessage(it.trim()).toString()) }
+        proc.inputStream.readAndClose()?.also { log?.debug(InfoMessage(it.trim()).toString()) }
     } catch(e: IOException) {
         e.printStackTrace()
         null
-    }
-}
-
-fun logCommandStreams(command : String, output: String?, error : String?, log : Log?) {
-    log?.let {
-        it.info(InfoMessage("Running command: $command").toString())
-        output?.let { o -> it.debug(InfoMessage(o).toString()) }
-        error?.let { e -> it.info(ErrorMessage(e.trim()).toString()) }
     }
 }
 
