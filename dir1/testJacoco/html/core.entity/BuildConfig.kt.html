@@ -35,28 +35,29 @@ interface BuildConfig {
 <span class="fc" id="L35">    fun reportDirs() = reports.toFileList(log)</span>
 <span class="fc" id="L36">    fun reportFiles() : List&lt;File&gt; = reportDirs().flatMap { it.findReportFiles() }</span>
 <span class="fc bfc" id="L37" title="All 4 branches covered.">    fun artifactsDir() = if (artifactsPath.isNotBlank()) File(artifactsPath) else File(reportDirs().firstDir(), &quot;buildChecks&quot;)</span>
+<span class="nc" id="L38">    fun tempDir() = File(System.getProperty(&quot;java.io.tmpdir&quot;), &quot;buildChecks&quot;)</span>
 }
 
 //gradle config cannot be a data class, must be open
-<span class="fc" id="L41">open class BuildConfigDefault : BuildConfig {</span>
-<span class="fc" id="L42">    override var reports: String = &quot;&quot;</span>
-<span class="fc" id="L43">    override var log: Log? = null</span>
-<span class="pc" id="L44">    override var maxDuration: Double? = null</span>
-<span class="fc" id="L45">    override var git: GitConfig = GitConfigDefault()</span>
-<span class="fc" id="L46">    override var allowUncommittedChanges: Boolean = true</span>
-<span class="fc" id="L47">    override var isSuccess: Boolean = true</span>
-<span class="fc" id="L48">    override var maxLintViolations: Int? = null</span>
-<span class="fc" id="L49">    override var minCoveragePercent: Double? = null</span>
-<span class="pc" id="L50">    override var buildUrl  = &quot;&quot;</span>
-<span class="fc" id="L51">    override var baseUrl  = &quot;&quot;</span>
-<span class="fc" id="L52">    override var authorization  = &quot;&quot;</span>
-<span class="fc" id="L53">    override var buildStartTime = Date()</span>
-<span class="fc" id="L54">    override var statsBaseUrl = &quot;&quot;</span>
-<span class="fc" id="L55">    override var taskName = &quot;default&quot;</span>
-<span class="fc" id="L56">    override var isPostActivated = false</span>
-<span class="fc" id="L57">    override var isPluginActivated = false</span>
-<span class="fc" id="L58">    override var artifactsPath : String = &quot;&quot;</span>
-<span class="pc" id="L59">    override var artifactsBranch : String = &quot;artifacts&quot;</span>
+<span class="pc" id="L42">open class BuildConfigDefault : BuildConfig {</span>
+<span class="fc" id="L43">    override var reports: String = &quot;&quot;</span>
+<span class="fc" id="L44">    override var log: Log? = null</span>
+<span class="pc" id="L45">    override var maxDuration: Double? = null</span>
+<span class="fc" id="L46">    override var git: GitConfig = GitConfigDefault()</span>
+<span class="fc" id="L47">    override var allowUncommittedChanges: Boolean = true</span>
+<span class="fc" id="L48">    override var isSuccess: Boolean = true</span>
+<span class="fc" id="L49">    override var maxLintViolations: Int? = null</span>
+<span class="fc" id="L50">    override var minCoveragePercent: Double? = null</span>
+<span class="pc" id="L51">    override var buildUrl  = &quot;&quot;</span>
+<span class="fc" id="L52">    override var baseUrl  = &quot;&quot;</span>
+<span class="fc" id="L53">    override var authorization  = &quot;&quot;</span>
+<span class="fc" id="L54">    override var buildStartTime = Date()</span>
+<span class="fc" id="L55">    override var statsBaseUrl = &quot;&quot;</span>
+<span class="fc" id="L56">    override var taskName = &quot;default&quot;</span>
+<span class="fc" id="L57">    override var isPostActivated = false</span>
+<span class="fc" id="L58">    override var isPluginActivated = false</span>
+<span class="fc" id="L59">    override var artifactsPath : String = &quot;&quot;</span>
+<span class="fc" id="L60">    override var artifactsBranch : String = &quot;artifacts&quot;</span>
 }
 
 

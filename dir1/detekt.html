@@ -54,10 +54,10 @@ number of packages: 6
 number of classes: 47
 </li>
 <li>
-number of functions: 152
+number of functions: 157
 </li>
 <li>
-number of properties: 120
+number of properties: 123
 </li>
 </ul>
 
@@ -82,6 +82,25 @@ Multiple occurrences of the same string literal within a single file detected.
 </span>
 </li>
 </ul>
+<div class="rule-container">
+<span class="rule">
+LongMethod
+</span>
+<span class="description">
+One method should have one responsibility. Long methods tend to handle many things at once. Prefer smaller methods to make them easier to understand.
+</span>
+</div>
+<ul>
+<li>
+<span class="location">
+/Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/HandleBuildFinishedUseCase.kt:60:1
+</span>
+<br />
+<span class="message">
+The function historyChart is too long. The maximum length is 20.
+</span>
+</li>
+</ul>
 <h3>performance</h3>
 <div class="rule-container">
 <span class="rule">
@@ -94,7 +113,7 @@ Using a spread operator causes a full copy of the array to be created before cal
 <ul>
 <li>
 <span class="location">
-/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:18:34
+/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt:19:34
 </span>
 <br />
 <span class="message">
