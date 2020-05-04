@@ -1,7 +1,6 @@
 package core.entity
 
 import core.run
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,8 +26,3 @@ fun commitDate() = "git show -s --format=%ct".run()?.toLong() ?: 0
 fun commitBranch() = "git symbolic-ref -q --short HEAD".run() ?: ""
 fun isAllCommitted() = "git status -s".run()?.isEmpty() ?: false
 fun GitConfig.summary() = "$shortHash $commitBranch at ${SimpleDateFormat().format(Date(commitDate * 1000))}"
-fun gitUrl() = "git config --get remote.origin.url".run()
-fun gitShallowClone(tempPath : File, branchName : String? = null): String? {
-    val branch = branchName?.let { " --branch $branchName" } ?: ""
-    return "git clone ${gitUrl()} ${tempPath.path}$branch --depth 1".run()
-}

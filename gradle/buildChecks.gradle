@@ -5,6 +5,7 @@ buildChecks {
     authorization = System.properties["auth"]
     buildUrl = System.properties["buildUrl"]
     reports = "$projectDir/build/reports"
+    artifactsBranch = "artifacts"
     minCoveragePercent = 50
     maxLintViolations = 8
     maxDuration = 60

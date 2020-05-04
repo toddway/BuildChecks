@@ -33,7 +33,7 @@ class HandleBuildFinishedUseCaseTests {
 
     @Test
     fun `when plugin is not activated, nothing is posted`() {
-        config.isPluginActivated = false
+        config.isChecksActivated = false
         val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
 
         usecase.invoke()
@@ -43,7 +43,7 @@ class HandleBuildFinishedUseCaseTests {
 
     @Test
     fun `when the build finishes unsuccessfully and plugin is activated, post failure status for each type`() {
-        config.isPluginActivated = true
+        config.isChecksActivated = true
         val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
 
         usecase.invoke()
@@ -53,7 +53,7 @@ class HandleBuildFinishedUseCaseTests {
 
     @Test
     fun `when the build finishes successfully and plugin is activated, handle success status for each type`() {
-        config.isPluginActivated = true
+        config.isChecksActivated = true
         val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
 
         usecase.invoke()

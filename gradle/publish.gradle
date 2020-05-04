@@ -1,6 +1,6 @@
 apply plugin: "com.gradle.plugin-publish"
 
-version = "2.2"
+version = "2.3"
 group = "com.toddway"
 jar.baseName = "buildChecks"
 

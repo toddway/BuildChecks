@@ -14,7 +14,7 @@ class HandleBuildStartedUseCaseTests {
     fun `when the plugin is disabled, nothing is posted`() {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = BuildConfigDefault()
-        config.isPluginActivated = false
+        config.isChecksActivated = false
         config.log = Log(mock())
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)
 
@@ -28,7 +28,7 @@ class HandleBuildStartedUseCaseTests {
     fun `when the build is started and the plugin is activated, post a build status`() {
         val postBuildStatus : PostStatusUseCase = mock()
         val config = BuildConfigDefault()
-        config.isPluginActivated = true
+        config.isChecksActivated = true
         config.isPostActivated = true
         config.log = Log(mock())
         val usecase = HandleBuildStartedUseCase(postBuildStatus, config)

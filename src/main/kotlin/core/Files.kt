@@ -1,8 +1,10 @@
 package core
 
-import core.entity.ErrorMessage
-import core.entity.InfoMessage
-import core.entity.Log
+import core.entity.*
+import core.usecase.toMessages
+import core.usecase.toStats
+import core.usecase.toSummaries
+import getCommitLog
 import java.io.File
 
 fun String.toFileList(log: Log? = null): List<File> {
@@ -47,3 +49,29 @@ fun File.isIndexHTML() = name.toLowerCase() == "index.html"
 fun File.containsIndexHTML() = listFiles()?.any { it.isIndexHTML() }  ?: false
 fun List<File>.toXmlDocuments() = filter { it.isXML() }.toDocumentList()
 fun File.findReportFiles() : List<File> = walkTopDown().onEnter { !it.parentFile.containsIndexHTML() }.filter { !it.isDirectory }.toList()
+
+
+fun BuildConfig.writeSummaryReports(messageQueue: MutableList<Message>) {
+    log?.info(InfoMessage("Building summary reports in ${artifactsDir()}...").toString())
+    val dirs = reportDirs()
+    val artifactsDir = dirs.copyInto(artifactsDir())
+    val files = artifactsDir.findReportFiles()
+    val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)
+    val htmlPairs = files.filter { it.isReadableFormat() }.toNameAndPathPairs(artifactsDir)
+    val summaries = files.toSummaries(this)
+    val chartHtml =
+            if (artifactsBranch.isNotBlank()) {
+                log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch...").toString())
+                historyChart(csvToMapsList(getCommitLog(tempDir(), artifactsBranch, log)))
+            }
+            else ""
+
+    File(artifactsDir, "index.html").apply {
+        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml))
+        messageQueue.add(InfoMessage("Browse reports at " + absoluteFile.toURI()))
+    }
+
+    File(artifactsDir, "stats.csv").apply {
+        writeText(summaries.toStats(this@writeSummaryReports).toString())
+    }
+}

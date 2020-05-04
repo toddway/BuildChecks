@@ -12,12 +12,13 @@ open class BuildChecksPlugin : Plugin<Project> {
             listOf(project.createPostChecksTask(), project.createPrintChecksTask()).forEach {
                 it.doLast { provideHandleUnsuccessfulSummariesUseCase().invoke() }
             }
-            project.createPushArtifactsTask().registry = this
+            project.createPushArtifactsTask()
 
             project.gradle.taskGraph.whenReady {
                 config.taskName = project.taskNameString()
                 config.isPostActivated = project.isPostChecksActivated()
-                config.isPluginActivated = project.isPluginActivated()
+                config.isChecksActivated = project.isChecksActivated()
+                config.isPushActivated = project.isPushArtifactsActivated()
                 config.log = Log(project.logger)
                 provideHandleBuildStartedUseCase().invoke()
             }
@@ -32,7 +33,8 @@ open class BuildChecksPlugin : Plugin<Project> {
 
 fun Project.isPrintChecksActivated() = gradle.taskGraph.allTasks.find { it is PrintChecksTask } != null
 fun Project.isPostChecksActivated() = gradle.taskGraph.allTasks.find { it is PostChecksTask } != null
-fun Project.isPluginActivated() = isPostChecksActivated() || isPrintChecksActivated()
+fun Project.isChecksActivated() = isPostChecksActivated() || isPrintChecksActivated() || isPushArtifactsActivated()
+fun Project.isPushArtifactsActivated() = gradle.taskGraph.allTasks.find { it is PushArtifacts } != null
 fun Project.taskNameString() = gradle.startParameter.taskNames.joinToString(" ")
 fun Project.createBuildChecksConfig() = extensions.create("buildChecks", BuildConfigDefault::class.java)
 fun Project.createPostChecksTask() = tasks.create("postChecks", PostChecksTask::class.java)

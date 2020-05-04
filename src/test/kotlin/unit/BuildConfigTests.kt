@@ -17,7 +17,7 @@ class BuildConfigTests {
         config.baseUrl = "Asdfd"
         config.buildUrl = "ASdfsadf"
         config.isPostActivated = true
-        config.isPluginActivated = true
+        config.isChecksActivated = true
         config.isSuccess = false
         config.isPostActivated = true
         config.maxLintViolations = 435
@@ -53,7 +53,7 @@ class BuildConfigTests {
     @Test fun test() {
         val config = BuildConfigDefault()
         //println(config.reportDirs().copyInto(config.artifactsDir()).path)
-        //val history = config.commitCsvsToHistoryMaps()
+        //val history = config.csvToMapsList()
         //println(history.jsArrayItemsFrom("coverage"))
     }
 }

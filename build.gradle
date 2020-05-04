@@ -11,9 +11,9 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.gradle.publish:plugin-publish-plugin:0.11.0"
-        classpath "com.toddway:buildchecks:2.0"
 
-        //these are here because they're dependencies of the buildChecks.jar file
+        //these are here only because they're dependencies of the buildChecks.jar
+        classpath "com.toddway:buildchecks"
         classpath 'io.reactivex.rxjava2:rxjava:2.1.14'
         classpath "com.squareup.retrofit2:retrofit:$retrofitVersion"
         classpath "com.squareup.retrofit2:converter-gson:$retrofitVersion"
@@ -40,6 +40,9 @@ task checks {
     dependsOn 'testJacoco'
     finalizedBy 'printChecks'
 }
+
+postChecks.dependsOn(checks)
+//postChecks.finalizedBy(pushArtifacts)
 
 task copyJar(type: Copy) {
     from "$buildDir/libs/buildChecks-${version}.jar"

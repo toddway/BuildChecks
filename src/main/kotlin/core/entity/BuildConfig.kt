@@ -18,7 +18,8 @@ interface BuildConfig {
     var statsBaseUrl: String
     var taskName : String
     var isPostActivated : Boolean
-    var isPluginActivated: Boolean
+    var isChecksActivated: Boolean
+    var isPushActivated: Boolean
     var isSuccess: Boolean
     var git : GitConfig
     var maxLintViolations : Int?
@@ -55,9 +56,10 @@ open class BuildConfigDefault : BuildConfig {
     override var statsBaseUrl = ""
     override var taskName = "default"
     override var isPostActivated = false
-    override var isPluginActivated = false
+    override var isChecksActivated = false
+    override var isPushActivated = false
     override var artifactsPath : String = ""
-    override var artifactsBranch : String = "artifacts"
+    override var artifactsBranch : String = ""
 }
 
 

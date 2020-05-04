@@ -1,5 +1,8 @@
 package core
 
+import core.entity.ErrorMessage
+import core.entity.InfoMessage
+import core.entity.Log
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -14,29 +17,35 @@ const val COMMAND_TIMEOUT : Long = 60
 fun Double.round(scale : Int) =
         BigDecimal(this).setScale(scale, BigDecimal.ROUND_HALF_UP).toDouble()
 
-fun String.runCommand(workingDir: File): String? {
+fun String.runCommand(workingDir: File, log : Log?): String? {
     return try {
         val proc = ProcessBuilder(*toCommandArgs())
                 .directory(workingDir)
                 .redirectOutput(ProcessBuilder.Redirect.PIPE)
                 .redirectError(ProcessBuilder.Redirect.PIPE)
                 .start()
-
         proc.waitFor(COMMAND_TIMEOUT, TimeUnit.MINUTES)
-        val v = proc.inputStream.readAndClose()
-        //println("${this} exit value: ${proc.exitValue()} ${proc.errorStream.readAndClose()}")
-        //println(v)
-        v
+        val output = proc.inputStream.readAndClose()
+        logCommandStreams(this, output, proc.errorStream.readAndClose(), log)
+        output
     } catch(e: IOException) {
         e.printStackTrace()
         null
     }
 }
 
-fun InputStream.readAndClose() : String {
+fun logCommandStreams(command : String, output: String?, error : String?, log : Log?) {
+    log?.let {
+        it.info(InfoMessage("Running command: $command").toString())
+        output?.let { o -> it.debug(InfoMessage(o).toString()) }
+        error?.let { e -> it.info(ErrorMessage(e.trim()).toString()) }
+    }
+}
+
+fun InputStream.readAndClose() : String? {
     val v = bufferedReader().readText()
     bufferedReader().close()
-    return v
+    return if (v.isBlank()) null else v
 }
 
 fun String.toCommandArgs() : Array<String> {
@@ -46,7 +55,7 @@ fun String.toCommandArgs() : Array<String> {
     return parts.toTypedArray()
 }
 
-fun String.run() = runCommand(File("."))?.trim()
+fun String.run() = runCommand(File("."), null)?.trim()
 
 fun Number.isNotGreaterThan(number: Number?): Boolean {
     if (number == null) return true
