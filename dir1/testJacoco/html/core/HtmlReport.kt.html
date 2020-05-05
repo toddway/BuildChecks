@@ -173,7 +173,7 @@ fun List&lt;Map&lt;String, String&gt;&gt;.jsArrayItemsFrom(key : String) : Strin
 }
 
 fun BuildConfig.chartHtml() : String {
-<span class="pc bpc" id="L176" title="2 of 4 branches missed.">    return if (artifactsBranch.isNotBlank()) {</span>
+<span class="pc bpc" id="L176" title="4 of 6 branches missed.">    return if (artifactsBranch.isNotBlank() &amp;&amp; isPushActivated) {</span>
 <span class="nc bnc" id="L177" title="All 2 branches missed.">        log?.info(InfoMessage(&quot;Building history chart from '$artifactsBranch' branch...&quot;).toString())</span>
 <span class="nc" id="L178">        val commits = getCommitLog(tempDir(), artifactsBranch, log)</span>
 <span class="nc bnc" id="L179" title="All 2 branches missed.">        log?.info(InfoMessage(&quot;Extract stat history from csv commit messages...&quot;).toString())</span>
