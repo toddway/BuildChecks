@@ -22,7 +22,7 @@ fun pushArtifacts(branchName: String, sourceDir: File?, tempDir: File, log: Log?
     sourceDir.copyRecursively(tempDir)
     commitAll(tempDir, File(sourceDir, "stats.csv").readText(), log)
     "git push --set-upstream origin $branchName".runCommand(tempDir, log)
-    println(InfoMessage("Artifacts pushed to ${gitUrl()}").toString())
+    println(InfoMessage("Pushed ${sourceDir.path} to $branchName branch of ${gitUrl()}").toString())
 }
 
 fun initOrphanBranch(tempDir : File, branchName : String, log: Log?) {
@@ -32,13 +32,13 @@ fun initOrphanBranch(tempDir : File, branchName : String, log: Log?) {
 }
 
 fun removeAll(tempDir: File, log: Log?) {
-    "git rm -rf .".runCommand(tempDir, log)
-    "git clean -d -f".runCommand(tempDir, log)
+    "git rm -rfq --ignore-unmatch .".runCommand(tempDir, log)
+    "git clean -dfq".runCommand(tempDir, log)
 }
 
 fun commitAll(tempDir: File, commitMessage : String, log: Log?) {
     "git add .".runCommand(tempDir, log)
-    "git commit -m \"$commitMessage\"".runCommand(tempDir, log)
+    "git commit -q -m \"$commitMessage\"".runCommand(tempDir, log)
 }
 
 fun deleteBranch(branchName: String) {

@@ -12,7 +12,7 @@ fun BuildConfig.htmlReport(messages: List<Message?>, htmlPairs: List<Pair<String
 <html>
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
-<h1>Build Checks Summary Report</h1>
+<h1>Build Summary</h1>
 ${messages.joinToString("\n") { "$it<br/>" }}
 <ul>${htmlPairs.joinToString("\n") { "<li><a href=\"${it.second}\">${it.first}</a></li>" }}</ul>
 $chartHtml
@@ -173,7 +173,7 @@ fun List<Map<String, String>>.jsArrayItemsFrom(key : String) : String {
 }
 
 fun BuildConfig.chartHtml() : String {
-    return if (artifactsBranch.isNotBlank()) {
+    return if (artifactsBranch.isNotBlank() && isPushActivated) {
         log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch...").toString())
         val commits = getCommitLog(tempDir(), artifactsBranch, log)
         log?.info(InfoMessage("Extract stat history from csv commit messages...").toString())
