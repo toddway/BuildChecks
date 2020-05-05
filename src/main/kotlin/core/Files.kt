@@ -4,7 +4,6 @@ import core.entity.*
 import core.usecase.toMessages
 import core.usecase.toStats
 import core.usecase.toSummaries
-import getCommitLog
 import java.io.File
 
 fun String.toFileList(log: Log? = null): List<File> {
@@ -59,14 +58,12 @@ fun BuildConfig.writeSummaryReports(messageQueue: MutableList<Message>) {
     val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)
     val htmlPairs = files.filter { it.isReadableFormat() }.toNameAndPathPairs(artifactsDir)
     val summaries = files.toSummaries(this)
-    val chartHtml = chartHtml()
+    val stats = summaries.toStats(this@writeSummaryReports).toString()
 
     File(artifactsDir, "index.html").apply {
-        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml))
+        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml(stats)))
         messageQueue.add(InfoMessage("Browse reports at " + absoluteFile.toURI()))
     }
 
-    File(artifactsDir, "stats.csv").apply {
-        writeText(summaries.toStats(this@writeSummaryReports).toString())
-    }
+    File(artifactsDir, "stats.csv").apply { writeText(stats) }
 }

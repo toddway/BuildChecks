@@ -172,12 +172,12 @@ fun List<Map<String, String>>.jsArrayItemsFrom(key : String) : String {
             .joinToString(",") { "{ x:unixDate(\"${it["date"]}\"), y:${it[key]} }" }
 }
 
-fun BuildConfig.chartHtml() : String {
+fun BuildConfig.chartHtml(stats: String): String {
     return if (artifactsBranch.isNotBlank() && isPushActivated) {
-        log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch...").toString())
+        log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch log...").toString())
         val commits = getCommitLog(tempDir(), artifactsBranch, log)
         log?.info(InfoMessage("Extract stat history from csv commit messages...").toString())
-        val mapsList = csvToMapsList(commits)
+        val mapsList = csvToMapsList(commits + "\n" + stats)
         mapsList.forEach { log?.info(InfoMessage("$it").toString()) }
         historyChart(mapsList)
     }
