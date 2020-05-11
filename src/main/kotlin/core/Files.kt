@@ -12,8 +12,8 @@ fun String.toFileList(log: Log? = null): List<File> {
             .map {
                 val f = File(it.trim())
                 if (log != null) {
-                    if (f.exists()) log.info(InfoMessage("BuildChecks found: ${f.absolutePath}").toString())
-                    else log.error(ErrorMessage("BuildChecks could not find: ${f.absolutePath}").toString())
+                    if (f.exists()) log.debug(InfoMessage("BuildChecks found: ${f.absolutePath}").toString())
+                    else log.debug(ErrorMessage("BuildChecks could not find: ${f.absolutePath}").toString())
                 }
                 f
             }
@@ -38,7 +38,7 @@ fun List<File>.copyInto(targetDir : File, subdirPrefix : String = "dir") : File 
 fun List<File>.firstDir() = firstOrNull { it.isDirectory }
 
 fun List<File>.toNameAndPathPairs(relativeRootDir : File) = map {
-    val name = if (it.isIndexHTML()) it.parentFile.relativeTo(relativeRootDir).path else it.name
+    val name = if (it.isIndexHTML()) it.parentFile.relativeTo(relativeRootDir).path else it.relativeTo(relativeRootDir).path
     name to it.relativeTo(relativeRootDir)
 }
 

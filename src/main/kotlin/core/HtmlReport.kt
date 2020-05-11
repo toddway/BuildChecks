@@ -86,7 +86,7 @@ var config = {
                 fill: true,
                 yAxisID: 'y-axis-4',
                 data: violationData,
-                hidden: true,
+                hidden: false,
             },
             {
                 label: 'Duration',
