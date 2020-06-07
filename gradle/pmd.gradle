@@ -1,0 +1,13 @@
+apply plugin: 'pmd'
+
+task pmd(type: Pmd) {
+    ruleSetFiles = files("$projectDir/../bid/gradle/pmd-rules.xml")
+    ruleSets = []
+    source = fileTree("$projectDir/src/main/java/")
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        //html.destination = "$project.buildDir/outputs/pmd/pmd.html"
+    }
+}

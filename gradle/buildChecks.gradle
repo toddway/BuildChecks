@@ -10,4 +10,3 @@ buildChecks {
     maxLintViolations = 8
     maxDuration = 60
 }
-

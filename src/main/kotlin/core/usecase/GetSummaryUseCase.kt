@@ -8,16 +8,12 @@ interface GetSummaryUseCase {
     fun value() : String?
     fun key() : String
     fun isSuccessful() : Boolean
-    companion object
+    fun status() = if (isSuccessful()) BuildStatus.SUCCESS else BuildStatus.FAILURE
+    fun valueOrKey() = value() ?: key()
 }
 
 fun List<GetSummaryUseCase>.postStatuses(postStatusUseCase: PostStatusUseCase) {
-    forEach { summary ->
-        summary.value()?.let {
-            val result = if (summary.isSuccessful()) BuildStatus.SUCCESS else BuildStatus.FAILURE
-            postStatusUseCase.post(result, it, summary.key())
-        }
-    }
+    filter { it.value() != null }.forEach { postStatusUseCase.post(it.status(), it.valueOrKey(), it.key()) }
 }
 
 fun List<File>.toSummaries(config : BuildConfig) : List<GetSummaryUseCase> {
@@ -30,13 +26,13 @@ fun List<File>.toSummaries(config : BuildConfig) : List<GetSummaryUseCase> {
 }
 
 fun List<GetSummaryUseCase>.toStats(config: BuildConfig) : Stats {
-    val lintUseCase = find { it is GetLintSummaryUseCase } as GetLintSummaryUseCase
-    val coverageUseCase = find { it is GetCoverageSummaryUseCase } as GetCoverageSummaryUseCase
+    val lintUseCase = filterIsInstance<GetLintSummaryUseCase>().firstOrNull()
+    val coverageUseCase = filterIsInstance<GetCoverageSummaryUseCase>().firstOrNull()
     return Stats(
-            coverageUseCase.percent() ?: 0.0,
-            lintUseCase.asTotal() ?: 0,
+            coverageUseCase?.percent() ?: 0.0,
+            lintUseCase?.asTotal() ?: 0,
             config.duration(),
-            coverageUseCase.linesPlusBranches() ?: 0,
+            coverageUseCase?.linesPlusBranches() ?: 0,
             config.git.commitDate,
             config.git.commitHash,
             config.git.commitBranch

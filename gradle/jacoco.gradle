@@ -1,0 +1,90 @@
+apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/reports")
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+project.afterEvaluate {
+    if (project.hasProperty('android')) {
+        if (android.hasProperty('applicationVariants')) {
+            android.applicationVariants.all { variant -> createCoverageTask(variant) } //android app module
+        } else if (android.hasProperty('libraryVariants')) {
+            android.libraryVariants.all { variant -> createCoverageTask(variant) } //android library module
+        }
+    } else {
+        createCoverageTask(null) //java library module
+    }
+}
+
+def createCoverageTask(variant) {
+    def excludes = [
+            /*Android*/
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            'androidx/**/*.*',
+            'android/**/*.*',
+
+            /*Binding*/
+            '**/*DataBinder*.*',
+            '**/*DataBinding*.*',
+            '**/*Binding*.*',
+            '**/BR.class',
+
+            /*Kodein*/
+            '**/*ModuleKt*.*',
+
+            /*AndroidAnnotations*/
+            '**/*_.*',
+            '**/*_$*',
+
+            /*Realm*/
+            'io/realm/**/*.*',
+
+            /*Tests*/
+            '**/*Mock*.*',
+            '**/*Test*.*',
+            '**/*Null*.*'
+    ]
+    def variantName
+    def testTaskName
+    def javaClasses
+    def kotlinClasses
+    if (variant == null) {
+        variantName = ""
+        testTaskName = "test"
+        javaClasses = fileTree(dir: "${buildDir}/classes/java/${variantName}", excludes: excludes)
+        kotlinClasses = fileTree(dir: "${buildDir}/classes/kotlin/${variantName}", excludes: excludes)
+    } else {
+        variantName = variant.name
+        testTaskName = "test${variantName.capitalize()}UnitTest"
+        javaClasses = fileTree(dir: variant.javaCompiler.destinationDir, excludes: excludes)
+        kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
+    }
+
+    tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+        group = "Reporting"
+        description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
+
+        reports {
+            html.enabled = true
+            xml.enabled = true
+        }
+
+        classDirectories = files([javaClasses, kotlinClasses])
+
+        sourceDirectories = files([
+                "$project.projectDir/src/main/java",
+                "$project.projectDir/src/${variantName}/java",
+                "$project.projectDir/src/main/kotlin",
+                "$project.projectDir/src/${variantName}/kotlin"
+        ])
+
+        executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+    }
+}

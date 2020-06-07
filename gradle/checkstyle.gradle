@@ -1,0 +1,13 @@
+apply plugin: 'checkstyle'
+
+task checkstyle(type: Checkstyle) {
+    source "$projectDir/src/main/java/"
+    configFile file("$projectDir/../bid/gradle/checkstyle.xml")
+    classpath = files()
+    showViolations true
+    ignoreFailures true
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}

@@ -22,7 +22,7 @@ class PostStatsUseCaseTests {
                 "asdfdf"
         )
         When calling datasource.postStats(metrics) itReturns Observable.just(true)
-        usecase.invoke(metrics)
+        usecase.post(metrics)
         Verify on datasource that datasource.postStats(metrics) was called
     }
 }

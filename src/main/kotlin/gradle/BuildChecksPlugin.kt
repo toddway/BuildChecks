@@ -1,7 +1,7 @@
 package gradle
+import Registry
 import core.entity.BuildConfigDefault
 import core.entity.Log
-import Registry
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

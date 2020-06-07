@@ -9,7 +9,10 @@ A Gradle plugin to post summaries from code analyzers to [GitHub](https://develo
     ✔ 79.33% coverage, threshold is 70.0%
     ✔ 5 rule violations (5 warning), threshold is 5
     ✔ Posting to GITHUB
+    ✔ Browse reports at file:/Users/user1/BuildChecks/build/reports/buildChecks/index.html
 
+
+<img src="img/report.png"/><br/>
 
 The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint, CPD)
 supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul, Slather, CPD, Checkstyle)
@@ -46,7 +49,6 @@ To post build checks to your remote source control system, add `postChecks`:
         finalizedBy ':postChecks'
     }
 
-
 If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
 you can attach postChecks by letting Gradle execute your command.
 Gradle lets you define custom executables like this:
@@ -76,6 +78,7 @@ All example properties below are optional.
         allowUncommittedChanges = true
      }
 
+
 #### baseUrl
 Github - `https://api.github.com/repos/<owner>/<repo>`
 
@@ -101,6 +104,17 @@ Bitbucket - Your profile image -> Bitbucket settings -> App passwords.
 
 Bitbucket Server - Your profile image -> Manage account -> Personal access tokens.
 
+
+#### History report
+Currently includes an experimental feature to store artifacts on an orphan repository branch and generate a history report.  In the buildChecks config block add:
+
+    buildChecks {
+        artifactsBranch = "<choose your own name for branch>"
+    }
+
+Then run:
+
+    ./gradlew pushArtifacts
 
 
 License

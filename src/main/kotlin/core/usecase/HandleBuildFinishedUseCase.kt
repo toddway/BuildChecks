@@ -8,18 +8,17 @@ import pushArtifacts
 class HandleBuildFinishedUseCase(
         private val postStatusUseCase: PostStatusUseCase,
         private val postStatsUseCase: PostStatsUseCase,
-        private val getSummaryUseCases: List<GetSummaryUseCase>,
+        private val summaries: List<GetSummaryUseCase>,
         private val config: BuildConfig,
         private val messageQueue : MutableList<Message>
 ) {
     fun invoke() {
         if (config.isChecksActivated) {
-            getSummaryUseCases.postStatuses(postStatusUseCase)
-            postStatsUseCase.invoke(getSummaryUseCases.toStats(config))
+            summaries.postStatuses(postStatusUseCase)
+            postStatsUseCase.post(summaries.toStats(config))
             config.writeSummaryReports(messageQueue)
             config.pushArtifacts(messageQueue)
             messageQueue.distinct().forEach { println(it.toString()) }
         }
     }
 }
-

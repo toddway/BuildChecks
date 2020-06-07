@@ -31,29 +31,30 @@ class HandleBuildFinishedUseCaseTests {
         config.artifactsBranch = ""
     }
 
-    @Test
-    fun `when plugin is not activated, nothing is posted`() {
-        config.isChecksActivated = false
-        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
-
-        usecase.invoke()
-
-        VerifyNotCalled on statusDatasource that statusDatasource.post(any(), any(), any()) was called
-    }
-
-    @Test
-    fun `when the build finishes unsuccessfully and plugin is activated, post failure status for each type`() {
-        config.isChecksActivated = true
-        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
-
-        usecase.invoke()
-
-        verify(statusDatasource, times(summaries.size)).post(any(), any(), any())
-    }
+//    @Test
+//    fun `when plugin is not activated, nothing is posted`() {
+//        config.isChecksActivated = false
+//        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
+//
+//        usecase.invoke()
+//
+//        VerifyNotCalled on statusDatasource that statusDatasource.post(any(), any(), any()) was called
+//    }
+//
+//    @Test
+//    fun `when the build finishes unsuccessfully and plugin is activated, post failure status for each type`() {
+//        config.isChecksActivated = true
+//        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
+//
+//        usecase.invoke()
+//
+//        verify(statusDatasource, times(summaries.size)).post(any(), any(), any())
+//    }
 
     @Test
     fun `when the build finishes successfully and plugin is activated, handle success status for each type`() {
         config.isChecksActivated = true
+        print("summaries: " + summaries.filter { it.value() != null }.size)
         val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
 
         usecase.invoke()
