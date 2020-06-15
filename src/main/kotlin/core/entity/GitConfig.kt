@@ -10,19 +10,23 @@ interface GitConfig {
     var commitDate : Long
     var commitBranch : String
     var isAllCommitted : Boolean
+    fun summary() = "$shortHash $commitBranch at ${SimpleDateFormat().format(Date(commitDate * 1000))}"
 }
 
 open class GitConfigDefault : GitConfig {
-    override var commitHash: String = commitHash()
-    override var shortHash: String = shortHash()
-    override var commitDate: Long = commitDate()
-    override var commitBranch: String = commitBranch()
-    override var isAllCommitted: Boolean = isAllCommitted()
+    override var commitHash: String
+        get() = "git rev-parse HEAD".run() ?: ""
+        set(value) {}
+    override var shortHash: String
+        get() = "git rev-parse --short HEAD".run() ?: ""
+        set(value) {}
+    override var commitDate: Long
+        get() = "git show -s --format=%ct".run()?.toLong() ?: 0
+        set(value) {}
+    override var commitBranch: String
+        get() =  "git symbolic-ref -q --short HEAD".run() ?: ""
+        set(value) {}
+    override var isAllCommitted: Boolean
+        get() = "git status -s".run()?.isEmpty() ?: false
+        set(value) {}
 }
-
-fun commitHash() = "git rev-parse HEAD".run() ?: ""
-fun shortHash()  = "git rev-parse --short HEAD".run() ?: ""
-fun commitDate() = "git show -s --format=%ct".run()?.toLong() ?: 0
-fun commitBranch() = "git symbolic-ref -q --short HEAD".run() ?: ""
-fun isAllCommitted() = "git status -s".run()?.isEmpty() ?: false
-fun GitConfig.summary() = "$shortHash $commitBranch at ${SimpleDateFormat().format(Date(commitDate * 1000))}"

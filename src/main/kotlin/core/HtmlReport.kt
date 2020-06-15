@@ -3,7 +3,6 @@ package core
 import core.entity.BuildConfig
 import core.entity.InfoMessage
 import core.entity.Message
-import core.entity.summary
 import getCommitLog
 import java.io.File
 
