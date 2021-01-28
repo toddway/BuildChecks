@@ -10,8 +10,7 @@ import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
 fun File.toDocument() : Document {
-    val dbf = DocumentBuilderFactory.newInstance()
-    val db = dbf.newDocumentBuilder()
+    val db = DocumentBuilderFactory.newInstance().newDocumentBuilder()
     db.setEntityResolver { _, systemId ->
         if (systemId.contains(".dtd")) {
             InputSource(StringReader(""))
@@ -19,11 +18,17 @@ fun File.toDocument() : Document {
             null
         }
     }
-
     return db.parse(this)
 }
 
-fun List<File>.toDocumentList() = map { it.toDocument() }
+fun List<File>.toDocumentList() : List<Document> = mapNotNull {
+    try {
+        it.toDocument()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
 
 fun NodeList.children() = object : Iterable<Node> {
     override fun iterator() = object : Iterator<Node> {
