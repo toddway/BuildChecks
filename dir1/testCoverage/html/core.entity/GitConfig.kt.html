@@ -15,18 +15,17 @@ interface GitConfig {
 
 <span class="fc" id="L16">open class GitConfigDefault : GitConfig {</span>
 <span class="fc" id="L17">    override var commitHash: String = &quot;&quot;</span>
-<span class="pc bpc" id="L18" title="1 of 4 branches missed.">        get() = if (field.isBlank()) &quot;git rev-parse HEAD&quot;.run() ?: &quot;&quot; else field</span>
+<span class="pc bpc" id="L18" title="1 of 8 branches missed.">        get() = field.takeIf { it.isNotBlank() } ?: &quot;git rev-parse HEAD&quot;.run() ?: &quot;&quot;</span>
 <span class="fc" id="L19">    override var shortHash: String = &quot;&quot;</span>
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        get() = &quot;git rev-parse --short HEAD&quot;.run() ?: &quot;&quot;</span>
-<span class="nc" id="L21">        set(value) { field = value }</span>
-    override var commitDate: Long
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        get() = &quot;git show -s --format=%ct&quot;.run()?.toLong() ?: 0</span>
-<span class="nc" id="L24">        set(value) {}</span>
-    override var commitBranch: String
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        get() =  &quot;git symbolic-ref -q --short HEAD&quot;.run() ?: &quot;&quot;</span>
-<span class="nc" id="L27">        set(value) {}</span>
+<span class="pc bpc" id="L20" title="1 of 8 branches missed.">        get() = field.takeIf { it.isNotBlank() } ?: &quot;git rev-parse --short HEAD&quot;.run() ?: &quot;&quot;</span>
+<span class="fc" id="L21">    override var commitDate: Long = 0L</span>
+<span class="pc bpc" id="L22" title="2 of 10 branches missed.">        get() = field.takeIf { it != 0L } ?: &quot;git show -s --format=%ct&quot;.run()?.toLong() ?: 0</span>
+<span class="fc" id="L23">    override var commitBranch: String = &quot;&quot;</span>
+<span class="pc bpc" id="L24" title="1 of 8 branches missed.">        get() =  field.takeIf { it.isNotBlank() } ?: &quot;git symbolic-ref -q --short HEAD&quot;.run() ?: &quot;&quot;</span>
     override var isAllCommitted: Boolean
-<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        get() = &quot;git status -s&quot;.run()?.isEmpty() ?: false</span>
-<span class="fc" id="L30">        set(value) {}</span>
+<span class="pc bpc" id="L26" title="2 of 4 branches missed.">        get() = &quot;git status -s&quot;.run()?.isEmpty() ?: false</span>
+<span class="fc" id="L27">        set(value) {}</span>
 }
+
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
