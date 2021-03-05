@@ -1,32 +1,33 @@
 package unit
 
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
-import core.entity.BuildConfigDefault
-import core.usecase.*
 import Registry
+import core.entity.BuildConfigDefault
+import core.usecase.HandleBuildFinishedUseCase
+import core.usecase.PostStatsUseCase
+import core.usecase.PostStatusUseCase
+import io.mockk.every
+import io.mockk.mockk
 import io.reactivex.Observable
-import org.amshove.kluent.*
 import org.junit.Before
 import org.junit.Test
 
 class HandleBuildFinishedUseCaseTests {
-    val statsDatasource : PostStatsUseCase.Datasource = mock()
+    val statsDatasource : PostStatsUseCase.Datasource = mockk()
     val postStatsUseCase = PostStatsUseCase(listOf(statsDatasource))
-    val statusDatasource : PostStatusUseCase.Datasource = mock()
-    val postStatusUseCase = PostStatusUseCase(listOf(statusDatasource), mock(), mock())
+    val statusDatasource : PostStatusUseCase.Datasource = mockk()
+    val postStatusUseCase = PostStatusUseCase(listOf(statusDatasource), mockk(), mockk())
     val config = BuildConfigDefault().apply { reports = "./src/test/testFiles" }
     val registry = Registry(config)
     val summaries = registry.provideGetSummaryUseCases()
 
 
     @Before fun before() {
-        When calling statusDatasource.name() itReturns "asdf"
-        When calling statusDatasource.isActive() itReturns true
-        When calling statusDatasource.isRemote() itReturns false
-        When calling statusDatasource.post(any(), any(), any()) itReturns Observable.just(true)
-        When calling statsDatasource.postStats(any()) itReturns Observable.just(true)
-        When calling statsDatasource.postStats(any()) itReturns Observable.just(true)
+        every { statusDatasource.name() } returns "asdf"
+        every { statusDatasource.isActive() } returns true
+        every { statusDatasource.isRemote() } returns false
+        every { statusDatasource.post(any(), any(), any()) } returns Observable.just(true)
+        every { statsDatasource.postStats(any()) } returns Observable.just(true)
+        every { statsDatasource.postStats(any()) } returns Observable.just(true)
         config.artifactsPath = "./build/testFiles/buildChecks"
         config.artifactsBranch = ""
     }
@@ -59,8 +60,8 @@ class HandleBuildFinishedUseCaseTests {
 
         usecase.invoke()
 
-        verify(statusDatasource, times(summaries.size)).post(any(), any(), any())
-        Verify on statsDatasource that statsDatasource.postStats(any()) was called
+        io.mockk.verify(exactly = summaries.size) { statusDatasource.post(any(), any(), any())}
+        io.mockk.verify { statsDatasource.postStats(any()) }
     }
 }
 

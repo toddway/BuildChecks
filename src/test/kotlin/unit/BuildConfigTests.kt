@@ -1,12 +1,11 @@
 package unit
 
-import core.csvToMapsList
 import core.entity.BuildConfigDefault
 import core.entity.GitConfigDefault
-import core.jsArrayItemsFrom
 import core.toXmlDocuments
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe
+import org.junit.Assert
 import org.junit.Test
 import java.util.*
 
@@ -52,16 +51,36 @@ class BuildConfigTests {
         config.completedMessage() shouldNotBe null
     }
 
-    @Test fun test() {
+    @Test fun `when getting a git property after setting it to a specific value, then it returns the value`() {
+        val someString = "ASdf"
         val config = BuildConfigDefault()
-        val csv = """
-            aldkfja ldkj a push to 3454095834
-            70=coverage, 20=whatever, aldkfjad=date
-        """.trimIndent()
-        println(csvToMapsList(csv).jsArrayItemsFrom("coverage"))
-        //println(config.reportDirs().copyInto(config.artifactsDir()).path)
-        //val history = config.csvToMapsList()
-        //println(history.jsArrayItemsFrom("coverage"))
+
+        config.git.apply {
+            Assert.assertNotEquals(someString, commitHash)
+            Assert.assertNotEquals(someString, shortHash)
+            Assert.assertNotEquals(someString, commitBranch)
+            Assert.assertNotEquals(someString, commitDate)
+
+            commitHash = someString
+            shortHash = someString
+            commitBranch = someString
+            commitDate = 1
+
+            Assert.assertEquals(someString, commitHash)
+            Assert.assertEquals(someString, shortHash)
+            Assert.assertEquals(someString, commitBranch)
+            Assert.assertEquals(1, commitDate)
+        }
+    }
+
+    @Test fun `when getting a git property before a value has been set, then it returns a non-empty value`() {
+        val config = BuildConfigDefault()
+        config.git.apply {
+            Assert.assertNotEquals("", commitHash)
+            Assert.assertNotEquals("", shortHash)
+            Assert.assertNotEquals("", commitBranch)
+            Assert.assertNotEquals(0, commitDate)
+        }
     }
 }
 

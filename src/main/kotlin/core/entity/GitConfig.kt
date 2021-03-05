@@ -14,19 +14,17 @@ interface GitConfig {
 }
 
 open class GitConfigDefault : GitConfig {
-    override var commitHash: String
-        get() = "git rev-parse HEAD".run() ?: ""
-        set(value) {}
-    override var shortHash: String
-        get() = "git rev-parse --short HEAD".run() ?: ""
-        set(value) {}
-    override var commitDate: Long
-        get() = "git show -s --format=%ct".run()?.toLong() ?: 0
-        set(value) {}
-    override var commitBranch: String
-        get() =  "git symbolic-ref -q --short HEAD".run() ?: ""
-        set(value) {}
+    override var commitHash: String = ""
+        get() = field.takeIf { it.isNotBlank() } ?: "git rev-parse HEAD".run() ?: ""
+    override var shortHash: String = ""
+        get() = field.takeIf { it.isNotBlank() } ?: "git rev-parse --short HEAD".run() ?: ""
+    override var commitDate: Long = 0L
+        get() = field.takeIf { it != 0L } ?: "git show -s --format=%ct".run()?.toLong() ?: 0
+    override var commitBranch: String = ""
+        get() =  field.takeIf { it.isNotBlank() } ?: "git symbolic-ref -q --short HEAD".run() ?: ""
     override var isAllCommitted: Boolean
         get() = "git status -s".run()?.isEmpty() ?: false
         set(value) {}
 }
+
+
