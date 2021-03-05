@@ -153,22 +153,22 @@ var chart = new Chart(document.getElementById('myChart').getContext('2d'), confi
 <span class="nc" id="L153">&quot;&quot;&quot;.trimIndent()</span>
 
 fun csvToMapsList(csv : String?) : List&lt;Map&lt;String, String&gt;&gt; {
-<span class="pc bpc" id="L156" title="3 of 6 branches missed.">    return csv?.lines()?.filter { it.isNotBlank() }?.map { row -&gt;</span>
-<span class="fc" id="L157">        val rowMap = mutableMapOf&lt;String, String&gt;()</span>
-<span class="fc" id="L158">        val cols = row.replace(&quot;\&quot;&quot;, &quot;&quot;).replace(&quot;, &quot;,&quot;,&quot;).split(&quot;,&quot;)</span>
-<span class="fc" id="L159">        cols.forEach { col -&gt;</span>
-<span class="fc" id="L160">            col.split(&quot;=&quot;).let {</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">                if (it.size == 2) rowMap.put(it[1], it[0])</span>
-<span class="fc" id="L162">                else rowMap.put(&quot;unknown&quot;, it[0])</span>
-<span class="fc" id="L163">            }</span>
-<span class="fc" id="L164">        }</span>
-<span class="fc" id="L165">        rowMap</span>
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">    }?.sortedBy { it[&quot;date&quot;] } ?: listOf()</span>
+<span class="nc bnc" id="L156" title="All 6 branches missed.">    return csv?.lines()?.filter { it.isNotBlank() }?.map { row -&gt;</span>
+<span class="nc" id="L157">        val rowMap = mutableMapOf&lt;String, String&gt;()</span>
+<span class="nc" id="L158">        val cols = row.replace(&quot;\&quot;&quot;, &quot;&quot;).replace(&quot;, &quot;,&quot;,&quot;).split(&quot;,&quot;)</span>
+<span class="nc" id="L159">        cols.forEach { col -&gt;</span>
+<span class="nc" id="L160">            col.split(&quot;=&quot;).let {</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                if (it.size == 2) rowMap.put(it[1], it[0])</span>
+<span class="nc" id="L162">                else rowMap.put(&quot;unknown&quot;, it[0])</span>
+<span class="nc" id="L163">            }</span>
+<span class="nc" id="L164">        }</span>
+<span class="nc" id="L165">        rowMap</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">    }?.sortedBy { it[&quot;date&quot;] } ?: listOf()</span>
 }
 
 fun List&lt;Map&lt;String, String&gt;&gt;.jsArrayItemsFrom(key : String) : String {
-<span class="pc bpc" id="L170" title="1 of 6 branches missed.">    return filter { it[&quot;date&quot;] != null &amp;&amp; it[key] != null }</span>
-<span class="fc" id="L171">            .joinToString(&quot;,&quot;) { &quot;{ x:unixDate(\&quot;${it[&quot;date&quot;]}\&quot;), y:${it[key]} }&quot; }</span>
+<span class="nc bnc" id="L170" title="All 6 branches missed.">    return filter { it[&quot;date&quot;] != null &amp;&amp; it[key] != null }</span>
+<span class="nc" id="L171">            .joinToString(&quot;,&quot;) { &quot;{ x:unixDate(\&quot;${it[&quot;date&quot;]}\&quot;), y:${it[key]} }&quot; }</span>
 }
 
 fun BuildConfig.chartHtml(stats: String): String {
