@@ -20,11 +20,14 @@ fun String.toFileList(log: Log? = null): List<File> {
             .filter { it.exists() }
 }
 
+fun List<File>.commonPrefix() : String = map { it.absolutePath }.reduce { acc, path -> path.commonPrefixWith(acc) }
 
-fun List<File>.copyInto(targetDir : File, subdirPrefix : String = "dir") : File {
-    forEachIndexed { index, file ->
+fun List<File>.copyInto(targetDir : File) : File {
+    val commonPrefix = commonPrefix()
+    forEach { file ->
         if (file.isDirectory) {
-            val subdir = File(targetDir, "$subdirPrefix${index + 1}")
+            val prefix = file.absolutePath.replaceFirst(commonPrefix, "")
+            val subdir = File(targetDir, prefix)
             subdir.deleteRecursively()
             file.listFiles()?.forEach {
                 if (it.name != subdir.name && it.name != targetDir.name)

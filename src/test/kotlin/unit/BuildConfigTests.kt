@@ -35,7 +35,7 @@ class BuildConfigTests {
     fun `when valid file paths are configured, reportFiles returns a list of File objects for each`() {
         val config = BuildConfigDefault()
         config.reports = "./src/test/testFiles"
-        config.reportFiles().toXmlDocuments().size shouldEqual 11
+        config.reportFiles().toXmlDocuments().size shouldEqual 12
     }
 
     @Test
