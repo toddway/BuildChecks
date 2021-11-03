@@ -2,11 +2,13 @@ package unit
 
 import Registry
 import core.entity.BuildConfigDefault
+import core.entity.ProjectConfig
 import core.usecase.HandleBuildFinishedUseCase
 import core.usecase.PostStatsUseCase
 import core.usecase.PostStatusUseCase
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
@@ -16,9 +18,14 @@ class HandleBuildFinishedUseCaseTests {
     val postStatsUseCase = PostStatsUseCase(listOf(statsDatasource))
     val statusDatasource : PostStatusUseCase.Datasource = mockk()
     val postStatusUseCase = PostStatusUseCase(listOf(statusDatasource), mockk(), mockk())
-    val config = BuildConfigDefault().apply { reports = "./src/test/testFiles" }
-    val registry = Registry(config)
+    val config = BuildConfigDefault().apply {
+        reports = "./src/test/testFiles"
+        log = mockk()
+    }
+    val projectConfig = mockk<ProjectConfig>().apply { every { createBuildChecksConfig() } returns config }
+    val registry = Registry(projectConfig)
     val summaries = registry.provideGetSummaryUseCases()
+    val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
 
 
     @Before fun before() {
@@ -32,36 +39,41 @@ class HandleBuildFinishedUseCaseTests {
         config.artifactsBranch = ""
     }
 
-//    @Test
-//    fun `when plugin is not activated, nothing is posted`() {
-//        config.isChecksActivated = false
-//        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
-//
-//        usecase.invoke()
-//
-//        VerifyNotCalled on statusDatasource that statusDatasource.post(any(), any(), any()) was called
-//    }
-//
-//    @Test
-//    fun `when the build finishes unsuccessfully and plugin is activated, post failure status for each type`() {
-//        config.isChecksActivated = true
-//        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
-//
-//        usecase.invoke()
-//
-//        verify(statusDatasource, times(summaries.size)).post(any(), any(), any())
-//    }
+    @Test
+    fun `when plugin is not activated, nothing is posted`() {
+        config.isChecksActivated = false
+
+        usecase.invoke()
+
+        verify(exactly = 0) { statusDatasource.post(any(), any(), any()) }
+    }
+
+    @Test
+    fun `when the build finishes unsuccessfully and plugin is activated, post failure status for each type`() {
+        config.isChecksActivated = true
+
+        usecase.invoke()
+
+        verify(exactly = summaries.size) { statusDatasource.post(any(), any(), any()) }
+    }
 
     @Test
     fun `when the build finishes successfully and plugin is activated, handle success status for each type`() {
         config.isChecksActivated = true
-        print("summaries: " + summaries.filter { it.value() != null }.size)
-        val usecase = HandleBuildFinishedUseCase(postStatusUseCase, postStatsUseCase, summaries, config, mutableListOf())
 
         usecase.invoke()
 
-        io.mockk.verify(exactly = summaries.size) { statusDatasource.post(any(), any(), any())}
-        io.mockk.verify { statsDatasource.postStats(any()) }
+        verify(exactly = summaries.size) { statusDatasource.post(any(), any(), any())}
+        verify { statsDatasource.postStats(any()) }
+    }
+
+    @Test
+    fun `when usecase is invoked, then the info log is called with the expected message`() {
+        val expectedMessage = "${usecase::class.simpleName} invoked"
+
+        usecase.invoke()
+
+        verify { config.log?.info(expectedMessage) }
     }
 }
 

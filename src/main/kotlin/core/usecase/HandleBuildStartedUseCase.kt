@@ -8,8 +8,9 @@ class HandleBuildStartedUseCase(
         val config: BuildConfig
 ) {
     fun invoke() {
+        config.log?.info("${this::class.simpleName} invoked")
         if (config.isChecksActivated) {
-            config.artifactsDir().deleteRecursively()
+            config.artifactsDir().runCatching { deleteRecursively() }
             postStatusUseCase.post(BuildStatus.PENDING, config.startedMessage(), "build")
         } else {
             config.log = null

@@ -1,12 +1,20 @@
-import core.entity.BuildConfig
-import core.entity.BuildConfigDefault
-import core.entity.Message
+import core.entity.*
 import core.usecase.*
 import data.buildList
 
-
-class Registry(val config : BuildConfig = BuildConfigDefault()) {
+class Registry(val projectConfig: ProjectConfig) {
     private val messages = mutableListOf<Message>()
+    val config = projectConfig.createBuildChecksConfig()
+
+    init {
+        projectConfig.initPostChecksTask {
+            provideHandleUnsuccessfulSummariesUseCase().invoke()
+        }
+        projectConfig.initPrintChecksTask {
+            provideHandleUnsuccessfulSummariesUseCase().invoke()
+        }
+        projectConfig.initPushArtifactsTask()
+    }
 
     fun provideGetSummaryUseCases() =
             config.reportFiles().toSummaries(config)
@@ -17,17 +25,27 @@ class Registry(val config : BuildConfig = BuildConfigDefault()) {
     fun providePostStatusUseCase() =
             PostStatusUseCase(PostStatusUseCase.Datasource.buildList(config), config, messages)
 
-    fun provideHandleBuildStartedUseCase() =
-            HandleBuildStartedUseCase(providePostStatusUseCase(), config)
+    fun provideBuildStartedUseCase(): HandleBuildStartedUseCase {
+        config.apply {
+            taskName = projectConfig.taskNameString()
+            isPostActivated = projectConfig.isPostChecksActivated()
+            isChecksActivated = projectConfig.isChecksActivated()
+            isPushActivated = projectConfig.isPushArtifactsActivated()
+            log = projectConfig.logger()
+        }
+        return HandleBuildStartedUseCase(providePostStatusUseCase(), config)
+    }
 
-    fun provideHandleBuildFinishedUseCase() =
-            HandleBuildFinishedUseCase(
-                    providePostStatusUseCase(),
-                    providePostStatsUseCase(),
-                    provideGetSummaryUseCases(),
-                    config,
-                    messages
-            )
+    fun provideBuildFinishedUseCase(isSuccess: Boolean): HandleBuildFinishedUseCase {
+        return HandleBuildFinishedUseCase(
+            providePostStatusUseCase(),
+            providePostStatsUseCase(),
+            provideGetSummaryUseCases(),
+            config.apply { this.isSuccess = isSuccess },
+            messages
+        )
+    }
+
 
     fun provideHandleUnsuccessfulSummariesUseCase() =
             HandleUnsuccessfulSummariesUseCase(provideGetSummaryUseCases())

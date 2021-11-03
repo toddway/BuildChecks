@@ -13,6 +13,7 @@ class HandleBuildFinishedUseCase(
         private val messageQueue : MutableList<Message>
 ) {
     fun invoke() {
+        config.log?.info("${this::class.simpleName} invoked")
         if (config.isChecksActivated) {
             summaries.postStatuses(postStatusUseCase)
             postStatsUseCase.post(summaries.toStats(config))
