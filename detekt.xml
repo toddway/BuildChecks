@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/entity/ProjectConfig.kt">
+	<error line="3" column="1" severity="warning" message="The interface ProjectConfig is too complex. Consider splitting it up." source="detekt.ComplexInterface" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/Files.kt">
+	<error line="24" column="1" severity="warning" message="Function copyInto is nested too deeply." source="detekt.NestedBlockDepth" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/GetLintSummaryUseCase.kt">
+	<error line="34" column="35" severity="warning" message="Multiple occurrences of the same string literal within a single file detected." source="detekt.StringLiteralDuplication" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/usecase/HtmlReport.kt">
+	<error line="22" column="1" severity="warning" message="The function historyChart is too long. The maximum length is 20." source="detekt.LongMethod" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/Utils.kt">
+	<error line="23" column="34" severity="warning" message="Using a spread operator causes a full copy of the array to be created before calling a method has a very high performance penalty." source="detekt.SpreadOperator" />
+</file>
+<file name="/Users/tway/dev/BuildChecks/src/main/kotlin/core/entity/GitConfig.kt">
+	<error line="13" column="96" severity="warning" message="This expression contains a magic number. Consider defining it to a well named constant." source="detekt.MagicNumber" />
+</file>
+</checkstyle>

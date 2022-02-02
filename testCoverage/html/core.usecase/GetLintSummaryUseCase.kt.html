@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetLintSummaryUseCase.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">core.usecase</a> &gt; <span class="el_source">GetLintSummaryUseCase.kt</span></div><h1>GetLintSummaryUseCase.kt</h1><pre class="source lang-java linenums">package core.usecase
+
+import core.*
+import core.entity.BuildConfig
+import org.w3c.dom.Document
+import org.w3c.dom.Node
+
+<span class="fc" id="L8">open class GetLintSummaryUseCase(</span>
+<span class="fc" id="L9">        val documents: List&lt;Document&gt;,</span>
+<span class="pc" id="L10">        val maxViolations : Int? = null) : GetSummaryUseCase {</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">    override fun isSuccessful(): Boolean = maxViolations?.isNotLessThan(asTotal()) ?: true</span>
+<span class="fc" id="L12">    override fun key(): String = &quot;lint&quot;</span>
+<span class="fc" id="L13">    override fun value(): String? = violationMap.toViolationSummary(maxViolations, documents.size)</span>
+<span class="fc" id="L14">    private val violationMap: Map&lt;String?, List&lt;Node&gt;&gt;? by lazy { documents.toViolationMap() }</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">    fun asTotal(): Int? = violationMap?.entryChildrenSum()</span>
+    companion object
+}
+
+fun Map&lt;String?, List&lt;Node&gt;&gt;?.toViolationSummary(maxViolations: Int?, numDocuments : Int) : String? {
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">    return this?.let {</span>
+<span class="pc bpc" id="L21" title="2 of 4 branches missed.">        val violationTypes = flatMap { e -&gt; listOf(&quot;${e.value.count()} ${e.key?.toLowerCase()}&quot;) }.toMutableList()</span>
+<span class="fc" id="L22">        val sum = entryChildrenSum()</span>
+<span class="fc" id="L23">        var summary = &quot;&quot;</span>
+<span class="fc" id="L24">        summary +=</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">                if (sum == 0) &quot;0 violations&quot;</span>
+<span class="fc" id="L26">                else &quot;$sum violations &quot; + &quot;(&quot; + violationTypes.joinToString(&quot;, &quot;) + &quot;)&quot;</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        maxViolations?.let { summary += &quot;, max is $maxViolations&quot; }</span>
+<span class="fc" id="L28">        return summary</span>
+    }
+}
+
+fun List&lt;Document&gt;.toViolationMap(): Map&lt;String?, List&lt;Node&gt;&gt;? {
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">    return if (isEmpty()) null</span>
+<span class="fc" id="L34">    else children(listOf(&quot;issue&quot;, &quot;error&quot;, &quot;duplication&quot;, &quot;violation&quot;)).groupBy { it.deriveViolationKey() }</span>
+}
+
+fun Node.deriveViolationKey() : String {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    return if (nodeName == &quot;duplication&quot;) &quot;clones&quot;</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    else if (nodeName == &quot;violation&quot;) &quot;error&quot;</span>
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">    else attr(&quot;severity&quot;)?.let {</span>
+<span class="pc bpc" id="L41" title="2 of 5 branches missed.">        when (it.toLowerCase()) {</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">            &quot;fatal&quot; -&gt; &quot;error&quot;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">            &quot;informational&quot; -&gt; &quot;info&quot;</span>
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">            else -&gt; it.toLowerCase()</span>
+        }
+<span class="nc" id="L46">    } ?: &quot;unknown&quot;</span>
+}
+
+fun List&lt;Document&gt;.buildLint(maxLintViolations : Int?) : GetLintSummaryUseCase {
+<span class="fc" id="L50">    return GetLintSummaryUseCase(this, maxLintViolations)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

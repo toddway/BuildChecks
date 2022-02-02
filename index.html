@@ -2,14 +2,18 @@
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
 <h1>Build Summary</h1>
-✔ 1.57s for gradle postChecks, max is 60.0s<br/>
-✔ 59.5% coverage (1,079 lines+branches), min is 50.0%<br/>
-✔ 6 violations (1 clones, 5 warning), max is 8<br/>
-<ul><li><a href="dir1/testCoverage/html/index.html">dir1/testCoverage/html</a></li>
-<li><a href="dir1/testCoverage/html/jacoco-sessions.html">dir1/testCoverage/html/jacoco-sessions.html</a></li>
-<li><a href="dir1/tests/test/index.html">dir1/tests/test</a></li>
-<li><a href="dir1/cpd.txt">dir1/cpd.txt</a></li>
-<li><a href="dir1/detekt.html">dir1/detekt.html</a></li></ul>
+✔ 2.35s for gradle checks postChecks, max is 60.0s<br/>
+✔ 61.52% coverage (1,159 lines+branches), min is 50.0%<br/>
+✔ 7 violations (1 clones, 6 warning), max is 8
+  <h3></h3>       
+  <ul style="list-style: none;">        
+        <li><a href="testCoverage/html/index.html">testCoverage/html</a></li>
+<li><a href="testCoverage/html/jacoco-sessions.html">testCoverage/html/jacoco-sessions.html</a></li>
+<li><a href="tests/test/index.html">tests/test</a></li>
+<li><a href="cpd.txt">cpd.txt</a></li>
+<li><a href="detekt.html">detekt.html</a></li>
+      
+  </ul>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <canvas id="myChart" style="max-width:1000px"></canvas>
@@ -19,10 +23,10 @@ function unixDate(stamp) {
 	return moment.unix(stamp).format(timeFormat);
 }
 
-var coverageData = [{ x:unixDate("1588014385"), y:69.75 },{ x:unixDate("1588014385"), y:70.99 },{ x:unixDate("1588014385"), y:70.87 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588255451"), y:70.6 },{ x:unixDate("1588598885"), y:68.06 },{ x:unixDate("1588598885"), y:68.84 },{ x:unixDate("1588613704"), y:69.25 },{ x:unixDate("1588613704"), y:69.25 },{ x:unixDate("1588618983"), y:69.15 },{ x:unixDate("1588618983"), y:69.15 },{ x:unixDate("1588618983"), y:69.15 },{ x:unixDate("1588618983"), y:69.25 },{ x:unixDate("1611847836"), y:58.35 },{ x:unixDate("1611847836"), y:58.35 },{ x:unixDate("1611847836"), y:60.65 },{ x:unixDate("1611847836"), y:60.65 },{ x:unixDate("1614967191"), y:59.5 }];
-var linePlusBranchData = [{ x:unixDate("1588014385"), y:1309 },{ x:unixDate("1588014385"), y:2568 },{ x:unixDate("1588014385"), y:2554 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588255451"), y:1313 },{ x:unixDate("1588598885"), y:1387 },{ x:unixDate("1588598885"), y:1348 },{ x:unixDate("1588613704"), y:1405 },{ x:unixDate("1588613704"), y:1405 },{ x:unixDate("1588618983"), y:1407 },{ x:unixDate("1588618983"), y:1407 },{ x:unixDate("1588618983"), y:1407 },{ x:unixDate("1588618983"), y:1405 },{ x:unixDate("1611847836"), y:1054 },{ x:unixDate("1611847836"), y:1054 },{ x:unixDate("1611847836"), y:1052 },{ x:unixDate("1611847836"), y:1052 },{ x:unixDate("1614967191"), y:1079 }];
-var durationData = [{ x:unixDate("1588014385"), y:9.64 },{ x:unixDate("1588014385"), y:5.84 },{ x:unixDate("1588014385"), y:0.16 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588255451"), y:6.18 },{ x:unixDate("1588598885"), y:3.13 },{ x:unixDate("1588598885"), y:3.2 },{ x:unixDate("1588613704"), y:1.31 },{ x:unixDate("1588613704"), y:1.93 },{ x:unixDate("1588618983"), y:3.31 },{ x:unixDate("1588618983"), y:7.9 },{ x:unixDate("1588618983"), y:10.49 },{ x:unixDate("1588618983"), y:3.44 },{ x:unixDate("1611847836"), y:1.11 },{ x:unixDate("1611847836"), y:15.99 },{ x:unixDate("1611847836"), y:1.43 },{ x:unixDate("1611847836"), y:9.79 },{ x:unixDate("1614967191"), y:1.53 }];
-var violationData = [{ x:unixDate("1588014385"), y:4 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588255451"), y:4 },{ x:unixDate("1588598885"), y:7 },{ x:unixDate("1588598885"), y:5 },{ x:unixDate("1588613704"), y:6 },{ x:unixDate("1588613704"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1614967191"), y:6 }];
+var coverageData = [{ x:unixDate("1588014385"), y:69.75 },{ x:unixDate("1588014385"), y:70.99 },{ x:unixDate("1588014385"), y:70.87 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588014385"), y:71.97 },{ x:unixDate("1588255451"), y:70.6 },{ x:unixDate("1588598885"), y:68.06 },{ x:unixDate("1588598885"), y:68.84 },{ x:unixDate("1588613704"), y:69.25 },{ x:unixDate("1588613704"), y:69.25 },{ x:unixDate("1588618983"), y:69.15 },{ x:unixDate("1588618983"), y:69.15 },{ x:unixDate("1588618983"), y:69.15 },{ x:unixDate("1588618983"), y:69.25 },{ x:unixDate("1611847836"), y:58.35 },{ x:unixDate("1611847836"), y:58.35 },{ x:unixDate("1611847836"), y:60.65 },{ x:unixDate("1611847836"), y:60.65 },{ x:unixDate("1614967191"), y:59.5 },{ x:unixDate("1643816847"), y:61.52 }];
+var linePlusBranchData = [{ x:unixDate("1588014385"), y:1309 },{ x:unixDate("1588014385"), y:2568 },{ x:unixDate("1588014385"), y:2554 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588014385"), y:1263 },{ x:unixDate("1588255451"), y:1313 },{ x:unixDate("1588598885"), y:1387 },{ x:unixDate("1588598885"), y:1348 },{ x:unixDate("1588613704"), y:1405 },{ x:unixDate("1588613704"), y:1405 },{ x:unixDate("1588618983"), y:1407 },{ x:unixDate("1588618983"), y:1407 },{ x:unixDate("1588618983"), y:1407 },{ x:unixDate("1588618983"), y:1405 },{ x:unixDate("1611847836"), y:1054 },{ x:unixDate("1611847836"), y:1054 },{ x:unixDate("1611847836"), y:1052 },{ x:unixDate("1611847836"), y:1052 },{ x:unixDate("1614967191"), y:1079 },{ x:unixDate("1643816847"), y:1159 }];
+var durationData = [{ x:unixDate("1588014385"), y:9.64 },{ x:unixDate("1588014385"), y:5.84 },{ x:unixDate("1588014385"), y:0.16 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588014385"), y:7.5 },{ x:unixDate("1588255451"), y:6.18 },{ x:unixDate("1588598885"), y:3.13 },{ x:unixDate("1588598885"), y:3.2 },{ x:unixDate("1588613704"), y:1.31 },{ x:unixDate("1588613704"), y:1.93 },{ x:unixDate("1588618983"), y:3.31 },{ x:unixDate("1588618983"), y:7.9 },{ x:unixDate("1588618983"), y:10.49 },{ x:unixDate("1588618983"), y:3.44 },{ x:unixDate("1611847836"), y:1.11 },{ x:unixDate("1611847836"), y:15.99 },{ x:unixDate("1611847836"), y:1.43 },{ x:unixDate("1611847836"), y:9.79 },{ x:unixDate("1614967191"), y:1.53 },{ x:unixDate("1643816847"), y:2.29 }];
+var violationData = [{ x:unixDate("1588014385"), y:4 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:14 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588014385"), y:7 },{ x:unixDate("1588255451"), y:4 },{ x:unixDate("1588598885"), y:7 },{ x:unixDate("1588598885"), y:5 },{ x:unixDate("1588613704"), y:6 },{ x:unixDate("1588613704"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1588618983"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1611847836"), y:6 },{ x:unixDate("1614967191"), y:6 },{ x:unixDate("1643816847"), y:7 }];
 
 window.chartColor = {
 	red: 'rgb(255, 99, 132)',
@@ -137,8 +141,8 @@ var config = {
 var chart = new Chart(document.getElementById('myChart').getContext('2d'), config);
 </script>
 <p style="color:grey;font-size:11px">
-Generated using 22199a8 master at 3/5/21, 11:59 AM 
-from dir1/cpd.xml, dir1/testCoverage/testCoverage.xml, dir1/detekt.xml
+Generated using 4da6887 master at 2/2/22, 9:47 AM 
+from <a href="cpd.xml">cpd.xml</a>, <a href="testCoverage/testCoverage.xml">testCoverage/testCoverage.xml</a>, <a href="detekt.xml">detekt.xml</a>
 </p>
 </body>
 </html>

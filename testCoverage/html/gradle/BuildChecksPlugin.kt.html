@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuildChecksPlugin.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">gradle</a> &gt; <span class="el_source">BuildChecksPlugin.kt</span></div><h1>BuildChecksPlugin.kt</h1><pre class="source lang-java linenums">package gradle
+import Registry
+import core.entity.BuildConfig
+import core.entity.BuildConfigDefault
+import core.entity.Log
+import core.entity.ProjectConfig
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+<span class="nc" id="L10">open class BuildChecksPlugin : Plugin&lt;Project&gt; {</span>
+
+    override fun apply(project: Project) {
+<span class="nc" id="L13">        val registry = Registry(GradleProjectConfig(project))</span>
+
+<span class="nc" id="L15">        project.gradle.taskGraph.whenReady {</span>
+<span class="nc" id="L16">            registry.provideBuildStartedUseCase().invoke()</span>
+<span class="nc" id="L17">        }</span>
+
+<span class="nc" id="L19">        project.gradle.buildFinished {</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">            registry.provideBuildFinishedUseCase(it.failure == null).invoke()</span>
+<span class="nc" id="L21">        }</span>
+<span class="nc" id="L22">    }</span>
+}
+
+<span class="nc" id="L25">class GradleProjectConfig(val project: Project) : ProjectConfig {</span>
+<span class="nc bnc" id="L26" title="All 6 branches missed.">    override fun isPrintChecksActivated() = project.gradle.taskGraph.allTasks.find { it is PrintChecksTask } != null</span>
+<span class="nc bnc" id="L27" title="All 6 branches missed.">    override fun isPostChecksActivated() = project.gradle.taskGraph.allTasks.find { it is PostChecksTask } != null</span>
+<span class="nc bnc" id="L28" title="All 6 branches missed.">    override fun isPushArtifactsActivated() = project.gradle.taskGraph.allTasks.find { it is PushArtifacts } != null</span>
+<span class="nc" id="L29">    override fun taskNameString() = project.gradle.startParameter.taskNames.joinToString(&quot; &quot;)</span>
+<span class="nc" id="L30">    override fun createBuildChecksConfig(): BuildConfig = project.extensions.create(&quot;buildChecks&quot;, BuildConfigDefault::class.java)</span>
+<span class="nc" id="L31">    override fun initPostChecksTask(doLast : () -&gt; Unit) { project.tasks.create(&quot;postChecks&quot;, PostChecksTask::class.java).doLast { doLast() } }</span>
+<span class="nc" id="L32">    override fun initPrintChecksTask(doLast : () -&gt; Unit) { project.tasks.create(&quot;printChecks&quot;, PrintChecksTask::class.java).doLast { doLast() } }</span>
+<span class="nc" id="L33">    override fun initPushArtifactsTask() { project.tasks.create(&quot;pushArtifacts&quot;, PushArtifacts::class.java) }</span>
+<span class="nc" id="L34">    override fun logger(): Log = Log(project.logger)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuildConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">core.entity</a> &gt; <span class="el_source">BuildConfig.kt</span></div><h1>BuildConfig.kt</h1><pre class="source lang-java linenums">package core.entity
+
+import core.findReportFiles
+import core.firstDir
+import core.round
+import core.toFileList
+import java.io.File
+import java.util.*
+
+@Suppress(&quot;ComplexInterface&quot;)
+interface BuildConfig {
+    var buildUrl : String
+    var reports : String
+    var allowUncommittedChanges : Boolean
+    var baseUrl : String
+    var authorization : String
+    var buildStartTime : Date
+    var statsBaseUrl: String
+    var taskName : String
+    var isPostActivated : Boolean
+    var isChecksActivated: Boolean
+    var isPushActivated: Boolean
+    var isSuccess: Boolean
+    var git : GitConfig
+    var maxLintViolations : Int?
+    var minCoveragePercent : Double?
+    var maxDuration : Double?
+    var log: Log?
+    var artifactsPath : String
+    var artifactsBranch : String
+
+<span class="fc" id="L32">    fun duration() = ((Date().time - buildStartTime.time) / core.THOUSAND).round(2)</span>
+<span class="fc" id="L33">    fun startedMessage() = &quot;gradle $taskName - in progress&quot;</span>
+<span class="fc" id="L34">    fun completedMessage() = &quot;${duration()}s for gradle $taskName&quot;</span>
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">    fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted</span>
+<span class="fc" id="L36">    fun reportDirs() = reports.toFileList(log)</span>
+<span class="fc" id="L37">    fun reportFiles() : List&lt;File&gt; = reportDirs().flatMap { it.findReportFiles() }</span>
+<span class="fc bfc" id="L38" title="All 4 branches covered.">    fun artifactsDir() = if (artifactsPath.isNotBlank()) File(artifactsPath) else File(reportDirs().firstDir(), &quot;buildChecks&quot;)</span>
+<span class="nc" id="L39">    fun tempDir() = File(System.getProperty(&quot;java.io.tmpdir&quot;), &quot;buildChecks&quot;)</span>
+<span class="fc" id="L40">    fun buildReportFile() = File(artifactsDir(), &quot;index.html&quot;)</span>
+}
+
+//gradle config cannot be a data class, must be open
+<span class="pc" id="L44">open class BuildConfigDefault : BuildConfig {</span>
+<span class="fc" id="L45">    override var reports: String = &quot;&quot;</span>
+<span class="fc" id="L46">    override var log: Log? = null</span>
+<span class="pc" id="L47">    override var maxDuration: Double? = null</span>
+<span class="fc" id="L48">    override var git: GitConfig = GitConfigDefault()</span>
+<span class="fc" id="L49">    override var allowUncommittedChanges: Boolean = true</span>
+<span class="fc" id="L50">    override var isSuccess: Boolean = true</span>
+<span class="fc" id="L51">    override var maxLintViolations: Int? = null</span>
+<span class="fc" id="L52">    override var minCoveragePercent: Double? = null</span>
+<span class="pc" id="L53">    override var buildUrl  = &quot;&quot;</span>
+<span class="fc" id="L54">    override var baseUrl  = &quot;&quot;</span>
+<span class="fc" id="L55">    override var authorization  = &quot;&quot;</span>
+<span class="fc" id="L56">    override var buildStartTime = Date()</span>
+<span class="fc" id="L57">    override var statsBaseUrl = &quot;&quot;</span>
+<span class="fc" id="L58">    override var taskName = &quot;default&quot;</span>
+<span class="fc" id="L59">    override var isPostActivated = false</span>
+<span class="fc" id="L60">    override var isChecksActivated = false</span>
+<span class="fc" id="L61">    override var isPushActivated = false</span>
+<span class="fc" id="L62">    override var artifactsPath : String = &quot;&quot;</span>
+<span class="fc" id="L63">    override var artifactsBranch : String = &quot;&quot;</span>
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

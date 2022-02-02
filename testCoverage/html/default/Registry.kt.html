@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Registry.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">BuildChecks</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Registry.kt</span></div><h1>Registry.kt</h1><pre class="source lang-java linenums">import core.entity.*
+import core.usecase.*
+import data.buildList
+
+<span class="pc" id="L5">class Registry(val projectConfig: ProjectConfig) {</span>
+<span class="fc" id="L6">    private val messages = mutableListOf&lt;Message&gt;()</span>
+<span class="pc" id="L7">    val config = projectConfig.createBuildChecksConfig()</span>
+
+<span class="fc" id="L9">    init {</span>
+<span class="fc" id="L10">        projectConfig.initPostChecksTask(provideChecksTaskDoLast())</span>
+<span class="fc" id="L11">        projectConfig.initPrintChecksTask(provideChecksTaskDoLast())</span>
+<span class="fc" id="L12">        projectConfig.initPushArtifactsTask()</span>
+<span class="fc" id="L13">    }</span>
+
+<span class="fc" id="L15">    fun provideChecksTaskDoLast() : () -&gt; Unit = {</span>
+<span class="nc" id="L16">        HandleUnsuccessfulSummariesUseCase(provideGetSummaryUseCases(), config).invoke()</span>
+<span class="pc" id="L17">    }</span>
+
+    fun provideGetSummaryUseCases() =
+<span class="fc" id="L20">            config.reportFiles().toSummaries(config)</span>
+
+    fun providePostStatsUseCase() =
+<span class="fc" id="L23">            PostStatsUseCase(PostStatsUseCase.Datasource.buildList(config))</span>
+
+    fun providePostStatusUseCase() =
+<span class="fc" id="L26">            PostStatusUseCase(PostStatusUseCase.Datasource.buildList(config), config, messages)</span>
+
+    fun provideBuildStartedUseCase(): HandleBuildStartedUseCase {
+<span class="fc" id="L29">        config.apply {</span>
+<span class="fc" id="L30">            taskName = projectConfig.taskNameString()</span>
+<span class="fc" id="L31">            isPostActivated = projectConfig.isPostChecksActivated()</span>
+<span class="fc" id="L32">            isChecksActivated = projectConfig.isChecksActivated()</span>
+<span class="fc" id="L33">            isPushActivated = projectConfig.isPushArtifactsActivated()</span>
+<span class="fc" id="L34">            log = projectConfig.logger()</span>
+<span class="fc" id="L35">        }</span>
+<span class="fc" id="L36">        return HandleBuildStartedUseCase(providePostStatusUseCase(), config)</span>
+    }
+
+    fun provideBuildFinishedUseCase(isSuccess: Boolean): HandleBuildFinishedUseCase {
+<span class="fc" id="L40">        config.apply { this.isSuccess = isSuccess }</span>
+<span class="fc" id="L41">        return HandleBuildFinishedUseCase(</span>
+<span class="fc" id="L42">            providePostStatusUseCase(),</span>
+<span class="fc" id="L43">            providePostStatsUseCase(),</span>
+<span class="fc" id="L44">            provideGetSummaryUseCases(),</span>
+<span class="fc" id="L45">            config,</span>
+<span class="fc" id="L46">            messages</span>
+        )
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
