@@ -2,11 +2,15 @@ package unit
 
 import core.entity.BuildConfigDefault
 import core.entity.GitConfigDefault
+import core.usecase.toBuildReport
 import core.toXmlDocuments
+import core.usecase.writeBuildReports
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotBe
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
+import java.awt.Desktop
 import java.util.*
 
 class BuildConfigTests {
@@ -82,7 +86,25 @@ class BuildConfigTests {
             Assert.assertNotEquals(0, commitDate)
         }
     }
+
+    @Test fun `when to BuildReport is called, then the correct report data is built`() {
+        val config = BuildConfigDefault()
+        config.reports = "./src/test/testFiles, ./src/test/testFiles2"
+        val buildReport = config.toBuildReport()
+        Assert.assertEquals(2, buildReport.directoryReports.size)
+        config.artifactsDir().deleteRecursively()
+    }
+
+    @Ignore
+    @Test fun test() {
+        val config = BuildConfigDefault()
+        config.reports = "./src/test/testFiles, ./src/test/testFiles2"
+        config.writeBuildReports(config.toBuildReport())
+        Desktop.getDesktop().open(config.buildReportFile())
+    }
 }
+
+
 
 
 

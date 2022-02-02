@@ -1,6 +1,5 @@
 package core.usecase
 
-import core.writeSummaryReports
 import core.entity.BuildConfig
 import core.entity.Message
 import pushArtifacts
@@ -17,7 +16,7 @@ class HandleBuildFinishedUseCase(
         if (config.isChecksActivated) {
             summaries.postStatuses(postStatusUseCase)
             postStatsUseCase.post(summaries.toStats(config))
-            config.writeSummaryReports(messageQueue)
+            config.writeBuildReports(config.toBuildReport(), messageQueue)
             config.pushArtifacts(messageQueue)
             messageQueue.distinct().forEach { println(it.toString()) }
         }

@@ -1,9 +1,8 @@
 package core
 
-import core.entity.*
-import core.usecase.toMessages
-import core.usecase.toStats
-import core.usecase.toSummaries
+import core.entity.ErrorMessage
+import core.entity.InfoMessage
+import core.entity.Log
 import java.io.File
 
 fun String.toFileList(log: Log? = null): List<File> {
@@ -20,7 +19,7 @@ fun String.toFileList(log: Log? = null): List<File> {
             .filter { it.exists() }
 }
 
-fun List<File>.commonPrefix() : String = map { it.absolutePath }.reduce { acc, path -> path.commonPrefixWith(acc) }
+fun List<File>.commonPrefix() : String = map { it.absolutePath }.reduceOrNull { acc, path -> path.commonPrefixWith(acc) } ?: ""
 
 fun List<File>.copyInto(targetDir : File) : File {
     val commonPrefix = commonPrefix()
@@ -40,33 +39,16 @@ fun List<File>.copyInto(targetDir : File) : File {
 
 fun List<File>.firstDir() = firstOrNull { it.isDirectory }
 
-fun List<File>.toNameAndPathPairs(relativeRootDir : File) = map {
-    val name = if (it.isIndexHTML()) it.parentFile.relativeTo(relativeRootDir).path else it.relativeTo(relativeRootDir).path
-    name to it.relativeTo(relativeRootDir)
+fun File.toNameAndPathPair(relativeRootDir: File): Pair<String, File> {
+    val name = if (isIndexHTML()) parentFile.relativeTo(relativeRootDir).path else relativeTo(relativeRootDir).path
+    return name to relativeTo(relativeRootDir)
 }
-
 fun File.isReadableFormat() : Boolean = name.toLowerCase().run { endsWith(".html") || endsWith(".txt") || endsWith(".text") || endsWith(".md")}
 fun File.isXML() = name.toLowerCase().endsWith(".xml")
 fun File.isIndexHTML() = name.toLowerCase() == "index.html"
 fun File.containsIndexHTML() = listFiles()?.any { it.isIndexHTML() }  ?: false
 fun List<File>.toXmlDocuments() = filter { it.isXML() }.toDocumentList()
 fun File.findReportFiles() : List<File> = walkTopDown().onEnter { !it.parentFile.containsIndexHTML() }.filter { !it.isDirectory }.toList()
+fun File.subdirs(): Array<File>? = listFiles { it : File -> it.isDirectory }
 
 
-fun BuildConfig.writeSummaryReports(messageQueue: MutableList<Message>) {
-    log?.info(InfoMessage("Building summary reports in ${artifactsDir()}...").toString())
-    val dirs = reportDirs()
-    val artifactsDir = dirs.copyInto(artifactsDir())
-    val files = artifactsDir.findReportFiles()
-    val xmlPairs = files.filter { it.isXML() }.toNameAndPathPairs(artifactsDir)
-    val htmlPairs = files.filter { it.isReadableFormat() }.toNameAndPathPairs(artifactsDir)
-    val summaries = files.toSummaries(this)
-    val stats = summaries.toStats(this@writeSummaryReports).toString()
-
-    File(artifactsDir, "index.html").apply {
-        writeText(htmlReport(summaries.toMessages(), htmlPairs, xmlPairs, chartHtml(stats)))
-        messageQueue.add(InfoMessage("Browse reports at " + absoluteFile.toURI()))
-    }
-
-    File(artifactsDir, "stats.csv").apply { writeText(stats) }
-}

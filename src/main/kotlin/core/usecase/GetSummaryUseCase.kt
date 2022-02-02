@@ -40,7 +40,7 @@ fun List<GetSummaryUseCase>.toStats(config: BuildConfig) : Stats {
 }
 
 
-fun List<GetSummaryUseCase>.toMessages() = filter { it.value() != null }.map { s ->
+fun List<GetSummaryUseCase>.toMessages(): List<Message?> = filter { it.value() != null }.map { s ->
     s.value()?.let {
         if (s.isSuccessful()) InfoMessage(it)
         else ErrorMessage(it)

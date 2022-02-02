@@ -7,13 +7,13 @@ class Registry(val projectConfig: ProjectConfig) {
     val config = projectConfig.createBuildChecksConfig()
 
     init {
-        projectConfig.initPostChecksTask {
-            provideHandleUnsuccessfulSummariesUseCase().invoke()
-        }
-        projectConfig.initPrintChecksTask {
-            provideHandleUnsuccessfulSummariesUseCase().invoke()
-        }
+        projectConfig.initPostChecksTask(provideChecksTaskDoLast())
+        projectConfig.initPrintChecksTask(provideChecksTaskDoLast())
         projectConfig.initPushArtifactsTask()
+    }
+
+    fun provideChecksTaskDoLast() : () -> Unit = {
+        HandleUnsuccessfulSummariesUseCase(provideGetSummaryUseCases(), config).invoke()
     }
 
     fun provideGetSummaryUseCases() =
@@ -37,16 +37,14 @@ class Registry(val projectConfig: ProjectConfig) {
     }
 
     fun provideBuildFinishedUseCase(isSuccess: Boolean): HandleBuildFinishedUseCase {
+        config.apply { this.isSuccess = isSuccess }
         return HandleBuildFinishedUseCase(
             providePostStatusUseCase(),
             providePostStatsUseCase(),
             provideGetSummaryUseCases(),
-            config.apply { this.isSuccess = isSuccess },
+            config,
             messages
         )
     }
 
-
-    fun provideHandleUnsuccessfulSummariesUseCase() =
-            HandleUnsuccessfulSummariesUseCase(provideGetSummaryUseCases())
 }

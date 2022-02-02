@@ -1,23 +1,19 @@
-package core
+package core.usecase
 
-import core.entity.BuildConfig
-import core.entity.InfoMessage
-import core.entity.Message
-import getCommitLog
+import core.entity.*
 import java.io.File
 
-
-fun BuildConfig.htmlReport(messages: List<Message?>, htmlPairs: List<Pair<String, File>>, xmlPairs: List<Pair<String, File>>, chartHtml : String) = """
+fun BuildReport.toHtml() = """
 <html>
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
 <h1>Build Summary</h1>
-${messages.joinToString("\n") { "$it<br/>" }}
-<ul>${htmlPairs.joinToString("\n") { "<li><a href=\"${it.second}\">${it.first}</a></li>" }}</ul>
-$chartHtml
+${messages.joinToString("<br/>\n")}
+${directoryReports.joinToString("") { it.toHtml() }}
+${statsHistory?.let { historyChart(it) } ?: ""}
 <p style="color:grey;font-size:11px">
-Generated using ${git.summary()} 
-from ${xmlPairs.map { "${it.second}" }.joinToString(", ")}
+Generated using $gitSummary 
+from ${xmlLinks.joinToString(", ") { it.toHtml() }}
 </p>
 </body>
 </html>
@@ -158,8 +154,8 @@ fun csvToMapsList(csv : String?) : List<Map<String, String>> {
         val cols = row.replace("\"", "").replace(", ",",").split(",")
         cols.forEach { col ->
             col.split("=").let {
-                if (it.size == 2) rowMap.put(it[1], it[0])
-                else rowMap.put("unknown", it[0])
+                if (it.size == 2) rowMap[it[1]] = it[0]
+                else rowMap["unknown"] = it[0]
             }
         }
         rowMap
@@ -171,14 +167,20 @@ fun List<Map<String, String>>.jsArrayItemsFrom(key : String) : String {
             .joinToString(",") { "{ x:unixDate(\"${it["date"]}\"), y:${it[key]} }" }
 }
 
-fun BuildConfig.chartHtml(stats: String): String {
-    return if (artifactsBranch.isNotBlank() && isPushActivated) {
-        log?.info(InfoMessage("Building history chart from '$artifactsBranch' branch log...").toString())
-        val commits = getCommitLog(tempDir(), artifactsBranch, log)
-        log?.info(InfoMessage("Extract stat history from csv commit messages...").toString())
-        val mapsList = csvToMapsList(commits + "\n" + stats)
-        mapsList.forEach { log?.info(InfoMessage("$it").toString()) }
-        historyChart(mapsList)
+fun BuildConfig.writeBuildReports(buildReport: BuildReport, messageQueue: MutableList<Message> = mutableListOf()) {
+    buildReportFile().apply {
+        writeText(buildReport.toHtml())
+        messageQueue.add(InfoMessage("Browse reports at " + absoluteFile.toURI()))
     }
-    else ""
+
+    File(artifactsDir(), "stats.csv").apply { writeText(buildReport.stats.toString()) }
 }
+
+fun Link.toHtml() = "<a href=\"${file.path}\">${name}</a>"
+fun DirectoryReport.toHtml() = """
+    <h3>${directoryLink.name}</h3>       
+    <ul style="list-style: none;">        
+        ${readableLinks.joinToString("\n") { "  <li>${it.toHtml()}</li>" }}
+        ${messages.map { it?.string }.joinToString("\n") { "  <li>$it</li>" }}
+    </ul>
+""".trimIndent()
