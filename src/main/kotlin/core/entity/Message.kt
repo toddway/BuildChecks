@@ -20,3 +20,5 @@ class InfoMessage(override val string: String) : Message(string) {
         return "✔ $string"
     }
 }
+
+fun List<Message>.printAll() = distinct().forEach { println(it.toString()) }

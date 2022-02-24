@@ -5,10 +5,8 @@ interface ProjectConfig {
     fun isPostChecksActivated() : Boolean
     fun isChecksActivated() = isPostChecksActivated() || isPrintChecksActivated() || isPushArtifactsActivated()
     fun isPushArtifactsActivated() : Boolean
+    fun isOpenChecksActivated() : Boolean
     fun taskNameString() : String
     fun createBuildChecksConfig() : BuildConfig
-    fun initPostChecksTask(doLast : () -> Unit)
-    fun initPrintChecksTask(doLast : () -> Unit)
-    fun initPushArtifactsTask()
     fun logger(): Log
 }

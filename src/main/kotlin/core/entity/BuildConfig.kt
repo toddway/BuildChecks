@@ -20,6 +20,7 @@ interface BuildConfig {
     var isPostActivated : Boolean
     var isChecksActivated: Boolean
     var isPushActivated: Boolean
+    var isOpenActivated: Boolean
     var isSuccess: Boolean
     var git : GitConfig
     var maxLintViolations : Int?
@@ -59,6 +60,7 @@ open class BuildConfigDefault : BuildConfig {
     override var isPostActivated = false
     override var isChecksActivated = false
     override var isPushActivated = false
+    override var isOpenActivated = false
     override var artifactsPath : String = ""
     override var artifactsBranch : String = ""
 }

@@ -1,6 +1,7 @@
 package core.usecase
 
 import core.entity.*
+import core.run
 import java.io.File
 
 fun BuildReport.toHtml() = """
@@ -167,10 +168,17 @@ fun List<Map<String, String>>.jsArrayItemsFrom(key : String) : String {
             .joinToString(",") { "{ x:unixDate(\"${it["date"]}\"), y:${it[key]} }" }
 }
 
-fun BuildConfig.writeBuildReports(buildReport: BuildReport, messageQueue: MutableList<Message> = mutableListOf()) {
+fun BuildConfig.writeBuildReports(
+    messageQueue: MutableList<Message> = mutableListOf(),
+    buildReport: BuildReport = toBuildReport()
+) {
     buildReportFile().apply {
         writeText(buildReport.toHtml())
         messageQueue.add(InfoMessage("Browse reports at " + absoluteFile.toURI()))
+        if (isOpenActivated) {
+            log?.info("Opening ${absoluteFile.toURI()}")
+            "open ${absoluteFile.toURI()}".run()
+        }
     }
 
     File(artifactsDir(), "stats.csv").apply { writeText(buildReport.stats.toString()) }

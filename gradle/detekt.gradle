@@ -1,12 +1,21 @@
 apply plugin: 'io.gitlab.arturbosch.detekt'
 
-detekt {
-    input = files(
+def getIncludeFiles() {
+    return project.ext.changeList != null
+            ? files(project.changeList.size == 0
+            ? "$projectDir/src/main/res"
+            : project.changeList.collect{ value -> "$rootDir/$value"})
+            : files(
             "$projectDir/src/main/java",
-            "$projectDir/src/main/kotlin"
+            "$projectDir/src/main/kotlin",
+            "$projectDir/src/commonMain/kotlin",
+            "$projectDir/src/androidMain/kotlin"
     )
-    config = files("$rootDir/gradle/detekt-config.yml")
-    filters = ".*build.*,.*/resources/.*,.*/tmp/.*"
+}
+
+detekt {
+    input = getIncludeFiles()
+    config = files("$projectDir/gradle/detekt-config.yml")
     reports {
         xml {
             enabled = true
@@ -16,5 +25,10 @@ detekt {
             enabled = true
             destination = file("$projectDir/build/reports/detekt.html")
         }
+        txt {
+            enabled = false
+        }
     }
+    baseline = file("$projectDir/detekt-baseline.xml")
+    basePath = projectDir
 }

@@ -1,9 +1,9 @@
 apply plugin: 'com.toddway.buildchecks'
 
 buildChecks {
-    baseUrl = System.properties["baseUrl"]
-    authorization = System.properties["auth"]
-    buildUrl = System.properties["buildUrl"]
+    baseUrl = providers.systemProperty("baseUrl").forUseAtConfigurationTime().get()
+    authorization = providers.systemProperty("auth").forUseAtConfigurationTime().get()
+    buildUrl = providers.systemProperty("buildUrl").forUseAtConfigurationTime().get()
     reports = "$projectDir/build/reports"
     artifactsBranch = "artifacts"
     minCoveragePercent = 50
@@ -11,16 +11,23 @@ buildChecks {
     maxDuration = 60
 }
 
-project.gradle.buildFinished {
-    def tasks = project.gradle.taskGraph.allTasks
-    def isPrintEnabled = tasks.find { it.name == "printChecks" } != null
-    def isPostEnabled = tasks.find { it.name == "postChecks" } != null
-    if (isPrintEnabled && !isPostEnabled) {
-        try {
-            exec {
-                executable "open"
-                args buildChecks.buildReportFile()
-            }
-        } catch (Exception e) { println(e.message) }
-    }
+//project.gradle.buildFinished {
+//    def tasks = project.gradle.taskGraph.allTasks
+//    def isPrintEnabled = tasks.find { it.name == "printChecks" } != null
+//    def isPostEnabled = tasks.find { it.name == "postChecks" } != null
+//    if (isPrintEnabled && !isPostEnabled) {
+//        try {
+//            exec {
+//                executable "open"
+//                args buildChecks.buildReportFile()
+//            }
+//        } catch (Exception e) { println(e.message) }
+//    }
+//}
+
+project.ext.changeList = null
+if (project.hasProperty("checkDiff")) {
+    def baseBranch = project.getProperty("checkDiff") ?: ""
+    project.ext.changeList = "git diff $baseBranch --name-only ${projectDir.name}/".execute().text.readLines()
+    println("checkDiff for $baseBranch: " + project.ext.changeList)
 }

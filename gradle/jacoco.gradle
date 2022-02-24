@@ -1,6 +1,6 @@
 apply plugin: 'jacoco'
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.7"
     reportsDir = file("$buildDir/reports")
 }
 
@@ -8,6 +8,7 @@ tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     jacoco.excludes = ['jdk.internal.*']
 }
+
 project.afterEvaluate {
     if (project.hasProperty('android')) {
         if (android.hasProperty('applicationVariants')) {
@@ -21,6 +22,22 @@ project.afterEvaluate {
 }
 
 def createCoverageTask(variant) {
+    def variantName
+    def testTaskName
+    def javaPath
+    def kotlinPath
+    if (variant == null) {
+        variantName = ""
+        testTaskName = "test"
+        javaPath = "${buildDir}/classes/java/${variantName}"
+        kotlinPath = "${buildDir}/classes/kotlin/${variantName}"
+    } else {
+        variantName = variant.name
+        testTaskName = "test${variantName.capitalize()}UnitTest"
+        javaPath = "${buildDir}/intermediates/javac/${variantName}/classes"
+        kotlinPath = "${buildDir}/tmp/kotlin-classes/${variantName}"
+    }
+
     def excludes = [
             /*Android*/
             '**/R.class',
@@ -43,6 +60,12 @@ def createCoverageTask(variant) {
             '**/*_.*',
             '**/*_$*',
 
+            /*Dagger*/
+            '**/*_Provide*/**',
+            '**/*_*Factory*/**',
+            '**/*_MembersInjector.class',
+            '**/*Dagger*',
+
             /*Realm*/
             'io/realm/**/*.*',
 
@@ -51,20 +74,16 @@ def createCoverageTask(variant) {
             '**/*Test*.*',
             '**/*Null*.*'
     ]
-    def variantName
-    def testTaskName
-    def javaClasses
-    def kotlinClasses
-    if (variant == null) {
-        variantName = ""
-        testTaskName = "test"
-        javaClasses = fileTree(dir: "${buildDir}/classes/java/${variantName}", excludes: excludes)
-        kotlinClasses = fileTree(dir: "${buildDir}/classes/kotlin/${variantName}", excludes: excludes)
-    } else {
-        variantName = variant.name
-        testTaskName = "test${variantName.capitalize()}UnitTest"
-        javaClasses = fileTree(dir: variant.javaCompiler.destinationDir, excludes: excludes)
-        kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}", excludes: excludes)
+
+    def javaClasses = fileTree(dir: javaPath, excludes: excludes)
+    def kotlinClasses = fileTree(dir: kotlinPath, excludes: excludes)
+
+    if (project.ext.changeList != null) {
+        def includes = project.ext.changeList.size == 0
+                ? ["**/IncludeNothing*"]
+                : project.changeList.collect { value -> "**/${value.tokenize("/").last().tokenize(".").first()}*"}
+        javaClasses.include(includes)
+        kotlinClasses.include(includes)
     }
 
     tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
@@ -76,15 +95,31 @@ def createCoverageTask(variant) {
             xml.enabled = true
         }
 
-        classDirectories = files([javaClasses, kotlinClasses])
+        classDirectories.from = files([javaClasses, kotlinClasses])
 
-        sourceDirectories = files([
+        sourceDirectories.from = files([
                 "$project.projectDir/src/main/java",
                 "$project.projectDir/src/${variantName}/java",
                 "$project.projectDir/src/main/kotlin",
-                "$project.projectDir/src/${variantName}/kotlin"
+                "$project.projectDir/src/${variantName}/kotlin",
+                "$project.projectDir/src/jvmMain/kotlin",
+                "$project.projectDir/src/androidMain/kotlin",
+                "$project.projectDir/src/commonMain/kotlin",
         ])
 
-        executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+        executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+
+        doFirst {
+            try {
+                def filesWithComposables = fileTree(kotlinPath)
+                        .filter { it.text.contains("Landroidx/compose/runtime/Composer;") }
+                        .collect {it.path.replaceAll(kotlinPath, "**") }
+                excludes.addAll(filesWithComposables)
+                kotlinClasses.exclude(excludes)
+            } catch (e) {
+                println(e.localizedMessage)
+            }
+
+        }
     }
 }

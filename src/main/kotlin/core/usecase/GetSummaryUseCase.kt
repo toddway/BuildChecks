@@ -2,6 +2,7 @@ package core.usecase
 
 import core.entity.*
 import core.toXmlDocuments
+import org.gradle.api.GradleException
 import java.io.File
 
 interface GetSummaryUseCase {
@@ -39,10 +40,20 @@ fun List<GetSummaryUseCase>.toStats(config: BuildConfig) : Stats {
     )
 }
 
+fun List<GetSummaryUseCase>.postStats(config: BuildConfig, postStatsUseCase: PostStatsUseCase) {
+    toStats(config).also { postStatsUseCase.post(it) }
+}
 
 fun List<GetSummaryUseCase>.toMessages(): List<Message?> = filter { it.value() != null }.map { s ->
     s.value()?.let {
         if (s.isSuccessful()) InfoMessage(it)
         else ErrorMessage(it)
     }
+}
+
+
+fun List<GetSummaryUseCase>.throwIfUnsuccessful(config: BuildConfig) = forEach { summary ->
+    config.log?.info("${summary.status()} for ${summary.key()} check, ${summary.value()}")
+    if (!summary.isSuccessful())
+        throw GradleException(summary.value() ?: "")
 }

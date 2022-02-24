@@ -1,3 +1,5 @@
+package core
+
 import core.entity.*
 import core.usecase.*
 import data.buildList
@@ -5,16 +7,6 @@ import data.buildList
 class Registry(val projectConfig: ProjectConfig) {
     private val messages = mutableListOf<Message>()
     val config = projectConfig.createBuildChecksConfig()
-
-    init {
-        projectConfig.initPostChecksTask(provideChecksTaskDoLast())
-        projectConfig.initPrintChecksTask(provideChecksTaskDoLast())
-        projectConfig.initPushArtifactsTask()
-    }
-
-    fun provideChecksTaskDoLast() : () -> Unit = {
-        HandleUnsuccessfulSummariesUseCase(provideGetSummaryUseCases(), config).invoke()
-    }
 
     fun provideGetSummaryUseCases() =
             config.reportFiles().toSummaries(config)
@@ -31,13 +23,14 @@ class Registry(val projectConfig: ProjectConfig) {
             isPostActivated = projectConfig.isPostChecksActivated()
             isChecksActivated = projectConfig.isChecksActivated()
             isPushActivated = projectConfig.isPushArtifactsActivated()
+            isOpenActivated = projectConfig.isOpenChecksActivated()
             log = projectConfig.logger()
         }
         return HandleBuildStartedUseCase(providePostStatusUseCase(), config)
     }
 
     fun provideBuildFinishedUseCase(isSuccess: Boolean): HandleBuildFinishedUseCase {
-        config.apply { this.isSuccess = isSuccess }
+        config.isSuccess = isSuccess
         return HandleBuildFinishedUseCase(
             providePostStatusUseCase(),
             providePostStatsUseCase(),
@@ -46,5 +39,4 @@ class Registry(val projectConfig: ProjectConfig) {
             messages
         )
     }
-
 }

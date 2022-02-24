@@ -99,7 +99,7 @@ class BuildConfigTests {
     @Test fun test() {
         val config = BuildConfigDefault()
         config.reports = "./src/test/testFiles, ./src/test/testFiles2"
-        config.writeBuildReports(config.toBuildReport())
+        config.writeBuildReports()
         Desktop.getDesktop().open(config.buildReportFile())
     }
 }
