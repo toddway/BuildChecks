@@ -11,22 +11,15 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.build.event.BuildEventsListenerRegistry
 import javax.inject.Inject
 
-open class BuildChecksPlugin @Inject constructor(
-    private val buildEventsListenerRegistry: BuildEventsListenerRegistry
-    ) : Plugin<Project> {
-
+open class BuildChecksPlugin @Inject constructor(private val buildEventsListenerRegistry: BuildEventsListenerRegistry) : Plugin<Project> {
     override fun apply(project: Project) {
         val registry = Registry(GradleProjectConfig(project))
 
-        BuildEventService.init(
+        BuildEventService.create(
             project.gradle.sharedServices,
             buildEventsListenerRegistry,
-            onBuildStart = {
-                registry.provideBuildStartedUseCase().invoke()
-            },
-            onBuildFinish = {
-                registry.provideBuildFinishedUseCase(it.hasNoFailures()).invoke()
-            }
+            onBuildStart = { registry.provideBuildStartedUseCase().invoke() },
+            onBuildFinish = { registry.provideBuildFinishedUseCase(it.hasNoFailures()).invoke() }
         )
     }
 }

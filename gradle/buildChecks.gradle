@@ -11,23 +11,39 @@ buildChecks {
     maxDuration = 60
 }
 
-//project.gradle.buildFinished {
-//    def tasks = project.gradle.taskGraph.allTasks
-//    def isPrintEnabled = tasks.find { it.name == "printChecks" } != null
-//    def isPostEnabled = tasks.find { it.name == "postChecks" } != null
-//    if (isPrintEnabled && !isPostEnabled) {
-//        try {
-//            exec {
-//                executable "open"
-//                args buildChecks.buildReportFile()
-//            }
-//        } catch (Exception e) { println(e.message) }
-//    }
-//}
 
-project.ext.changeList = null
-if (project.hasProperty("checkDiff")) {
+//this builds a list of changed files for use with known code analysis tools
+def buildChangeLists() {
+    if (!project.hasProperty("checkDiff")) return
     def baseBranch = project.getProperty("checkDiff") ?: ""
-    project.ext.changeList = "git diff $baseBranch --name-only ${projectDir.name}/".execute().text.readLines()
-    println("checkDiff for $baseBranch: " + project.ext.changeList)
+    def cmd = "git diff $baseBranch --name-only ${projectDir.name}/"
+    def changeList = cmd.execute().text.readLines()
+    project.ext.changeList = changeList
+    println("checkDiff for $baseBranch: " + changeList)
+    project.ext.checkstyleList = fileTree(dir: "$rootDir", includes:changeList.size == 0 ? [""] : changeList)
+    project.ext.detektList = files(changeList.size == 0
+            ? "$projectDir/src/main/res"
+            : changeList.collect{ value -> "$rootDir/$value"})
+    def cpdList = changeList.findAll{ it.contains("/src/main/java") || it.contains("/src/main/kotlin") }
+    project.ext.cpdList = fileTree(dir: "$rootDir", includes: (cpdList.size == 0 ? [""] : cpdList))
+    project.ext.jacocoList = changeList.size == 0
+            ? ["**/IncludeNothing*"]
+            : changeList.collect { value -> "**/${value.tokenize("/").last().tokenize(".").first()}*"}
+}
+
+buildChangeLists()
+
+task printChangeLists {
+    doLast {
+        print("all: ")
+        println(project.ext.changeList)
+        print("checkstyle: ")
+        println(project.ext.checkstyleList)
+        print("detekt: ")
+        println(project.ext.detektList)
+        print("cpdList: ")
+        println(project.ext.cpdList)
+        print("jacocoList: ")
+        println(project.ext.jacocoList)
+    }
 }

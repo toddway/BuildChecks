@@ -10,7 +10,7 @@ cpdCheck {
 
     ignoreFailures true
 
-    def classes = fileTree("$projectDir/src/main/java")
+    def classes= fileTree("$projectDir/src/main/java")
     classes += fileTree("$projectDir/src/main/kotlin")
     source = classes
 

@@ -51,9 +51,8 @@ fun List<GetSummaryUseCase>.toMessages(): List<Message?> = filter { it.value() !
     }
 }
 
-
 fun List<GetSummaryUseCase>.throwIfUnsuccessful(config: BuildConfig) = forEach { summary ->
     config.log?.info("${summary.status()} for ${summary.key()} check, ${summary.value()}")
-    if (!summary.isSuccessful())
+    if (config.isSuccess && !summary.isSuccessful())
         throw GradleException(summary.value() ?: "")
 }

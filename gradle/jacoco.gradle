@@ -78,14 +78,6 @@ def createCoverageTask(variant) {
     def javaClasses = fileTree(dir: javaPath, excludes: excludes)
     def kotlinClasses = fileTree(dir: kotlinPath, excludes: excludes)
 
-    if (project.ext.changeList != null) {
-        def includes = project.ext.changeList.size == 0
-                ? ["**/IncludeNothing*"]
-                : project.changeList.collect { value -> "**/${value.tokenize("/").last().tokenize(".").first()}*"}
-        javaClasses.include(includes)
-        kotlinClasses.include(includes)
-    }
-
     tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
         group = "Reporting"
         description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
@@ -119,7 +111,6 @@ def createCoverageTask(variant) {
             } catch (e) {
                 println(e.localizedMessage)
             }
-
         }
     }
 }
