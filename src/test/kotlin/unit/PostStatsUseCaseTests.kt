@@ -2,15 +2,17 @@ package unit
 
 import core.entity.Stats
 import core.usecase.PostStatsUseCase
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import io.reactivex.Observable
-import org.amshove.kluent.*
 import org.junit.Test
 
 class PostStatsUseCaseTests {
 
     @Test
     fun `when metrics, post them`() {
-        val datasource : PostStatsUseCase.Datasource = mock()
+        val datasource : PostStatsUseCase.Datasource = mockk()
         val usecase = PostStatsUseCase(listOf(datasource))
         val metrics = Stats(
                 1.1,
@@ -21,9 +23,9 @@ class PostStatsUseCaseTests {
                 "ADfsdf",
                 "asdfdf"
         )
-        When calling datasource.postStats(metrics) itReturns Observable.just(true)
+        every {  datasource.postStats(metrics) } returns Observable.just(true)
         usecase.post(metrics)
-        Verify on datasource that datasource.postStats(metrics) was called
+        verify { datasource.postStats(metrics) }
     }
 }
 

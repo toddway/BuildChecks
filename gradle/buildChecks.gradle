@@ -1,9 +1,9 @@
 apply plugin: 'com.toddway.buildchecks'
 
 buildChecks {
-    baseUrl = providers.systemProperty("baseUrl").forUseAtConfigurationTime().get()
-    authorization = providers.systemProperty("auth").forUseAtConfigurationTime().get()
-    buildUrl = providers.systemProperty("buildUrl").forUseAtConfigurationTime().get()
+    baseUrl = providers.hasProperty("baseUrl") ? providers.systemProperty("baseUrl").forUseAtConfigurationTime().get() : "http://localhost"
+    authorization = providers.hasProperty("auth") ? providers.systemProperty("auth").forUseAtConfigurationTime().get() : ""
+    buildUrl = providers.hasProperty("buildUrl") ? providers.systemProperty("buildUrl").forUseAtConfigurationTime().get() : "http://localhost"
     reports = "$projectDir/build/reports"
     artifactsBranch = "artifacts"
     minCoveragePercent = 50

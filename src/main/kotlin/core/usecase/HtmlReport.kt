@@ -6,6 +6,7 @@ import java.io.File
 
 fun BuildReport.toHtml() = """
 <html>
+<meta charset="utf-8">
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
 <h1>Build Summary</h1>
@@ -173,6 +174,7 @@ fun BuildConfig.writeBuildReports(
     buildReport: BuildReport = toBuildReport()
 ) {
     buildReportFile().apply {
+        parentFile.mkdirs()
         writeText(buildReport.toHtml())
         messageQueue.add(InfoMessage("Browse reports at " + absoluteFile.toURI()))
         if (isOpenActivated) {

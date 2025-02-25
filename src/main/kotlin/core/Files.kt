@@ -19,21 +19,15 @@ fun String.toFileList(log: Log? = null): List<File> {
             .filter { it.exists() }
 }
 
-fun List<File>.commonPrefix() : String = map { it.absolutePath }.reduceOrNull { acc, path -> path.commonPrefixWith(acc) } ?: ""
+fun String.toShortUid(items: Set<String>) : String {
+    val prefix = items.reduceOrNull { acc, path -> path.commonPrefixWith(acc) } ?: ""
+    val suffix = items.reduceOrNull { acc, path -> path.commonSuffixWith(acc) } ?: ""
+    return removePrefix(prefix).removeSuffix(suffix).replace(File.separator, "-")
+}
 
-fun List<File>.copyInto(targetDir : File) : File {
-    val commonPrefix = commonPrefix()
-    forEach { file ->
-        if (file.isDirectory) {
-            val prefix = file.absolutePath.replaceFirst(commonPrefix, "")
-            val subdir = File(targetDir, prefix)
-            subdir.deleteRecursively()
-            file.listFiles()?.forEach {
-                if (it.name != subdir.name && it.name != targetDir.name)
-                    it.copyRecursively(File(subdir, it.name))
-            }
-        }
-    }
+fun List<File>.copyEachRecursively(targetDir : File) : File {
+    val paths = map { it.absolutePath }.toSet()
+    forEach { it.copyRecursively(File(targetDir, it.absolutePath.toShortUid(paths)), true) }
     return targetDir
 }
 

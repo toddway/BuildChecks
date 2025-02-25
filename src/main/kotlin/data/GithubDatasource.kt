@@ -5,10 +5,11 @@ import core.entity.BuildStatus
 import core.usecase.PostStatusUseCase
 import io.reactivex.Observable
 import okhttp3.ResponseBody
-import retrofit2.Retrofit
 import retrofit2.http.*
 
-class GithubDatasource(retrofit: Retrofit, val config : BuildConfig) : PostStatusUseCase.Datasource {
+class GithubDatasource(val config : BuildConfig) : PostStatusUseCase.Datasource {
+    private val retrofit by lazy { retrofit(config.baseUrl, config.authorization) }
+
     override fun isRemote() = true
 
     override fun post(status: BuildStatus, message: String, key: String): Observable<Boolean> {
@@ -16,7 +17,7 @@ class GithubDatasource(retrofit: Retrofit, val config : BuildConfig) : PostStatu
         return service.postBuildStatus(config.git.commitHash, body).map { true }.onErrorReturn { false }
     }
 
-    private val service = retrofit.create(Service::class.java)
+    private val service by lazy { retrofit.create(Service::class.java) }
 
     override fun isActive(): Boolean {
         return config.isPostActivated && config.baseUrl.contains("github")

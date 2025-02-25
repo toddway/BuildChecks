@@ -2,7 +2,6 @@ package func
 
 import core.entity.Stats
 import data.buildRetrofitStatsDatasource
-import org.amshove.kluent.shouldBe
 import org.junit.Ignore
 import org.junit.Test
 import java.util.*
@@ -22,6 +21,6 @@ class RetrofitBuildMetricDatasourceIntegrationTests {
                 "asdfdf"
         )
         val result = datasource.postStats(metrics).blockingFirst()
-        result shouldBe true
+        assert(result == true)
     }
 }

@@ -5,12 +5,13 @@ import core.entity.BuildStatus
 import core.usecase.PostStatusUseCase
 import io.reactivex.Observable
 import okhttp3.ResponseBody
-import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-class BitBucket2Datasource(retrofit: Retrofit, val config : BuildConfig) : PostStatusUseCase.Datasource {
+class BitBucket2Datasource(val config : BuildConfig) : PostStatusUseCase.Datasource {
+    private val retrofit by lazy { retrofit(config.baseUrl, config.authorization) }
+
     override fun isRemote() = true
     override fun post(status: BuildStatus, message: String, key: String): Observable<Boolean> {
         val body = BitbucketBuildStatusBody(status.bitbucketFormat(), key, message, config.buildUrl, "")

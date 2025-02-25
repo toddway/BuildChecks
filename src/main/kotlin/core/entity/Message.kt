@@ -12,7 +12,7 @@ open class Message(open val string : String = "") {
 
 class ErrorMessage(override val string: String) : Message(string) {
     override fun toString(): String {
-        return "!  $string"
+        return "✘ $string"
     }
 }
 class InfoMessage(override val string: String) : Message(string) {

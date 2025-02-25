@@ -1,7 +1,6 @@
 package unit
 
 import core.entity.Stats
-import org.amshove.kluent.shouldEqual
 import org.junit.Test
 
 class StatsTests {
@@ -28,6 +27,6 @@ class StatsTests {
                 "asdfdf"
         )
 
-        metrics shouldEqual metrics2
+        assert(metrics == metrics2)
     }
 }

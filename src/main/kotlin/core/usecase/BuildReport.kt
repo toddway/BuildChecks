@@ -26,7 +26,7 @@ data class DirectoryReport(
 data class Link(val name : String, val file : File)
 
 fun BuildConfig.toBuildReport() : BuildReport {
-    val artifactsDir = reportDirs().copyInto(artifactsDir())
+    val artifactsDir = reportDirs().copyEachRecursively(artifactsDir())
     log?.info(InfoMessage("Building summary reports in ${artifactsDir}...").toString())
     val allReportFiles = artifactsDir.findReportFiles()
     val buildSummaries = allReportFiles.toSummaries(this)
@@ -42,16 +42,7 @@ fun BuildConfig.toBuildReport() : BuildReport {
 }
 
 fun BuildConfig.toDirectoryReports() : List<DirectoryReport> {
-    return if (reportDirs().size == 1) {
-        listOf(
-            DirectoryReport(
-                directoryLink = artifactsDir().asLink(artifactsDir()),
-                messages = listOf(),
-                readableLinks = artifactsDir().findReportFiles().readables().map { it.asLink(artifactsDir()) }
-            )
-        )
-    }
-    else artifactsDir().subdirs()?.map { dir ->
+    return artifactsDir().subdirs()?.map { dir ->
         val reportFiles = dir.findReportFiles()
         DirectoryReport(
             directoryLink = dir.asLink(artifactsDir()),
@@ -62,7 +53,7 @@ fun BuildConfig.toDirectoryReports() : List<DirectoryReport> {
 }
 
 fun List<File>.readables() = filter { it.isReadableFormat() }
-fun File.asLink(relativeRootDir : File) = toNameAndPathPair(relativeRootDir).let { Link(it.first, it.second) }
+fun File.asLink(relativeRootDir : File) : Link = toNameAndPathPair(relativeRootDir).let { Link(it.first, it.second) }
 
 fun BuildConfig.statsHistory(currentStats: Stats) : List<Map<String, String>>? =
     if (artifactsBranch.isNotBlank() && isPushActivated) {

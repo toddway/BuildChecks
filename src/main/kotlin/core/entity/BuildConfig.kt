@@ -36,7 +36,7 @@ interface BuildConfig {
     fun isAllCommitted() = allowUncommittedChanges || git.isAllCommitted
     fun reportDirs() = reports.toFileList(log)
     fun reportFiles() : List<File> = reportDirs().flatMap { it.findReportFiles() }
-    fun artifactsDir() = if (artifactsPath.isNotBlank()) File(artifactsPath) else File(reportDirs().firstDir(), "buildChecks")
+    fun artifactsDir() = File((if (artifactsPath.isNotBlank()) File(artifactsPath) else File( "./build")).absolutePath)
     fun tempDir() = File(System.getProperty("java.io.tmpdir"), "buildChecks")
     fun buildReportFile() = File(artifactsDir(), "index.html")
 }

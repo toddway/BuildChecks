@@ -1,5 +1,6 @@
 package data
 import okhttp3.Cache
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,10 +36,12 @@ fun retrofit(baseUrl : String, authorization : String): Retrofit {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
     authClient.networkInterceptors().add(overrideCacheControlInterceptor)
 
+    val httpUrl : HttpUrl = HttpUrl.parse(baseUrl) ?: HttpUrl.parse("https://localhost")!!
+
     return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .baseUrl(baseUrl)
+            .baseUrl(httpUrl)
             .client(authClient.build())
             .build()
 }

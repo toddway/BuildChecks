@@ -1,7 +1,6 @@
 package func
 
-import core.commonPrefix
-import core.copyInto
+import core.copyEachRecursively
 import org.junit.Test
 import java.io.File
 
@@ -28,6 +27,6 @@ class ReportTests {
             File("./src/test/testFiles/reports/whatever/coverage")
         )
 
-        dirs.copyInto(targetDir)
+        dirs.copyEachRecursively(targetDir)
     }
 }

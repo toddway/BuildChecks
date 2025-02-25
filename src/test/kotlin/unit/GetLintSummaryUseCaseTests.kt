@@ -5,8 +5,6 @@ import core.toFileList
 import core.usecase.GetLintSummaryUseCase
 import core.usecase.toViolationMap
 import core.usecase.toViolationSummary
-import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldNotBe
 import org.junit.Test
 
 class GetLintSummaryUseCaseTests {
@@ -16,24 +14,24 @@ class GetLintSummaryUseCaseTests {
         val usecase = GetLintSummaryUseCase("./src/test/testFiles/lint-results-prodRelease.xml".toFileList().toDocumentList())
         val v = usecase.value()
         println(v)
-        v shouldNotBe null
+        assert(v != null)
     }
 
     @Test
     fun `when a map is created from multiple report files, then the counts of each violation type are accurate`() {
         val docs = "./src/test/testFiles/lint-results-prodRelease.xml, ./src/test/testFiles/detekt-checkstyle.xml, ./src/test/testFiles/cpdCheck-swift.xml".toFileList().toDocumentList()
         val map = docs.toViolationMap()
-        map?.get("clones")?.count() shouldEqual 2
-        map?.get("error")?.count() shouldEqual 7
-        map?.get("warning")?.count() shouldEqual 409
-        map?.get("info")?.count() shouldEqual 5
+        assert(map?.get("clones")?.count() == 2)
+        assert(map?.get("error")?.count() == 7)
+        assert(map?.get("warning")?.count() == 409)
+        assert(map?.get("info")?.count() == 5)
         println(map?.toViolationSummary(34, docs.size))
     }
 
     @Test
     fun `when a pmd map is created, the error count is correct`() {
         val map = "./src/test/testFiles/pmd.xml".toFileList().toDocumentList().toViolationMap()
-        map?.get("error")?.count() shouldEqual 2
+        assert(map?.get("error")?.count() == 2)
     }
 }
 
