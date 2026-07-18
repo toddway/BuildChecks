@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.toddway.shelf.JvmTests" tests="4" skipped="0" failures="1" errors="0" timestamp="2026-07-18T19:05:12" hostname="VML-M-T7J7JLV6J0" time="1.106">
+  <properties/>
+  <testcase name="when_item_is_put_and_the_key_has_invalid_characters_then_the_same_invalid_key_can_be_used_to_get_the_value[jvm]" classname="com.toddway.shelf.JvmTests" time="0.329"/>
+  <testcase name="when_using_any_serializer_then_any_returned_values_match_the_stored_values[jvm]" classname="com.toddway.shelf.JvmTests" time="0.045"/>
+  <testcase name="test_with_ktor[jvm]" classname="com.toddway.shelf.JvmTests" time="0.731">
+    <failure message="io.ktor.client.features.BadResponseStatusException: Received bad status code: 401 Unauthorized. Expected status code &lt; 300." type="io.ktor.client.features.BadResponseStatusException">io.ktor.client.features.BadResponseStatusException: Received bad status code: 401 Unauthorized. Expected status code &lt; 300.
+	at com.toddway.shelf.JvmTestsKt.response(JvmTests.kt:128)
+	at com.toddway.shelf.JvmTestsKt$response$1.invokeSuspend(JvmTests.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at io.ktor.util.pipeline.SuspendFunctionGun.resumeRootWith(PipelineContext.kt:211)
+	at io.ktor.util.pipeline.SuspendFunctionGun.loop(PipelineContext.kt:168)
+	at io.ktor.util.pipeline.SuspendFunctionGun.access$loop(PipelineContext.kt:63)
+	at io.ktor.util.pipeline.SuspendFunctionGun$continuation$1.resumeWith(PipelineContext.kt:118)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:46)
+	at io.ktor.util.pipeline.SuspendFunctionGun.resumeRootWith(PipelineContext.kt:211)
+	at io.ktor.util.pipeline.SuspendFunctionGun.loop(PipelineContext.kt:168)
+	at io.ktor.util.pipeline.SuspendFunctionGun.access$loop(PipelineContext.kt:63)
+	at io.ktor.util.pipeline.SuspendFunctionGun$continuation$1.resumeWith(PipelineContext.kt:118)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:46)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:106)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:274)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:84)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:59)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:38)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at com.toddway.shelf.JvmTests.test_with_ktor(JvmTests.kt:78)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy5.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:119)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:414)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+</failure>
+  </testcase>
+  <testcase name="when_item_is_called_and_the_key_has_invalid_characters_then_each_invalid_character_is_replaced_with_an_underscore[jvm]" classname="com.toddway.shelf.JvmTests" time="0.001"/>
+  <system-out><![CDATA[
+MoshiSerializer
+  1
+  [1, 1, 1]
+  []
+  true
+  [true, true, true]
+  []
+  adsf
+  [adsf, adsf, adsf]
+  []
+  Thing(url=ADf)
+  [Thing(url=ADf), Thing(url=ADf), Thing(url=ADf)]
+  []
+
+GsonSerializer
+  1
+  [1, 1, 1]
+  []
+  true
+  [true, true, true]
+  []
+  adsf
+  [adsf, adsf, adsf]
+  []
+  Thing(url=ADf)
+  [Thing(url=ADf), Thing(url=ADf), Thing(url=ADf)]
+  []
+14:05:12.717 [Test worker @coroutine#1] INFO io.ktor.client.HttpClient - REQUEST: https://api.github.com/issues?filter=all&status=open&direction=desc%22
+14:05:12.718 [Test worker @coroutine#1] INFO io.ktor.client.HttpClient - METHOD: HttpMethod(value=GET)
+14:05:12.718 [Test worker @coroutine#1] INFO io.ktor.client.HttpClient - BODY Content-Type: null
+14:05:12.719 [Test worker @coroutine#1] INFO io.ktor.client.HttpClient - BODY START
+14:05:12.719 [Test worker @coroutine#1] INFO io.ktor.client.HttpClient - BODY END
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -5,3 +5,5 @@ build/
 .DS_Store
 local.properties
 gradle.properties
+CLAUDE.md
+.claude/

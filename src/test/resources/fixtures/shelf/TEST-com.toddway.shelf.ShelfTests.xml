@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.toddway.shelf.ShelfTests" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-07-18T19:05:13" hostname="VML-M-T7J7JLV6J0" time="0.067">
+  <properties/>
+  <testcase name="when_removing_an_existing_key_then_the_value_no_longer_exists[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.01"/>
+  <testcase name="when_no_items_are_put_then_an_empty_set_is_returned[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.002"/>
+  <testcase name="when_an_object_is_not_put_then_the_stored_value_is_not_equal_to_the_original[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.002"/>
+  <testcase name="when_getting_all_items_that_have_been_put_then_a_set_of_all_items_is_returned[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.003"/>
+  <testcase name="when_getting_an_item_after_DiskStorage_is_reset_then_it_still_returns_the_original_value[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.007"/>
+  <testcase name="when_getting_an_item_that_does_not_exist_then_it_returns_null[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.001"/>
+  <testcase name="when_getting_the_age_of_an_item_that_does_not_exist[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.001"/>
+  <testcase name="when_getting_an_item_that_has_not_expired_then_it_returns_a_value[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.009"/>
+  <testcase name="when_an_object_changed_after_it_is_put_then_the_stored_value_is_not_equal_to_the_original[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.005"/>
+  <testcase name="when_an_object_is_put_then_the_stored_value_is_not_equal_to_an_object_with_different_data[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.002"/>
+  <testcase name="when_an_object_is_put_then_the_stored_value_is_equal_to_the_original[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.002"/>
+  <testcase name="when_getting_an_item_that_has_expired_then_it_returns_null[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.001"/>
+  <testcase name="when_getting_an_item_that_exists_then_it_returns_the_original_value[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.004"/>
+  <testcase name="when_getting_an_item_after_MemoryStorage_is_reset_then_it_returns_null[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.001"/>
+  <testcase name="when_getting_the_age_after_an_interval_then_the_age_is_equal_to_the_interval[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.001"/>
+  <testcase name="test_lists[jvm]" classname="com.toddway.shelf.ShelfTests" time="0.015"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -23,6 +23,11 @@ class ParserContractTest {
         "cpdCheck-swift.xml" to "cpd",
         "cpdCheck-ts.xml" to "cpd",
         "reports/cpd/cpdCheck.xml" to "cpd",
+        "shelf/TEST-com.toddway.shelf.JvmTests.xml" to "junit",
+        "shelf/TEST-com.toddway.shelf.ShelfTests.xml" to "junit",
+        "shelf/detekt.xml" to "checkstyle",
+        "shelf/cpdCheck.xml" to "cpd",
+        "shelf/jvmTestCoverage.xml" to "jacoco",
     )
 
     private val unclaimedFixtures = listOf(
