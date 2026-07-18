@@ -1,0 +1,17 @@
+[versions]
+kotlin = "2.2.0"
+serialization = "1.9.0"
+ktoml = "0.7.1"
+clikt = "5.0.3"
+junit = "5.12.2"
+
+[libraries]
+serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+ktoml = { module = "com.akuleshov7:ktoml-core", version.ref = "ktoml" }
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
