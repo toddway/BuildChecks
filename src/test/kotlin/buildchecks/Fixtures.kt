@@ -12,4 +12,6 @@ object Fixtures {
     fun file(path: String): File = File(root, path).also {
         require(it.exists()) { "Missing fixture: ${it.path}" }
     }
+
+    fun text(path: String): String = file(path).readText()
 }
