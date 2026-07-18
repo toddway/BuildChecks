@@ -1,3 +1,8 @@
+> **⚠️ v4 in development.** BuildChecks is being rewritten as a toolchain-agnostic CLI —
+> see [V4-PLAN.md](V4-PLAN.md). The Gradle plugin described below is v3, preserved at the
+> [`3.3.2` tag](https://github.com/toddway/BuildChecks/tree/3.3.2) and still available on the
+> [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.toddway.buildchecks).
+
 A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).  E.g.:
 
 [ ![Gradle Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/toddway/buildchecks/com.toddway.buildchecks.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugin) ](https://plugins.gradle.org/plugin/com.toddway.buildchecks)
