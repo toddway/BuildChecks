@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.005" tests="6" failures="2" skipped="1">
+  <testsuite name="Root Suite" timestamp="2026-07-18T18:27:25" tests="0" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="calculator" timestamp="2026-07-18T18:27:25" tests="3" file="/work/sample/mocha-tests.js" time="0.001" failures="1">
+    <testcase name="calculator adds two numbers" time="0.000" classname="adds two numbers">
+    </testcase>
+    <testcase name="calculator divides evenly" time="0.000" classname="divides evenly">
+    </testcase>
+    <testcase name="calculator divides by zero" time="0.000" classname="divides by zero">
+      <failure message="division by zero" type="Error"><![CDATA[Error: division by zero
+    at divide (src/calculator.js:11:11)
+    at Context.<anonymous> (mocha-tests.js:8:50)
+    at process.processImmediate (node:internal/timers:478:21)]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="greeter" timestamp="2026-07-18T18:27:25" tests="3" file="/work/sample/mocha-tests.js" time="0.003" failures="1" skipped="1">
+    <testcase name="greeter greets by name" time="0.000" classname="greets by name">
+    </testcase>
+    <testcase name="greeter greets strangers politely" time="0.001" classname="greets strangers politely">
+      <failure message="Expected values to be strictly equal:
++ actual - expected
+
++ &apos;hello, stranger&apos;
+- &apos;hello stranger&apos;
+        ^" type="AssertionError"><![CDATA[AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'hello, stranger'
+- 'hello stranger'
+        ^
+    at Context.<anonymous> (mocha-tests.js:13:48)
+    at process.processImmediate (node:internal/timers:478:21)
+
+      + expected - actual
+
+      -hello, stranger
+      +hello stranger
+      ]]></failure>
+    </testcase>
+    <testcase name="greeter greets in french" time="0.000" classname="greets in french">
+      <skipped/>
+    </testcase>
+  </testsuite>
+</testsuites>
