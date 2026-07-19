@@ -8,8 +8,9 @@ import java.io.File
  * output dir stays one portable artifact (v3's best feature, kept — V4-PLAN.md §7).
  *
  * Heuristics per ingested file: a sibling html/ dir or index.html means the parent dir is
- * an html report root — copy it whole; otherwise a sibling .html with the same basename is
- * copied alone. Generic report roots with neither are skipped.
+ * an html report root — copy it whole; a sibling .html with the same basename is copied
+ * alone; JUnit XML under `test-results/<name>/` links Gradle's html report at
+ * `reports/tests/<name>/`. Report files with none of these are skipped.
  */
 fun copyToolReports(root: File, files: List<IngestedFile>, outputDir: File): List<IngestedFile> =
     files.map { ingested ->
@@ -17,6 +18,7 @@ fun copyToolReports(root: File, files: List<IngestedFile>, outputDir: File): Lis
         val destination = File(outputDir, "tools/${ingested.path.substringBeforeLast('/').replace('/', '-')}")
         val htmlRoot = listOf(File(parent, "html"), File(parent, "index.html")).any { it.exists() }
         val sibling = File(parent, File(ingested.path).nameWithoutExtension + ".html")
+        val gradleTests = gradleTestsHtml(root, ingested.path)
         when {
             htmlRoot -> {
                 copyDir(parent, destination, exclude = outputDir)
@@ -28,9 +30,22 @@ fun copyToolReports(root: File, files: List<IngestedFile>, outputDir: File): Lis
                 sibling.copyTo(File(destination, sibling.name), overwrite = true)
                 ingested.copy(toolReport = relative(outputDir, File(destination, sibling.name)))
             }
+            gradleTests != null -> {
+                val testsDestination = File(outputDir, "tools/${relative(root, gradleTests).replace('/', '-')}")
+                copyDir(gradleTests, testsDestination, exclude = outputDir)
+                ingested.copy(toolReport = relative(outputDir, File(testsDestination, "index.html")))
+            }
             else -> ingested
         }
     }
+
+// Gradle writes JUnit XML to build/test-results/<name>/ and html to build/reports/tests/<name>/.
+private fun gradleTestsHtml(root: File, ingestedPath: String): File? {
+    val dir = ingestedPath.substringBeforeLast('/')
+    if (!dir.contains("test-results/")) return null
+    val html = File(root, dir.replaceFirst("test-results/", "reports/tests/"))
+    return html.takeIf { File(it, "index.html").isFile }
+}
 
 // A tool's report root can contain our own output dir; never copy that into itself.
 private fun copyDir(source: File, destination: File, exclude: File) {

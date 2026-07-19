@@ -47,6 +47,9 @@ class VerbsTest {
         // a tool html report next to the ingested xml, as jacoco lays it out
         File(root, "build/reports/jvmTestCoverage/html").mkdirs()
         File(root, "build/reports/jvmTestCoverage/html/index.html").writeText("<html>jacoco report</html>")
+        // Gradle's test html report, in its conventional location
+        File(root, "build/reports/tests/jvmTest").mkdirs()
+        File(root, "build/reports/tests/jvmTest/index.html").writeText("<html>test report</html>")
         runBaseline(root) { }
         assertEquals(0, runCheck(root) { out += it })
 
@@ -58,8 +61,11 @@ class VerbsTest {
         assertTrue(File(outputDir, "merged.sarif").readText().contains("ESLint"))
         // jacoco html/ dir sits next to the ingested xml -> copied and linked
         assertTrue(File(outputDir, "tools/build-reports-jvmTestCoverage/html/index.html").isFile)
-        assertTrue(File(outputDir, "index.html").readText()
-            .contains("tools/build-reports-jvmTestCoverage/html/index.html"))
+        val html = File(outputDir, "index.html").readText()
+        assertTrue(html.contains("tools/build-reports-jvmTestCoverage/html/index.html"))
+        // junit xml under test-results/jvmTest -> Gradle's reports/tests/jvmTest html
+        assertTrue(File(outputDir, "tools/build-reports-tests-jvmTest/index.html").isFile)
+        assertTrue(html.contains("<a href=\"tools/build-reports-tests-jvmTest/index.html\">jvmTest</a>"), html)
     }
 
     @Test

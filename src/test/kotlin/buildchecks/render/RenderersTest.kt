@@ -135,7 +135,7 @@ class RenderersTest {
         assertTrue(html.contains("<span class=\"badge fail\">NEW</span>"))
         assertTrue(html.contains("test_with_ktor[jvm]"))
         assertTrue(html.contains("Coverage 93.24%"))
-        assertTrue(html.contains("href=\"tools/detekt/detekt.html\""))
+        assertTrue(html.contains("Tool reports: <a href=\"tools/detekt/detekt.html\">detekt</a>"))
         assertTrue(html.contains("differ in age by 45 minutes"))
         assertTrue(html.contains("found but not understood") || html.contains("Found but not understood"))
     }

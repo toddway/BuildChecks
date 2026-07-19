@@ -62,8 +62,27 @@ class HtmlReport : Renderer {
         appendLine("</tbody></table></section>")
     }
 
+    // Section-level drill-down links into each tool's own copied HTML report.
+    private fun StringBuilder.toolLinks(summary: CheckSummary, formats: Set<String>) {
+        val links = summary.files
+            .filter { it.format in formats && it.toolReport != null }
+            .distinctBy { it.toolReport }
+        if (links.isEmpty()) return
+        appendLine("<p>Tool reports: " + links.joinToString(" · ") {
+            "<a href=\"${escape(it.toolReport!!)}\">${escape(label(it.path))}</a>"
+        } + "</p>")
+    }
+
+    // "build/reports/jvmTestCoverage/jvmTestCoverage.xml" -> "jvmTestCoverage";
+    // "build/test-results/jvmTest/TEST-x.xml" -> "jvmTest"
+    private fun label(path: String): String {
+        val name = path.substringAfterLast('/').substringBeforeLast('.')
+        return if (name.startsWith("TEST-")) path.substringBeforeLast('/').substringAfterLast('/') else name
+    }
+
     private fun StringBuilder.findings(summary: CheckSummary) {
         appendLine("<section><h2>Findings (${summary.findings.size})</h2>")
+        toolLinks(summary, setOf("sarif", "checkstyle", "cpd"))
         if (summary.findings.isEmpty()) {
             appendLine("<p>No findings.</p></section>")
             return
@@ -98,6 +117,7 @@ class HtmlReport : Renderer {
         val failed = summary.tests.filter { it.status == TestStatus.FAILED || it.status == TestStatus.ERROR }
         val skipped = summary.tests.count { it.status == TestStatus.SKIPPED }
         appendLine("<section><h2>Tests (${summary.tests.size} total, ${failed.size} failed, $skipped skipped)</h2>")
+        toolLinks(summary, setOf("junit"))
         if (failed.isEmpty()) {
             appendLine("<p>All tests passed.</p></section>")
             return
@@ -113,6 +133,7 @@ class HtmlReport : Renderer {
         val coverage = summary.coverage ?: return
         val percent = coverage.linePercent?.let { "%.2f%%".format(it) } ?: "n/a"
         appendLine("<section><h2>Coverage $percent</h2>")
+        toolLinks(summary, setOf("jacoco", "cobertura", "lcov"))
         appendLine("<table class=\"sortable\"><thead><tr><th>File</th><th>Covered</th><th>Total</th><th>%</th></tr></thead><tbody>")
         coverage.files.sortedBy { it.path }.forEach { file ->
             val filePercent = if (file.lines.isEmpty()) "" else "%.1f".format(100.0 * file.linesCovered / file.lines.size)
