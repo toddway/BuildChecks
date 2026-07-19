@@ -12,7 +12,7 @@ check lifecycle, and move settings into `buildchecks.toml`.
 | `reports = "<dirs>"` | `[reports] paths = [<globs>]`, or omit for zero-config discovery |
 | `artifactsPath` | `[reports] output_dir` (default `build/reports/buildchecks`) |
 | `minCoveragePercent` | `[gates] min_coverage_percent` |
-| `maxLintViolations` | `[gates] max_errors` / `max_warnings`, plus the new-findings gate |
+| `maxLintViolations` | `[gates] max_errors` / `max_warnings`, plus the findings gate's new-vs-baseline check |
 | `baseUrl`, `authorization`, `buildUrl` (status posting) | removed — post from CI with `curl` + `jq` over `summary.json` (see CI recipes) |
 | per-tool baselines (detekt/checkstyle/CPD) | one `buildchecks baseline` snapshot; delete the per-tool files |
 | `postChecks` / `printChecks` tasks | `buildchecks check` (console summary always prints) |
