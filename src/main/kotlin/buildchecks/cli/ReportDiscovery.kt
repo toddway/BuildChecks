@@ -1,13 +1,20 @@
 package buildchecks.cli
 
 import java.io.File
+import java.nio.file.FileSystems
+import java.nio.file.Path
 
 /**
- * Zero-config candidate scan (V4-PLAN.md §3). Finds files under the standard report
- * locations; parsers decide by content whether a candidate is understood. Refined with
- * config-driven globs in phase 4.
+ * Candidate scan (V4-PLAN.md §3). With no configured globs, the zero-config default set:
+ * standard report locations, sniffed by content. Config `paths` globs override the
+ * locations; parsers still decide by content whether a candidate is understood.
  */
-class ReportDiscovery(private val outputDir: String = DEFAULT_OUTPUT_DIR) {
+class ReportDiscovery(
+    globs: List<String>? = null,
+    private val outputDir: String = DEFAULT_OUTPUT_DIR,
+) {
+
+    private val matchers = globs?.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
 
     fun discover(root: File): List<File> = root.walkTopDown()
         .onEnter { dir ->
@@ -16,11 +23,17 @@ class ReportDiscovery(private val outputDir: String = DEFAULT_OUTPUT_DIR) {
                 // Gradle's processed-resources copies of source files are not reports
                 !(dir.name == "resources" && dir.parentFile?.name == "build")
         }
-        .filter { it.isFile && it.extension in candidateExtensions && isInReportLocation(relative(root, it)) }
+        .filter { it.isFile && matches(relative(root, it)) }
         .sortedBy { relative(root, it) }
         .toList()
 
-    private fun isInReportLocation(path: String) =
+    private fun matches(path: String): Boolean {
+        val matchers = matchers
+            ?: return File(path).extension in candidateExtensions && isInDefaultLocation(path)
+        return matchers.any { it.matches(Path.of(path)) }
+    }
+
+    private fun isInDefaultLocation(path: String) =
         path.contains("build/reports/") ||
             path.contains("build/test-results/") ||
             path.contains("target/site/jacoco/") ||

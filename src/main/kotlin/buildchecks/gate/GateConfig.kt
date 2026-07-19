@@ -8,4 +8,5 @@ data class GateConfig(
     val maxErrors: Int? = null,
     val maxWarnings: Int? = null,
     val maxTestFailures: Int? = null, // null = 0 whenever test reports are present
+    val minChangedLineCoverage: Int? = null, // consumed by the changed-line gate (phase 5)
 )

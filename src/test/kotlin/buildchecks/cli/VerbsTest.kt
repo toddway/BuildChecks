@@ -100,6 +100,40 @@ class VerbsTest {
     }
 
     @Test
+    fun `config drives gates, output dir, and baseline file`() {
+        copyPassingReports()
+        File(root, "buildchecks.toml").writeText("""
+            [reports]
+            output_dir = "out/quality"
+            [gates]
+            max_errors = 0
+            [git]
+            baseline_file = "quality-baseline.txt"
+        """.trimIndent())
+        val config = loadConfig(null, root)
+
+        runBaseline(root, config) { }
+        assertTrue(File(root, "quality-baseline.txt").isFile)
+
+        assertEquals(1, runCheck(root, config) { out += it })
+        assertTrue(text.contains("FAIL  errors: 6 errors (max 0)"), text) // shelf detekt has 6 errors
+        assertTrue(File(root, "out/quality/summary.json").isFile)
+    }
+
+    @Test
+    fun `configured report globs narrow what is ingested`() {
+        copyPassingReports()
+        File(root, "buildchecks.toml").writeText("""
+            [reports]
+            paths = ["**/test-results/**"]
+        """.trimIndent())
+
+        runCheck(root, loadConfig(null, root)) { out += it }
+        assertTrue(text.contains("ingested: build/test-results/jvmTest/TEST-ShelfTests.xml (junit)"), text)
+        assertTrue(!text.contains("detekt.xml"), text)
+    }
+
+    @Test
     fun `stale sibling reports produce a freshness warning`() {
         copyPassingReports()
         File(root, "build/reports/detekt.xml").setLastModified(System.currentTimeMillis() - 60 * 60_000)
