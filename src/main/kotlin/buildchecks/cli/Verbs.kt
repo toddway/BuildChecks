@@ -3,6 +3,8 @@ package buildchecks.cli
 import buildchecks.gate.FingerprintBaseline
 import buildchecks.gate.Fingerprinter
 import buildchecks.gate.GateContext
+import buildchecks.git.GitDiff
+import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
 import buildchecks.model.ReportedFinding
 import buildchecks.model.freshness
@@ -14,8 +16,10 @@ import java.io.File
 fun runCheck(
     root: File,
     config: Config = Config(),
+    baseRefFlag: String? = null,
     verbose: Boolean = false,
     nowMillis: Long = System.currentTimeMillis(),
+    env: (String) -> String? = System::getenv,
     echo: (String) -> Unit,
 ): Int {
     val outputDir = File(root, config.reports.outputDir)
@@ -23,7 +27,8 @@ fun runCheck(
     val merged = ingestion.files.map { it.report }.merged()
     val fingerprinted = Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
     val baseline = FingerprintBaseline(File(root, config.git.baselineFile)).read()
-    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline)
+    val changedLines = changedLines(root, config, baseRefFlag, verbose, env, echo)
+    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedLines)
     val results = gates(config.gates).flatMap { it.evaluate(context) }
 
     val summary = CheckSummary(
@@ -82,6 +87,24 @@ private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (S
     ingestion.notUnderstood.forEach { echo("not understood: $it") }
     if (ingestion.files.isEmpty()) echo("no report files found under ${root.absolutePath}")
     return ingestion
+}
+
+// Base ref resolution order per V4-PLAN.md §4: flag -> config -> GITHUB_BASE_REF -> gate skips.
+private fun changedLines(
+    root: File,
+    config: Config,
+    baseRefFlag: String?,
+    verbose: Boolean,
+    env: (String) -> String?,
+    echo: (String) -> Unit,
+): ChangedLines? {
+    if (config.gates.minChangedLineCoverage == null) return null
+    val baseRef = baseRefFlag
+        ?: config.git.baseRef
+        ?: env("GITHUB_BASE_REF")?.takeIf { it.isNotBlank() }
+        ?: return null
+    if (verbose) echo("base ref: $baseRef")
+    return GitDiff(root).changedLines(baseRef)
 }
 
 // Report paths may be absolute (JVM tools) or repo-relative (JS/TS tools).

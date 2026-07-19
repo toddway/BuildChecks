@@ -1,0 +1,49 @@
+diff --git a/docs/new.md b/docs/new.md
+new file mode 100644
+index 0000000..5e86699
+--- /dev/null
++++ b/docs/new.md
+@@ -0,0 +1,2 @@
++brand new file
++second line
+diff --git a/docs/notes.md b/docs/notes.md
+index 9864d22..03331f0 100644
+--- a/docs/notes.md
++++ b/docs/notes.md
+@@ -2 +1,0 @@ line one
+-line two
+@@ -4 +3 @@ line three
+-line four
++line four v2
+@@ -5,0 +5 @@ line five
++line six
+diff --git a/docs/old.md b/docs/old.md
+deleted file mode 100644
+index 9f87a02..0000000
+--- a/docs/old.md
++++ /dev/null
+@@ -1 +0,0 @@
+-old file to delete
+diff --git a/logo.bin b/logo.bin
+index f99dcd9..8cf1a42 100644
+Binary files a/logo.bin and b/logo.bin differ
+diff --git a/src/main/kotlin/com/example/Greeter.kt b/src/main/kotlin/com/example/Greeter.kt
+index 7de98c5..3e1200c 100644
+--- a/src/main/kotlin/com/example/Greeter.kt
++++ b/src/main/kotlin/com/example/Greeter.kt
+@@ -5 +5,2 @@ class Greeter {
+-        return "Hello, " + name
++        require(name.isNotBlank())
++        return "Hi, $name!"
+@@ -6,0 +8,2 @@ class Greeter {
++
++    fun farewell(name: String) = "Bye, $name"
+diff --git a/src/main/kotlin/com/example/Renamed.kt b/src/main/kotlin/com/example/RenamedV2.kt
+similarity index 82%
+rename from src/main/kotlin/com/example/Renamed.kt
+rename to src/main/kotlin/com/example/RenamedV2.kt
+index eda5a98..cf5c11b 100644
+--- a/src/main/kotlin/com/example/Renamed.kt
++++ b/src/main/kotlin/com/example/RenamedV2.kt
+@@ -5,0 +6 @@ object Keep {
++    val z = 3

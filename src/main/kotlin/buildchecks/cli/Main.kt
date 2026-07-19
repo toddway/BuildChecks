@@ -25,6 +25,7 @@ class Check : CliktCommand(name = "check") {
     private val configPath by option("--config", help = "config file (default: buildchecks.toml at the root)")
         .file()
     private val outputDir by option("--output-dir", help = "where reports are written")
+    private val baseRef by option("--base-ref", help = "git ref to diff changed-line coverage against")
     private val open by option("--open", help = "open index.html when done").flag()
     private val verbose by option("--verbose", help = "print discovery and config detail").flag()
 
@@ -34,7 +35,7 @@ class Check : CliktCommand(name = "check") {
         val code = runCatchingIo {
             val config = configure(configPath, outputDir, root)
             reportDir = File(root, config.reports.outputDir)
-            runCheck(root, config, verbose, echo = ::echo)
+            runCheck(root, config, baseRef, verbose, echo = ::echo)
         }
         if (open) reportDir?.let { openInBrowser(File(it, "index.html")) }
         exit(code)

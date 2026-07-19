@@ -1,5 +1,6 @@
 package buildchecks.cli
 
+import buildchecks.gate.ChangedLineCoverageGate
 import buildchecks.gate.FloorsGate
 import buildchecks.gate.Gate
 import buildchecks.gate.GateConfig
@@ -32,8 +33,9 @@ fun reportParsers(): List<ReportParser> = listOf(
     CpdParser(),
 )
 
-// Evaluation order per V4-PLAN.md §4 (changed-line coverage gate arrives in phase 5).
+// Evaluation order per V4-PLAN.md §4.
 fun gates(config: GateConfig): List<Gate> = listOf(
+    ChangedLineCoverageGate(config),
     NewFindingsGate(config),
     RatchetGate(config),
     FloorsGate(config),

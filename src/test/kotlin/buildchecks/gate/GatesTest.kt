@@ -1,5 +1,6 @@
 package buildchecks.gate
 
+import buildchecks.model.ChangedLines
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
@@ -29,7 +30,98 @@ class GatesTest {
         tests: List<TestResult> = emptyList(),
         coverage: CoverageData? = null,
         baseline: Baseline? = null,
-    ) = GateContext(findings, tests, coverage, baseline)
+        changedLines: ChangedLines? = null,
+    ) = GateContext(findings, tests, coverage, baseline, changedLines)
+
+    // -- changed-line coverage --
+
+    private val changedLineGate = ChangedLineCoverageGate(GateConfig(minChangedLineCoverage = 80))
+
+    // JaCoCo-style package path; git sees the full repo-relative path.
+    private fun perLineCoverage(vararg lines: Pair<Int, Int>) = CoverageData(listOf(
+        FileCoverage("com/example/Greeter.kt", lines.map { LineCoverage(it.first, it.second) }),
+    ))
+
+    private fun diff(vararg lines: Int) = ChangedLines.Diff(
+        "origin/dev",
+        mapOf("src/main/kotlin/com/example/Greeter.kt" to lines.toSet()),
+    )
+
+    @Test
+    fun `changed-line gate is off without a configured minimum`() {
+        assertTrue(ChangedLineCoverageGate(GateConfig()).evaluate(context(changedLines = diff(1))).isEmpty())
+    }
+
+    @Test
+    fun `changed-line gate skips with a hint when no base ref resolved`() {
+        val result = changedLineGate.evaluate(context(coverage = perLineCoverage(1 to 1))).single()
+        assertEquals(GateStatus.SKIPPED, result.status)
+        assertTrue(result.detail.contains("GITHUB_BASE_REF"), result.detail)
+    }
+
+    @Test
+    fun `changed-line gate surfaces why git was unavailable`() {
+        val unavailable = ChangedLines.Unavailable("git not available: No such file or directory")
+        val result = changedLineGate.evaluate(context(changedLines = unavailable)).single()
+        assertEquals(GateStatus.SKIPPED, result.status)
+        assertEquals("git not available: No such file or directory", result.detail)
+    }
+
+    @Test
+    fun `changed lines gate on per-line hits across path conventions`() {
+        // 3 of 4 changed executable lines covered = 75% < 80
+        val coverage = perLineCoverage(5 to 1, 6 to 1, 7 to 1, 8 to 0)
+        val fail = changedLineGate.evaluate(context(coverage = coverage, changedLines = diff(5, 6, 7, 8))).single()
+        assertEquals(GateStatus.FAILED, fail.status)
+        assertEquals("75.00% of 4 changed lines vs origin/dev (min 80%)", fail.detail)
+
+        val pass = changedLineGate.evaluate(context(coverage = coverage, changedLines = diff(5, 6, 7))).single()
+        assertEquals(GateStatus.PASSED, pass.status)
+    }
+
+    @Test
+    fun `absolute report paths still match repo-relative git paths`() {
+        val coverage = CoverageData(listOf(
+            FileCoverage("/ci/workspace/src/main/kotlin/com/example/Greeter.kt", listOf(LineCoverage(5, 1))),
+        ))
+        val result = changedLineGate.evaluate(context(coverage = coverage, changedLines = diff(5))).single()
+        assertEquals(GateStatus.PASSED, result.status)
+    }
+
+    @Test
+    fun `non-executable changed lines are excluded from the ratio`() {
+        // only line 5 is in the report; lines 6-7 are blanks/comments
+        val coverage = perLineCoverage(5 to 1)
+        val result = changedLineGate.evaluate(context(coverage = coverage, changedLines = diff(5, 6, 7))).single()
+        assertEquals(GateStatus.PASSED, result.status)
+        assertTrue(result.detail.startsWith("100.00% of 1 changed lines"), result.detail)
+    }
+
+    @Test
+    fun `changed files without coverage data are noted, not failed`() {
+        val changed = ChangedLines.Diff("main", mapOf(
+            "src/main/kotlin/com/example/Greeter.kt" to setOf(5),
+            "README.md" to setOf(1, 2),
+        ))
+        val result = changedLineGate.evaluate(context(coverage = perLineCoverage(5 to 1), changedLines = changed)).single()
+        assertEquals(GateStatus.PASSED, result.status)
+        assertTrue(result.detail.endsWith("; 1 changed file(s) without coverage data"), result.detail)
+    }
+
+    @Test
+    fun `changed-line gate skips on empty diffs and missing coverage`() {
+        val emptyDiff = ChangedLines.Diff("main", emptyMap())
+        assertEquals(
+            GateStatus.SKIPPED,
+            changedLineGate.evaluate(context(coverage = perLineCoverage(1 to 1), changedLines = emptyDiff)).single().status,
+        )
+        val noCoverage = changedLineGate.evaluate(context(changedLines = diff(5))).single()
+        assertEquals(GateStatus.SKIPPED, noCoverage.status)
+        assertEquals("no coverage data", noCoverage.detail)
+        // changed lines exist but none map to line data (e.g. only generated code changed)
+        val noData = changedLineGate.evaluate(context(coverage = perLineCoverage(1 to 1), changedLines = diff(99))).single()
+        assertEquals(GateStatus.SKIPPED, noData.status)
+    }
 
     // -- new findings --
 

@@ -142,6 +142,51 @@ class VerbsTest {
     }
 
     @Test
+    fun `changed-line coverage skips visibly without a base ref`() {
+        copyPassingReports()
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            min_changed_line_coverage = 80
+        """.trimIndent())
+        runBaseline(root) { }
+
+        assertEquals(0, runCheck(root, loadConfig(null, root), env = { null }) { out += it })
+        assertTrue(text.contains("SKIP  changed-line coverage: no base ref"), text)
+    }
+
+    @Test
+    fun `changed-line coverage gates a real diff against lcov line data`() {
+        // calculator.js per lcov.info: lines 1-10 hit, 11-12 missed, 13-15 hit, 16-18 missed
+        copy("lcov.info", "coverage/lcov.info")
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            min_changed_line_coverage = 80
+            [git]
+            base_ref = "base"
+        """.trimIndent())
+        git("init", "-q")
+        File(root, "src").mkdirs()
+        val calculator = File(root, "src/calculator.js")
+        calculator.writeText((1..20).joinToString("\n") { "// line $it" } + "\n")
+        git("add", "src")
+        git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "base")
+        git("branch", "base")
+        // change one covered line (4) and one uncovered line (11) -> 50% < 80
+        calculator.writeText((1..20).joinToString("\n") { if (it == 4 || it == 11) "// line $it changed" else "// line $it" } + "\n")
+        git("add", "src")
+        git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "change")
+        runBaseline(root, loadConfig(null, root)) { }
+
+        assertEquals(1, runCheck(root, loadConfig(null, root)) { out += it })
+        assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs base (min 80%)"), text)
+    }
+
+    private fun git(vararg args: String) {
+        val process = ProcessBuilder("git", *args).directory(root).redirectErrorStream(true).start()
+        assertEquals(0, process.waitFor(), "git failed: ${process.inputStream.bufferedReader().readText()}")
+    }
+
+    @Test
     fun `stale sibling reports produce a freshness warning`() {
         copyPassingReports()
         File(root, "build/reports/detekt.xml").setLastModified(System.currentTimeMillis() - 60 * 60_000)

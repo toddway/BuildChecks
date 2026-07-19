@@ -22,4 +22,9 @@ class FixturesTest {
         Fixtures.file("lcov.info")                       // LCOV (c8)
         Fixtures.file("mocha-junit.xml")                 // JUnit XML with failures/skips (mocha-junit-reporter)
     }
+
+    @Test
+    fun `fixture files generated for phase 5 are present`() {
+        Fixtures.file("git-diff.txt")                    // git diff --unified=0 --find-renames
+    }
 }
