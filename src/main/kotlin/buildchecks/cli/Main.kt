@@ -15,11 +15,11 @@ class BuildChecks : CliktCommand(name = "buildchecks") {
 }
 
 class Check : CliktCommand(name = "check") {
-    override fun run() = exit(runCatchingIo { runCheck(File("."), echo = ::echo) })
+    override fun run() = exit(runCatchingIo { runCheck(File(".").canonicalFile, echo = ::echo) })
 }
 
 class Baseline : CliktCommand(name = "baseline") {
-    override fun run() = exit(runCatchingIo { runBaseline(File(".")) { echo(it) } })
+    override fun run() = exit(runCatchingIo { runBaseline(File(".").canonicalFile) { echo(it) } })
 }
 
 // Gate failures exit 1; config/IO errors exit 2 (V4-PLAN.md §4).

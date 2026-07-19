@@ -19,7 +19,7 @@ fun ingest(root: File, candidates: List<File>, parsers: List<ReportParser>): Ing
         if (parser == null) {
             notUnderstood += path
         } else {
-            files += IngestedFile(path, parser.format, candidate.lastModified(), parser.parse(content))
+            files += IngestedFile(path, parser.format, candidate.lastModified(), parser.parse(content), content)
         }
     }
     return Ingestion(files, notUnderstood)

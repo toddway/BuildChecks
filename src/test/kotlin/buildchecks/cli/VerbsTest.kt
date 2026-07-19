@@ -15,6 +15,7 @@ class VerbsTest {
     lateinit var root: File
 
     private val out = mutableListOf<String>()
+    private val text: String get() = out.joinToString("\n")
 
     private fun copy(fixture: String, dest: String) {
         Fixtures.file(fixture).copyTo(File(root, dest))
@@ -33,10 +34,32 @@ class VerbsTest {
         assertTrue(File(root, "buildchecks-baseline.txt").isFile)
 
         assertEquals(0, runCheck(root) { out += it })
-        assertTrue(out.any { it == "PASS  new findings: 0 new (max 0)" }, out.joinToString("\n"))
-        assertTrue(out.any { it.startsWith("PASS  findings ratchet: 8 findings") }, out.joinToString("\n"))
-        assertTrue(out.any { it.startsWith("PASS  coverage ratchet:") }, out.joinToString("\n"))
-        assertTrue(out.any { it.startsWith("PASS  test failures: 0 failed of 16") }, out.joinToString("\n"))
+        assertTrue(text.contains("PASS  new findings: 0 new (max 0)"), text)
+        assertTrue(text.contains("PASS  findings must not increase: 8 findings"), text)
+        assertTrue(text.contains("PASS  coverage must not decrease:"), text)
+        assertTrue(text.contains("PASS  test failures: 0 failed of 16"), text)
+    }
+
+    @Test
+    fun `check writes every output file`() {
+        copyPassingReports()
+        copy("eslint.sarif", "build/reports/eslint.sarif")
+        // a tool html report next to the ingested xml, as jacoco lays it out
+        File(root, "build/reports/jvmTestCoverage/html").mkdirs()
+        File(root, "build/reports/jvmTestCoverage/html/index.html").writeText("<html>jacoco report</html>")
+        runBaseline(root) { }
+        assertEquals(0, runCheck(root) { out += it })
+
+        val outputDir = File(root, ReportDiscovery.DEFAULT_OUTPUT_DIR)
+        for (name in listOf("index.html", "summary.md", "summary.json", "findings.json", "codeclimate.json", "merged.sarif")) {
+            assertTrue(File(outputDir, name).isFile, "$name missing")
+        }
+        assertTrue(File(outputDir, "summary.json").readText().contains("\"passed\": true"))
+        assertTrue(File(outputDir, "merged.sarif").readText().contains("ESLint"))
+        // jacoco html/ dir sits next to the ingested xml -> copied and linked
+        assertTrue(File(outputDir, "tools/build-reports-jvmTestCoverage/html/index.html").isFile)
+        assertTrue(File(outputDir, "index.html").readText()
+            .contains("tools/build-reports-jvmTestCoverage/html/index.html"))
     }
 
     @Test
@@ -46,8 +69,10 @@ class VerbsTest {
         FingerprintBaseline(File(root, "buildchecks-baseline.txt")).write(emptyList(), null)
 
         assertEquals(1, runCheck(root) { out += it })
-        assertTrue(out.any { it.startsWith("FAIL  new findings: 8 new (max 0)") }, out.joinToString("\n"))
-        assertTrue(out.any { it.startsWith("FAIL  findings ratchet: 8 findings (baseline 0)") }, out.joinToString("\n"))
+        assertTrue(text.contains("FAIL  new findings: 8 new (max 0)"), text)
+        assertTrue(text.contains("FAIL  findings must not increase: 8 findings (baseline 0)"), text)
+        assertTrue(File(root, "${ReportDiscovery.DEFAULT_OUTPUT_DIR}/summary.json").readText()
+            .contains("\"passed\": false"))
     }
 
     @Test
@@ -55,14 +80,14 @@ class VerbsTest {
         copy("shelf/TEST-com.toddway.shelf.JvmTests.xml", "build/test-results/jvmTest/TEST-JvmTests.xml")
 
         assertEquals(1, runCheck(root) { out += it })
-        assertTrue(out.any { it == "FAIL  test failures: 1 failed of 4 tests (max 0)" }, out.joinToString("\n"))
-        assertTrue(out.any { it.startsWith("SKIP  new findings:") }, out.joinToString("\n"))
+        assertTrue(text.contains("FAIL  test failures: 1 failed of 4 tests (max 0)"), text)
+        assertTrue(text.contains("SKIP  new findings:"), text)
     }
 
     @Test
     fun `a project without reports passes with skips`() {
         assertEquals(0, runCheck(root) { out += it })
-        assertTrue(out.any { it.startsWith("no report files found") }, out.joinToString("\n"))
+        assertTrue(text.contains("no report files found"), text)
     }
 
     @Test
@@ -71,6 +96,15 @@ class VerbsTest {
         File(root, "build/reports/lint-results.xml").writeText(Fixtures.text("lint-results-prodRelease.xml"))
 
         runCheck(root) { out += it }
-        assertTrue(out.any { it == "not understood: build/reports/lint-results.xml" }, out.joinToString("\n"))
+        assertTrue(text.contains("not understood: build/reports/lint-results.xml"), text)
+    }
+
+    @Test
+    fun `stale sibling reports produce a freshness warning`() {
+        copyPassingReports()
+        File(root, "build/reports/detekt.xml").setLastModified(System.currentTimeMillis() - 60 * 60_000)
+
+        runCheck(root) { out += it }
+        assertTrue(text.contains("WARNING: ingested reports differ in age by"), text)
     }
 }

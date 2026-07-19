@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     application
+    jacoco // core Gradle plugin; enables dogfooding: the CLI gates its own build
 }
 
 group = "com.toddway"
@@ -30,4 +31,9 @@ tasks.test {
     testLogging {
         events("passed", "failed", "skipped")
     }
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    reports { xml.required = true }
 }

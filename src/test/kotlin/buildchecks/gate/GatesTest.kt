@@ -72,10 +72,10 @@ class GatesTest {
         val baseline = Baseline(emptySet(), 0, 80.05)
 
         val within = gate.evaluate(context(coverage = coverage(80, 100), baseline = baseline))
-        assertEquals(GateStatus.PASSED, within.single { it.gate == "coverage ratchet" }.status)
+        assertEquals(GateStatus.PASSED, within.single { it.gate == "coverage must not decrease" }.status)
 
         val below = gate.evaluate(context(coverage = coverage(79, 100), baseline = baseline))
-        assertEquals(GateStatus.FAILED, below.single { it.gate == "coverage ratchet" }.status)
+        assertEquals(GateStatus.FAILED, below.single { it.gate == "coverage must not decrease" }.status)
     }
 
     @Test

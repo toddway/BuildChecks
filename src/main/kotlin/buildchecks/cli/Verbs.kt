@@ -4,29 +4,51 @@ import buildchecks.gate.FingerprintBaseline
 import buildchecks.gate.Fingerprinter
 import buildchecks.gate.GateConfig
 import buildchecks.gate.GateContext
+import buildchecks.model.CheckSummary
 import buildchecks.model.GateStatus
+import buildchecks.model.ReportedFinding
+import buildchecks.model.freshness
 import buildchecks.model.merged
+import buildchecks.render.ConsoleSummary
 import java.io.File
 
-/** ingest -> gate -> report; returns the process exit code (0 pass, 1 gate failure). */
-fun runCheck(root: File, config: GateConfig = GateConfig(), echo: (String) -> Unit): Int {
+/** ingest -> gate -> render; returns the process exit code (0 pass, 1 gate failure). */
+fun runCheck(
+    root: File,
+    config: GateConfig = GateConfig(),
+    nowMillis: Long = System.currentTimeMillis(),
+    echo: (String) -> Unit,
+): Int {
+    val outputDir = File(root, ReportDiscovery.DEFAULT_OUTPUT_DIR)
     val ingestion = ingestReports(root, echo)
     val merged = ingestion.files.map { it.report }.merged()
     val fingerprinted = Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
     val baseline = FingerprintBaseline(baselineFile(root)).read()
     val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline)
-
     val results = gates(config).flatMap { it.evaluate(context) }
-    echo("")
-    results.forEach { result ->
-        val mark = when (result.status) {
-            GateStatus.PASSED -> "PASS"
-            GateStatus.FAILED -> "FAIL"
-            GateStatus.SKIPPED -> "SKIP"
-        }
-        echo("$mark  ${result.gate}: ${result.detail}")
+
+    val summary = CheckSummary(
+        gates = results,
+        findings = fingerprinted.map {
+            ReportedFinding(it.finding, it.fingerprint, baseline != null && it.fingerprint !in baseline.fingerprints)
+        },
+        tests = merged.tests,
+        coverage = merged.coverage,
+        files = copyToolReports(root, ingestion.files, outputDir),
+        notUnderstood = ingestion.notUnderstood,
+        freshness = freshness(ingestion.files, nowMillis),
+    )
+
+    outputDir.mkdirs()
+    renderers().forEach { renderer ->
+        File(outputDir, renderer.fileName).writeText(renderer.render(summary))
     }
-    return if (results.any { it.status == GateStatus.FAILED }) 1 else 0
+
+    echo("")
+    echo(ConsoleSummary().render(summary))
+    echo("")
+    echo("report: ${File(outputDir, "index.html").absolutePath}")
+    return if (summary.passed) 0 else 1
 }
 
 /** ingest -> snapshot the fingerprint baseline file. */
