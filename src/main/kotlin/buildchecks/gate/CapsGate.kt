@@ -5,24 +5,11 @@ import buildchecks.model.GateStatus
 import buildchecks.model.Severity
 import buildchecks.model.TestStatus
 
-/** Optional absolute floors (V4-PLAN.md §4); each configured floor yields one result. */
-class FloorsGate(private val config: GateConfig) : Gate {
+/** Optional absolute caps (V4-PLAN.md §4); each configured cap yields one result. */
+class CapsGate(private val config: GateConfig) : Gate {
 
     override fun evaluate(context: GateContext): List<GateResult> {
         val results = mutableListOf<GateResult>()
-
-        config.minCoveragePercent?.let { floor ->
-            val percent = context.coverage?.linePercent
-            results += if (percent == null) {
-                GateResult("minimum coverage", GateStatus.SKIPPED, "no coverage data")
-            } else {
-                GateResult(
-                    "minimum coverage",
-                    if (percent >= floor) GateStatus.PASSED else GateStatus.FAILED,
-                    "%.2f%% (min %.1f%%)".format(percent, floor),
-                )
-            }
-        }
 
         config.maxErrors?.let { max ->
             val errors = context.findings.count { it.finding.severity == Severity.ERROR }

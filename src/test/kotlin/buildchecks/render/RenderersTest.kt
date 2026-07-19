@@ -39,7 +39,7 @@ class RenderersTest {
         ).merged()
         return CheckSummary(
             gates = listOf(
-                GateResult("new findings", GateStatus.PASSED, "0 new (max 0)"),
+                GateResult("findings", GateStatus.PASSED, "0 new (max 0), 8 total (baseline max 8)"),
                 GateResult("test failures", GateStatus.FAILED, "1 failed of 4 tests (max 0)"),
             ),
             findings = reports.findings.mapIndexed { index, finding ->
@@ -119,7 +119,7 @@ class RenderersTest {
         val console = ConsoleSummary().render(summary)
         assertTrue(console.contains("│ warnings"))
         assertTrue(console.contains("│ coverage"))
-        assertTrue(console.contains("PASS  new findings: 0 new (max 0)"))
+        assertTrue(console.contains("PASS  findings: 0 new (max 0), 8 total (baseline max 8)"))
         assertTrue(console.contains("FAIL  test failures: 1 failed of 4 tests (max 0)"))
         assertTrue(console.contains("WARNING: ingested reports differ in age by 45 minutes"))
     }
@@ -144,7 +144,7 @@ class RenderersTest {
     fun `html report explains itself to a first-time reader`() {
         val html = HtmlReport().render(summary)
         // every gate name carries a hover explanation
-        assertTrue(html.contains("<span class=\"help\" title=\"Findings that are not in the baseline"))
+        assertTrue(html.contains("<span class=\"help\" title=\"Checked two ways against the baseline"))
         assertTrue(html.contains("title=\"Failed tests must not exceed"))
         // bulk tables are collapsed behind their aggregates
         assertTrue(html.contains("<details><summary>Per-file line coverage (6 files)</summary>"))

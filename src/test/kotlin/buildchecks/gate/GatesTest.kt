@@ -123,80 +123,92 @@ class GatesTest {
         assertEquals(GateStatus.SKIPPED, noData.status)
     }
 
-    // -- new findings --
+    // -- findings --
 
     @Test
-    fun `new findings gate skips without a baseline`() {
-        val result = NewFindingsGate(GateConfig()).evaluate(context(listOf(finding()))).single()
+    fun `findings gate skips without a baseline`() {
+        val result = FindingsGate(GateConfig()).evaluate(context(listOf(finding()))).single()
         assertEquals(GateStatus.SKIPPED, result.status)
     }
 
     @Test
-    fun `baselined findings pass, unknown fingerprints fail`() {
-        val gate = NewFindingsGate(GateConfig())
+    fun `baselined findings pass, unknown fingerprints fail with an example`() {
+        val gate = FindingsGate(GateConfig())
         val baseline = Baseline(setOf("aaaa"), 1, null)
 
         val pass = gate.evaluate(context(listOf(finding()), baseline = baseline)).single()
         assertEquals(GateStatus.PASSED, pass.status)
+        assertEquals("0 new (max 0), 1 total (baseline max 1)", pass.detail)
 
         val fail = gate.evaluate(context(listOf(finding(fingerprint = "bbbb")), baseline = baseline)).single()
         assertEquals(GateStatus.FAILED, fail.status)
         assertTrue(fail.detail.contains("MagicNumber at src/A.kt:7"))
     }
 
-    // -- ratchets --
-
     @Test
-    fun `findings ratchet fails when the total grows`() {
-        val gate = RatchetGate(GateConfig())
+    fun `findings gate fails when the total grows even with no new fingerprints`() {
+        // two findings sharing the baselined fingerprint: nothing "new", but the total ratchet trips
+        val gate = FindingsGate(GateConfig())
         val baseline = Baseline(setOf("aaaa"), 1, null)
 
-        val pass = gate.evaluate(context(listOf(finding()), baseline = baseline))
-        assertEquals(listOf(GateStatus.PASSED), pass.map { it.status })
+        val fail = gate.evaluate(context(listOf(finding(), finding()), baseline = baseline)).single()
+        assertEquals(GateStatus.FAILED, fail.status)
+        assertEquals("0 new (max 0), 2 total (baseline max 1)", fail.detail)
 
-        val fail = gate.evaluate(context(listOf(finding(), finding(fingerprint = "bbbb")), baseline = baseline))
-        assertEquals(listOf(GateStatus.FAILED), fail.map { it.status })
+        // ratchet off: only the new-findings clause remains
+        val ratchetOff = FindingsGate(GateConfig(ratchet = false))
+            .evaluate(context(listOf(finding(), finding()), baseline = baseline)).single()
+        assertEquals(GateStatus.PASSED, ratchetOff.status)
+        assertEquals("0 new (max 0)", ratchetOff.detail)
     }
 
+    // -- coverage --
+
     @Test
-    fun `coverage ratchet allows the tolerance and no more`() {
-        val gate = RatchetGate(GateConfig(coverageTolerance = 0.1))
+    fun `coverage gate holds the baseline floor minus tolerance and names the source`() {
+        val gate = CoverageGate(GateConfig(coverageTolerance = 0.1))
         val baseline = Baseline(emptySet(), 0, 80.05)
 
-        val within = gate.evaluate(context(coverage = coverage(80, 100), baseline = baseline))
-        assertEquals(GateStatus.PASSED, within.single { it.gate == "coverage" }.status)
+        val within = gate.evaluate(context(coverage = coverage(80, 100), baseline = baseline)).single()
+        assertEquals(GateStatus.PASSED, within.status)
+        assertEquals("80.00% (min 79.95%, from baseline)", within.detail)
 
-        val below = gate.evaluate(context(coverage = coverage(79, 100), baseline = baseline))
-        assertEquals(GateStatus.FAILED, below.single { it.gate == "coverage" }.status)
+        val below = gate.evaluate(context(coverage = coverage(79, 100), baseline = baseline)).single()
+        assertEquals(GateStatus.FAILED, below.status)
     }
 
     @Test
-    fun `ratchet gate is disabled by config and skips without a baseline`() {
-        assertTrue(RatchetGate(GateConfig(ratchet = false)).evaluate(context()).isEmpty())
-        assertEquals(
-            GateStatus.SKIPPED,
-            RatchetGate(GateConfig()).evaluate(context()).single().status,
-        )
-    }
+    fun `coverage gate uses the higher of baseline and configured minimum`() {
+        val baseline = Baseline(emptySet(), 0, 60.0)
+        val configHigher = CoverageGate(GateConfig(minCoveragePercent = 75.0))
+            .evaluate(context(coverage = coverage(70, 100), baseline = baseline)).single()
+        assertEquals(GateStatus.FAILED, configHigher.status)
+        assertEquals("70.00% (min 75.00%, configured)", configHigher.detail)
 
-    // -- floors --
-
-    @Test
-    fun `unconfigured floors yield no results for a project without tests`() {
-        assertTrue(FloorsGate(GateConfig()).evaluate(context()).isEmpty())
+        // ratchet off leaves only the configured minimum
+        val ratchetOff = CoverageGate(GateConfig(ratchet = false, minCoveragePercent = 52.0))
+            .evaluate(context(coverage = coverage(53, 100), baseline = baseline)).single()
+        assertEquals("53.00% (min 52.00%, configured)", ratchetOff.detail)
     }
 
     @Test
-    fun `coverage floor gates the percentage and skips without data`() {
-        val gate = FloorsGate(GateConfig(minCoveragePercent = 52.0))
-        assertEquals(GateStatus.PASSED, gate.evaluate(context(coverage = coverage(52, 100))).single().status)
-        assertEquals(GateStatus.FAILED, gate.evaluate(context(coverage = coverage(51, 100))).single().status)
+    fun `coverage gate skips without data and vanishes without any limit`() {
+        val gate = CoverageGate(GateConfig(minCoveragePercent = 52.0))
         assertEquals(GateStatus.SKIPPED, gate.evaluate(context()).single().status)
+        // no baseline coverage, no configured minimum -> nothing to gate against
+        assertTrue(CoverageGate(GateConfig()).evaluate(context(coverage = coverage(50, 100))).isEmpty())
+    }
+
+    // -- caps --
+
+    @Test
+    fun `unconfigured caps yield no results for a project without tests`() {
+        assertTrue(CapsGate(GateConfig()).evaluate(context()).isEmpty())
     }
 
     @Test
-    fun `error and warning floors count by severity`() {
-        val gate = FloorsGate(GateConfig(maxErrors = 0, maxWarnings = 1))
+    fun `error and warning caps count by severity`() {
+        val gate = CapsGate(GateConfig(maxErrors = 0, maxWarnings = 1))
         val results = gate.evaluate(context(listOf(
             finding(Severity.ERROR),
             finding(Severity.WARNING, "bbbb"),
@@ -207,8 +219,8 @@ class GatesTest {
     }
 
     @Test
-    fun `test failures floor defaults to zero when tests are present`() {
-        val gate = FloorsGate(GateConfig())
+    fun `test failures cap defaults to zero when tests are present`() {
+        val gate = CapsGate(GateConfig())
         val tests = listOf(
             TestResult("suite", "passes", TestStatus.PASSED),
             TestResult("suite", "fails", TestStatus.FAILED),

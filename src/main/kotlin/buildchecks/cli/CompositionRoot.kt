@@ -1,11 +1,11 @@
 package buildchecks.cli
 
+import buildchecks.gate.CapsGate
 import buildchecks.gate.ChangedLineCoverageGate
-import buildchecks.gate.FloorsGate
+import buildchecks.gate.CoverageGate
+import buildchecks.gate.FindingsGate
 import buildchecks.gate.Gate
 import buildchecks.gate.GateConfig
-import buildchecks.gate.NewFindingsGate
-import buildchecks.gate.RatchetGate
 import buildchecks.parse.CheckstyleParser
 import buildchecks.parse.CoberturaParser
 import buildchecks.parse.CpdParser
@@ -36,9 +36,9 @@ fun reportParsers(): List<ReportParser> = listOf(
 // Evaluation order per V4-PLAN.md §4.
 fun gates(config: GateConfig): List<Gate> = listOf(
     ChangedLineCoverageGate(config),
-    NewFindingsGate(config),
-    RatchetGate(config),
-    FloorsGate(config),
+    FindingsGate(config),
+    CoverageGate(config),
+    CapsGate(config),
 )
 
 // Every file written to the output dir on each check run (V4-PLAN.md §7).
