@@ -148,7 +148,8 @@ class HtmlReport : Renderer {
         appendLine("<thead><tr><th>File</th><th>Format</th><th>Age</th><th>Tool report</th></tr></thead><tbody>")
         summary.files.forEach { file ->
             val age = summary.freshness?.ageMinutes?.get(file.path)?.let { "$it min" } ?: ""
-            val link = file.toolReport?.let { "<a href=\"${escape(it)}\">open</a>" } ?: ""
+            // no link = the tool produced no html report next to the ingested file
+            val link = file.toolReport?.let { "<a href=\"${escape(it)}\">open</a>" } ?: "—"
             appendLine("<tr><td class=\"path\">${escape(file.path)}</td><td>${escape(file.format)}</td><td>$age</td><td>$link</td></tr>")
         }
         appendLine("</tbody></table>")

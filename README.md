@@ -1,5 +1,6 @@
 > **⚠️ v4 in development.** BuildChecks is being rewritten as a toolchain-agnostic CLI —
-> see [V4-PLAN.md](V4-PLAN.md). The Gradle plugin described below is v3, preserved at the
+> see [V4-PLAN.md](V4-PLAN.md) for the plan and [MAINTAINING.md](MAINTAINING.md) for how to
+> build, test, and try it. The Gradle plugin described below is v3, preserved at the
 > [`3.3.2` tag](https://github.com/toddway/BuildChecks/tree/3.3.2) and still available on the
 > [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.toddway.buildchecks).
 
