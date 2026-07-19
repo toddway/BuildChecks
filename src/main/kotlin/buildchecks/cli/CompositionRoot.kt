@@ -1,5 +1,10 @@
 package buildchecks.cli
 
+import buildchecks.gate.FloorsGate
+import buildchecks.gate.Gate
+import buildchecks.gate.GateConfig
+import buildchecks.gate.NewFindingsGate
+import buildchecks.gate.RatchetGate
 import buildchecks.parse.CheckstyleParser
 import buildchecks.parse.CoberturaParser
 import buildchecks.parse.CpdParser
@@ -10,7 +15,6 @@ import buildchecks.parse.ReportParser
 import buildchecks.parse.SarifParser
 
 // Manual composition root (V4-PLAN.md §2): explicit ordered lists, no framework.
-// Grows as phases land; today it declares the parser set.
 fun reportParsers(): List<ReportParser> = listOf(
     SarifParser(),
     JunitParser(),
@@ -19,4 +23,11 @@ fun reportParsers(): List<ReportParser> = listOf(
     LcovParser(),
     CheckstyleParser(),
     CpdParser(),
+)
+
+// Evaluation order per V4-PLAN.md §4 (changed-line coverage gate arrives in phase 5).
+fun gates(config: GateConfig): List<Gate> = listOf(
+    NewFindingsGate(config),
+    RatchetGate(config),
+    FloorsGate(config),
 )
