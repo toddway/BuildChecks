@@ -28,8 +28,11 @@ class ReportDiscovery(
         .toList()
 
     private fun matches(path: String): Boolean {
-        val matchers = matchers
-            ?: return File(path).extension in candidateExtensions && isInDefaultLocation(path)
+        // Extension prefilter applies in both modes: globs choose locations, but only
+        // files that could be a supported report format become candidates — a glob
+        // ending in ** must not drag a tool's html pages into "not understood".
+        if (File(path).extension !in candidateExtensions) return false
+        val matchers = matchers ?: return isInDefaultLocation(path)
         return matchers.any { it.matches(Path.of(path)) }
     }
 

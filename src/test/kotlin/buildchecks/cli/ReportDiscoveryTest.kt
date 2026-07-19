@@ -55,6 +55,19 @@ class ReportDiscoveryTest {
     }
 
     @Test
+    fun `globs only pick locations - non-report extensions are never candidates`() {
+        touch("out/detekt.xml")
+        touch("out/tests/index.html")            // a tool's own html report
+        touch("out/binary/results.bin")          // gradle's binary test results
+        touch("out/tests/style.css")
+
+        assertEquals(
+            listOf("out/detekt.xml"),
+            discovered(ReportDiscovery(globs = listOf("out/**"))),
+        )
+    }
+
+    @Test
     fun `globs still never match the tool's own output dir`() {
         touch("out/report.xml")
         touch("out/buildchecks/summary.json")

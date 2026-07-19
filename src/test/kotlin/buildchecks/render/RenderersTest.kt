@@ -132,12 +132,26 @@ class RenderersTest {
         assertTrue(html.contains("BuildChecks <span class=\"badge fail\">FAILED</span>"))
         assertTrue(html.contains("Findings (8)"))
         assertTrue(html.contains("data-severity=\"ERROR\""))
-        assertTrue(html.contains("<span class=\"badge fail\">NEW</span>"))
+        assertTrue(html.contains(">NEW</span>"))
         assertTrue(html.contains("test_with_ktor[jvm]"))
         assertTrue(html.contains("Coverage 93.24%"))
         assertTrue(html.contains("Tool reports: <a href=\"tools/detekt/detekt.html\">detekt</a>"))
         assertTrue(html.contains("differ in age by 45 minutes"))
         assertTrue(html.contains("found but not understood") || html.contains("Found but not understood"))
+    }
+
+    @Test
+    fun `html report explains itself to a first-time reader`() {
+        val html = HtmlReport().render(summary)
+        // every gate name carries a hover explanation
+        assertTrue(html.contains("<span class=\"help\" title=\"Fails on findings introduced since the baseline"))
+        assertTrue(html.contains("title=\"Failed tests may not exceed"))
+        // bulk tables are collapsed behind their aggregates
+        assertTrue(html.contains("<details><summary>Per-file line coverage (6 files)</summary>"))
+        assertTrue(html.contains("<details><summary>All 2 files</summary>"))
+        assertTrue(html.contains("<details><summary>Found but not understood (1)</summary>"))
+        // the coverage aggregate is stated in lines, not just a percentage
+        assertTrue(html.contains("executable lines covered"))
     }
 
     @Test

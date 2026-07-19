@@ -9,6 +9,11 @@ import buildchecks.model.TestStatus
  * Self-contained browsable report: inline CSS/JS, no CDN, no external requests
  * (V4-PLAN.md §7). Tool report links point at directories the CLI copied under
  * the output dir, so the whole dir is one portable artifact.
+ *
+ * Written for a maintainer seeing it for the first time: every section opens with
+ * a one-line explanation, jargon carries a hover tooltip, and bulk tables
+ * (per-file coverage, the ingested-file inventory) are collapsed behind their
+ * aggregate so the first screen is the verdict, not the data.
  */
 class HtmlReport : Renderer {
 
@@ -39,25 +44,32 @@ class HtmlReport : Renderer {
     private fun StringBuilder.header(summary: CheckSummary) {
         val badge = if (summary.passed) "<span class=\"badge pass\">PASSED</span>"
         else "<span class=\"badge fail\">FAILED</span>"
-        appendLine("<header><h1>BuildChecks $badge</h1></header>")
+        appendLine("<header><h1>BuildChecks $badge</h1>")
+        appendLine("<p class=\"muted\">One gated summary of this build's analysis findings, test results, " +
+            "and coverage, aggregated from ${summary.files.size} report files your tools wrote.</p></header>")
     }
 
     private fun StringBuilder.freshnessBanner(summary: CheckSummary) {
         val freshness = summary.freshness?.takeIf { it.stale } ?: return
         appendLine("<div class=\"warning\">⚠️ Ingested reports differ in age by ${freshness.spreadMinutes} minutes " +
-            "(tolerance ${freshness.toleranceMinutes}) — possible orphaned reports from removed modules or a partial build.</div>")
+            "(tolerance ${freshness.toleranceMinutes}) — some numbers here may come from an earlier build. " +
+            "Usual causes: a partial build, or a removed module whose old reports are still on disk. " +
+            "Sort the Age column under Report files to find the outliers.</div>")
     }
 
     private fun StringBuilder.gates(summary: CheckSummary) {
-        appendLine("<section><h2>Gates</h2><table>")
+        appendLine("<section><h2>Gates</h2>")
+        appendLine("<p class=\"muted\">The pass/fail rules this run was checked against — any FAIL fails the " +
+            "build (non-zero exit). Hover a gate name for what it checks.</p>")
+        appendLine("<table>")
         appendLine("<thead><tr><th>Gate</th><th>Status</th><th>Detail</th></tr></thead><tbody>")
         summary.gates.forEach { result ->
             val status = when (result.status) {
                 GateStatus.PASSED -> "<td class=\"pass\">PASS</td>"
                 GateStatus.FAILED -> "<td class=\"fail\">FAIL</td>"
-                GateStatus.SKIPPED -> "<td class=\"skip\">SKIP</td>"
+                GateStatus.SKIPPED -> "<td class=\"skip\" title=\"Not evaluated — the detail column says why.\">SKIP</td>"
             }
-            appendLine("<tr><td>${escape(result.gate)}</td>$status<td>${escape(result.detail)}</td></tr>")
+            appendLine("<tr><td>${help(result.gate, GATE_EXPLANATIONS[result.gate])}</td>$status<td>${escape(result.detail)}</td></tr>")
         }
         appendLine("</tbody></table></section>")
     }
@@ -82,9 +94,11 @@ class HtmlReport : Renderer {
 
     private fun StringBuilder.findings(summary: CheckSummary) {
         appendLine("<section><h2>Findings (${summary.findings.size})</h2>")
+        appendLine("<p class=\"muted\">Every issue the ingested analysis tools reported. " +
+            "${help("NEW", NEW_EXPLANATION)} marks findings introduced since the baseline snapshot.</p>")
         toolLinks(summary, setOf("sarif", "checkstyle", "cpd"))
         if (summary.findings.isEmpty()) {
-            appendLine("<p>No findings.</p></section>")
+            appendLine("<p>None of the ingested analysis reports contain findings.</p></section>")
             return
         }
         val tools = summary.findings.map { it.finding.tool }.distinct().sorted()
@@ -107,7 +121,7 @@ class HtmlReport : Renderer {
                 "<td>${escape(finding.ruleId)}</td>" +
                 "<td class=\"path\">${escape(location)}</td>" +
                 "<td>${escape(finding.message)}</td>" +
-                "<td>${if (reported.isNew) "<span class=\"badge fail\">NEW</span>" else ""}</td></tr>")
+                "<td>${if (reported.isNew) "<span class=\"badge fail\" title=\"${escape(NEW_EXPLANATION)}\">NEW</span>" else ""}</td></tr>")
         }
         appendLine("</tbody></table></section>")
     }
@@ -117,6 +131,8 @@ class HtmlReport : Renderer {
         val failed = summary.tests.filter { it.status == TestStatus.FAILED || it.status == TestStatus.ERROR }
         val skipped = summary.tests.count { it.status == TestStatus.SKIPPED }
         appendLine("<section><h2>Tests (${summary.tests.size} total, ${failed.size} failed, $skipped skipped)</h2>")
+        appendLine("<p class=\"muted\">From the JUnit XML the test runs wrote. Failures are listed here; " +
+            "full output is in the tool reports.</p>")
         toolLinks(summary, setOf("junit"))
         if (failed.isEmpty()) {
             appendLine("<p>All tests passed.</p></section>")
@@ -133,45 +149,96 @@ class HtmlReport : Renderer {
         val coverage = summary.coverage ?: return
         val percent = coverage.linePercent?.let { "%.2f%%".format(it) } ?: "n/a"
         appendLine("<section><h2>Coverage $percent</h2>")
+        appendLine("<p class=\"muted\">${"%,d".format(coverage.linesCovered)} of ${"%,d".format(coverage.linesTotal)} " +
+            "executable lines covered, totaled across every ingested coverage report. This is the number the " +
+            "coverage gates check. For line-by-line annotated source, open the tool reports.</p>")
         toolLinks(summary, setOf("jacoco", "cobertura", "lcov"))
+        appendLine("<details><summary>Per-file line coverage (${coverage.files.size} files)</summary>")
         appendLine("<table class=\"sortable\"><thead><tr><th>File</th><th>Covered</th><th>Total</th><th>%</th></tr></thead><tbody>")
         coverage.files.sortedBy { it.path }.forEach { file ->
             val filePercent = if (file.lines.isEmpty()) "" else "%.1f".format(100.0 * file.linesCovered / file.lines.size)
             appendLine("<tr><td class=\"path\">${escape(file.path)}</td><td>${file.linesCovered}</td>" +
                 "<td>${file.lines.size}</td><td>$filePercent</td></tr>")
         }
-        appendLine("</tbody></table></section>")
+        appendLine("</tbody></table></details></section>")
     }
 
     private fun StringBuilder.ingested(summary: CheckSummary) {
-        appendLine("<footer><h2>Ingested files</h2><table>")
-        appendLine("<thead><tr><th>File</th><th>Format</th><th>Age</th><th>Tool report</th></tr></thead><tbody>")
-        summary.files.forEach { file ->
-            val age = summary.freshness?.ageMinutes?.get(file.path)?.let { "$it min" } ?: ""
-            // no link = the tool produced no html report next to the ingested file
-            val link = file.toolReport?.let { "<a href=\"${escape(it)}\">open</a>" } ?: "—"
-            appendLine("<tr><td class=\"path\">${escape(file.path)}</td><td>${escape(file.format)}</td><td>$age</td><td>$link</td></tr>")
+        val formatCounts = summary.files.groupingBy { it.format }.eachCount()
+            .entries.sortedByDescending { it.value }
+            .joinToString(" · ") { "${it.value} ${it.key}" }
+        appendLine("<footer><h2>Report files (${summary.files.size} read)</h2>")
+        appendLine("<p class=\"muted\">Everything BuildChecks found and understood" +
+            (if (formatCounts.isEmpty()) "." else ": $formatCounts.") +
+            " Numbers above are computed only from these files.</p>")
+        if (summary.files.isNotEmpty()) {
+            appendLine("<details><summary>All ${summary.files.size} files</summary>")
+            appendLine("<table class=\"sortable\">")
+            appendLine("<thead><tr><th>File</th><th>Format</th>" +
+                "<th>${help("Age", "Minutes between the report file's last modification and this check run — old reports may be stale.")}</th>" +
+                "<th>Tool report</th></tr></thead><tbody>")
+            summary.files.forEach { file ->
+                val age = summary.freshness?.ageMinutes?.get(file.path)?.let { "$it min" } ?: ""
+                // no link = the tool produced no html report next to the ingested file
+                val link = file.toolReport?.let { "<a href=\"${escape(it)}\">open</a>" } ?: "—"
+                appendLine("<tr><td class=\"path\">${escape(file.path)}</td><td>${escape(file.format)}</td><td>$age</td><td>$link</td></tr>")
+            }
+            appendLine("</tbody></table></details>")
         }
-        appendLine("</tbody></table>")
         if (summary.notUnderstood.isNotEmpty()) {
-            appendLine("<h2>Found but not understood</h2><ul>")
+            appendLine("<details><summary>Found but not understood (${summary.notUnderstood.size})</summary>")
+            appendLine("<p class=\"muted\">These matched the report search but no parser recognized their " +
+                "content, so they contribute nothing above. Harmless unless a report you expected is listed here — " +
+                "if so, check the tool is writing one of the supported formats " +
+                "(SARIF, JUnit, JaCoCo, Cobertura, LCOV, Checkstyle, CPD).</p><ul>")
             summary.notUnderstood.forEach { appendLine("<li class=\"path\">${escape(it)}</li>") }
-            appendLine("</ul>")
+            appendLine("</ul></details>")
         }
         appendLine("</footer>")
     }
+
+    private fun help(text: String, explanation: String?): String =
+        if (explanation == null) escape(text)
+        else "<span class=\"help\" title=\"${escape(explanation)}\">${escape(text)}</span>"
 
     private fun escape(text: String) = text
         .replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
 
     private companion object {
+        const val NEW_EXPLANATION = "Not present in the baseline snapshot (buildchecks-baseline.txt) — " +
+            "introduced since the last `buildchecks baseline` run."
+
+        val GATE_EXPLANATIONS = mapOf(
+            "new findings" to "Fails on findings introduced since the baseline snapshot. Pre-existing " +
+                "findings recorded in buildchecks-baseline.txt don't count against this gate.",
+            "findings must not increase" to "Ratchet: the total finding count may not exceed the count " +
+                "recorded in the baseline. Re-run `buildchecks baseline` to accept a new level.",
+            "coverage must not decrease" to "Ratchet: overall line coverage may not drop below the " +
+                "baseline percentage (minus the configured tolerance).",
+            "coverage floor" to "Overall line coverage must be at least the configured minimum " +
+                "(gates.min_coverage_percent).",
+            "errors" to "Error-severity findings may not exceed the configured maximum (gates.max_errors).",
+            "warnings" to "Warning-severity findings may not exceed the configured maximum (gates.max_warnings).",
+            "test failures" to "Failed tests may not exceed the configured maximum (gates.max_test_failures, default 0).",
+            "changed-line coverage" to "Coverage of the lines added or changed since the git base ref. " +
+                "Skipped with a notice when git or a base ref isn't available.",
+        )
+
         val CSS = """
             :root { color-scheme: light dark; }
             body { font: 14px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 72rem; padding: 1rem 2rem 4rem; }
-            h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; margin-top: 2rem; }
+            h1 { font-size: 1.4rem; margin-bottom: .2rem; } h2 { font-size: 1.1rem; margin-top: 2rem; }
+            .muted { margin: .2rem 0 .8rem; opacity: .65; }
             table { border-collapse: collapse; width: 100%; }
             th, td { border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent); padding: .35rem .6rem; text-align: left; vertical-align: top; }
-            th { cursor: pointer; user-select: none; white-space: nowrap; }
+            th { user-select: none; white-space: nowrap; }
+            table.sortable th { cursor: pointer; }
+            table.sortable th::after { content: " ⇅"; font-weight: 400; opacity: .35; }
+            table.sortable th[data-asc="true"]::after { content: " ▲"; opacity: 1; }
+            table.sortable th[data-asc="false"]::after { content: " ▼"; opacity: 1; }
+            .help { border-bottom: 1px dotted; cursor: help; }
+            details { margin: .8rem 0; }
+            summary { cursor: pointer; font-weight: 600; margin-bottom: .4rem; }
             .badge { border-radius: .3rem; font-size: .75em; font-weight: 700; padding: .15rem .5rem; vertical-align: middle; }
             .badge.pass, td.pass { background: #1a7f37; color: #fff; }
             .badge.fail, td.fail { background: #cf222e; color: #fff; }
