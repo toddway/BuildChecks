@@ -14,10 +14,10 @@ class FloorsGate(private val config: GateConfig) : Gate {
         config.minCoveragePercent?.let { floor ->
             val percent = context.coverage?.linePercent
             results += if (percent == null) {
-                GateResult("coverage floor", GateStatus.SKIPPED, "no coverage data")
+                GateResult("minimum coverage", GateStatus.SKIPPED, "no coverage data")
             } else {
                 GateResult(
-                    "coverage floor",
+                    "minimum coverage",
                     if (percent >= floor) GateStatus.PASSED else GateStatus.FAILED,
                     "%.2f%% (min %.1f%%)".format(percent, floor),
                 )

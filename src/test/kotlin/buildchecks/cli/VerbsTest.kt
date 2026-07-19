@@ -35,8 +35,8 @@ class VerbsTest {
 
         assertEquals(0, runCheck(root) { out += it })
         assertTrue(text.contains("PASS  new findings: 0 new (max 0)"), text)
-        assertTrue(text.contains("PASS  findings must not increase: 8 findings"), text)
-        assertTrue(text.contains("PASS  coverage must not decrease:"), text)
+        assertTrue(text.contains("PASS  total findings: 8 (baseline max 8)"), text)
+        assertTrue(text.contains("PASS  coverage:"), text)
         assertTrue(text.contains("PASS  test failures: 0 failed of 16"), text)
     }
 
@@ -78,7 +78,7 @@ class VerbsTest {
 
         assertEquals(1, runCheck(root) { out += it })
         assertTrue(text.contains("FAIL  new findings: 8 new (max 0)"), text)
-        assertTrue(text.contains("FAIL  findings must not increase: 8 findings (baseline 0)"), text)
+        assertTrue(text.contains("FAIL  total findings: 8 (baseline max 0)"), text)
         assertTrue(File(root, "${ReportDiscovery.DEFAULT_OUTPUT_DIR}/summary.json").readText()
             .contains("\"passed\": false"))
     }

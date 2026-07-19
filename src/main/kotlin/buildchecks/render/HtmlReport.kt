@@ -60,7 +60,10 @@ class HtmlReport : Renderer {
     private fun StringBuilder.gates(summary: CheckSummary) {
         appendLine("<section><h2>Gates</h2>")
         appendLine("<p class=\"muted\">The pass/fail rules this run was checked against — any FAIL fails the " +
-            "build (non-zero exit). Hover a gate name for what it checks.</p>")
+            "build (non-zero exit). Each detail reads <em>measured value (limit)</em>: a plain max/min limit " +
+            "comes from this project's configuration; a limit marked <em>baseline</em> comes from the committed " +
+            "snapshot of the last accepted state (<code>buildchecks baseline</code>), so those numbers can only " +
+            "hold steady or improve. Hover a gate name for what it checks.</p>")
         appendLine("<table>")
         appendLine("<thead><tr><th>Gate</th><th>Status</th><th>Detail</th></tr></thead><tbody>")
         summary.gates.forEach { result ->
@@ -209,19 +212,20 @@ class HtmlReport : Renderer {
             "introduced since the last `buildchecks baseline` run."
 
         val GATE_EXPLANATIONS = mapOf(
-            "new findings" to "Fails on findings introduced since the baseline snapshot. Pre-existing " +
-                "findings recorded in buildchecks-baseline.txt don't count against this gate.",
-            "findings must not increase" to "Ratchet: the total finding count may not exceed the count " +
-                "recorded in the baseline. Re-run `buildchecks baseline` to accept a new level.",
-            "coverage must not decrease" to "Ratchet: overall line coverage may not drop below the " +
-                "baseline percentage (minus the configured tolerance).",
-            "coverage floor" to "Overall line coverage must be at least the configured minimum " +
-                "(gates.min_coverage_percent).",
-            "errors" to "Error-severity findings may not exceed the configured maximum (gates.max_errors).",
-            "warnings" to "Warning-severity findings may not exceed the configured maximum (gates.max_warnings).",
-            "test failures" to "Failed tests may not exceed the configured maximum (gates.max_test_failures, default 0).",
-            "changed-line coverage" to "Coverage of the lines added or changed since the git base ref. " +
-                "Skipped with a notice when git or a base ref isn't available.",
+            "new findings" to "Findings that are not in the baseline — introduced since the snapshot " +
+                "was last taken. The other findings gates compare totals; this one catches each " +
+                "individual new issue.",
+            "total findings" to "The finding total must not rise above the baseline's total, so the " +
+                "backlog can only stay level or shrink. Run `buildchecks baseline` to accept a new level.",
+            "coverage" to "Overall line coverage must not drop below the baseline's coverage (less the " +
+                "configured tolerance) — it can only stay level or rise.",
+            "minimum coverage" to "An absolute floor from your config: overall line coverage must be at " +
+                "least this, regardless of the baseline.",
+            "errors" to "Error-severity findings must not exceed the configured maximum.",
+            "warnings" to "Warning-severity findings must not exceed the configured maximum.",
+            "test failures" to "Failed tests must not exceed the configured maximum (0 unless configured).",
+            "changed-line coverage" to "Coverage of only the lines added or changed relative to the git " +
+                "base ref. Skipped with a notice when git or a base ref isn't available.",
         )
 
         val CSS = """

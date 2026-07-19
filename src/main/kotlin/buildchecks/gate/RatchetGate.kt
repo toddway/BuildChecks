@@ -19,7 +19,7 @@ class RatchetGate(private val config: GateConfig) : Gate {
         results += GateResult(
             FINDINGS,
             if (total <= baseline.findingCount) GateStatus.PASSED else GateStatus.FAILED,
-            "$total findings (baseline ${baseline.findingCount})",
+            "$total (baseline max ${baseline.findingCount})",
         )
 
         val percent = context.coverage?.linePercent
@@ -29,15 +29,16 @@ class RatchetGate(private val config: GateConfig) : Gate {
             results += GateResult(
                 COVERAGE,
                 if (percent >= floor) GateStatus.PASSED else GateStatus.FAILED,
-                "%.2f%% (baseline %.2f%%, tolerance %.1f)".format(percent, baselinePercent, config.coverageTolerance),
+                "%.2f%% (baseline min %.2f%%)".format(percent, floor),
             )
         }
         return results
     }
 
     private companion object {
-        // "Ratchet" internally (V4-PLAN.md §4), but the output labels say what the rule is.
-        const val FINDINGS = "findings must not increase"
-        const val COVERAGE = "coverage must not decrease"
+        // "Ratchet" internally (V4-PLAN.md §4); names are plain metrics, the rule lives in
+        // the report tooltip, and a "baseline"-prefixed limit marks where it came from.
+        const val FINDINGS = "total findings"
+        const val COVERAGE = "coverage"
     }
 }

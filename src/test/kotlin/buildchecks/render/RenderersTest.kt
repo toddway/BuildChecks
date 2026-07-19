@@ -144,8 +144,8 @@ class RenderersTest {
     fun `html report explains itself to a first-time reader`() {
         val html = HtmlReport().render(summary)
         // every gate name carries a hover explanation
-        assertTrue(html.contains("<span class=\"help\" title=\"Fails on findings introduced since the baseline"))
-        assertTrue(html.contains("title=\"Failed tests may not exceed"))
+        assertTrue(html.contains("<span class=\"help\" title=\"Findings that are not in the baseline"))
+        assertTrue(html.contains("title=\"Failed tests must not exceed"))
         // bulk tables are collapsed behind their aggregates
         assertTrue(html.contains("<details><summary>Per-file line coverage (6 files)</summary>"))
         assertTrue(html.contains("<details><summary>All 2 files</summary>"))
