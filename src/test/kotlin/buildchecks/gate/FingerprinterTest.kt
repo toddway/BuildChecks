@@ -1,0 +1,97 @@
+package buildchecks.gate
+
+import buildchecks.model.Finding
+import buildchecks.model.Location
+import buildchecks.model.Severity
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Test
+
+class FingerprinterTest {
+
+    // The violation sits mid-block so its two-line context window travels with the block.
+    private val block = listOf(
+        "fun total(items: List<Int>): Int {",
+        "    // sums with an offset",
+        "    val magic = 42",
+        "    return items.sum() + magic",
+        "}",
+    )
+
+    private fun finding(
+        path: String = "src/Total.kt",
+        line: Int? = 3,
+        rule: String = "MagicNumber",
+        message: String = "This expression contains a magic number.",
+    ) = Finding("detekt", rule, Severity.WARNING, message, Location(path, line))
+
+    private fun fingerprint(finding: Finding, source: Map<String, List<String>>): String =
+        Fingerprinter { source[it] }.fingerprint(listOf(finding)).single().fingerprint
+
+    @Test
+    fun `survives the block shifting to a different line`() {
+        val original = fingerprint(finding(line = 3), mapOf("src/Total.kt" to block))
+        val shifted = fingerprint(
+            finding(line = 13),
+            mapOf("src/Total.kt" to List(10) { "// header $it" } + block),
+        )
+        assertEquals(original, shifted)
+    }
+
+    @Test
+    fun `survives a file rename`() {
+        val original = fingerprint(finding(path = "src/Total.kt"), mapOf("src/Total.kt" to block))
+        val renamed = fingerprint(finding(path = "src/Sum.kt"), mapOf("src/Sum.kt" to block))
+        assertEquals(original, renamed)
+    }
+
+    @Test
+    fun `survives reindentation`() {
+        val original = fingerprint(finding(), mapOf("src/Total.kt" to block))
+        val reindented = fingerprint(finding(), mapOf("src/Total.kt" to block.map { "        $it" }))
+        assertEquals(original, reindented)
+    }
+
+    @Test
+    fun `changes when the violating code is rewritten`() {
+        val original = fingerprint(finding(), mapOf("src/Total.kt" to block))
+        val rewritten = block.toMutableList().also { it[2] = "    val magic = 43" }
+        assertNotEquals(original, fingerprint(finding(), mapOf("src/Total.kt" to rewritten)))
+    }
+
+    @Test
+    fun `changes when the rule differs`() {
+        val source = mapOf("src/Total.kt" to block)
+        assertNotEquals(
+            fingerprint(finding(rule = "MagicNumber"), source),
+            fingerprint(finding(rule = "ForbiddenComment"), source),
+        )
+    }
+
+    @Test
+    fun `falls back to the message when source is unavailable`() {
+        val none = emptyMap<String, List<String>>()
+        assertEquals(fingerprint(finding(), none), fingerprint(finding(line = 99), none))
+        assertNotEquals(fingerprint(finding(), none), fingerprint(finding(message = "Other message."), none))
+    }
+
+    @Test
+    fun `identical findings get occurrence indexes`() {
+        val twins = listOf(finding(line = 10), finding(line = 20))
+        val fingerprints = Fingerprinter { null }.fingerprint(twins).map { it.fingerprint }
+        assertEquals(2, fingerprints.distinct().size)
+        assertEquals("${fingerprints[0]}-1", fingerprints[1])
+    }
+
+    @Test
+    fun `cpd clones hash the fragment and token count, not the location`() {
+        fun clone(snippet: String, tokens: Int = 48, path: String = "A.swift") = Finding(
+            "cpd", "duplicated-code", Severity.WARNING, "dup",
+            Location(path, 5), snippet = snippet, duplicatedTokens = tokens,
+        )
+        val a = fingerprint(clone("class Round {\n    val r = 1\n}"), emptyMap())
+        val b = fingerprint(clone("class Round {  val r = 1 }", path = "B.swift"), emptyMap())
+        assertEquals(a, b)
+        assertNotEquals(a, fingerprint(clone("class Round {\n    val r = 1\n}", tokens = 50), emptyMap()))
+    }
+}
