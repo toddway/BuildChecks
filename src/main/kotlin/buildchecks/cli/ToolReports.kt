@@ -26,8 +26,7 @@ fun copyToolReports(root: File, files: List<IngestedFile>, outputDir: File): Lis
                 ingested.copy(toolReport = index?.let { relative(outputDir, File(destination, it)) })
             }
             sibling.isFile -> {
-                destination.mkdirs()
-                sibling.copyTo(File(destination, sibling.name), overwrite = true)
+                copyFile(sibling, File(destination, sibling.name))
                 ingested.copy(toolReport = relative(outputDir, File(destination, sibling.name)))
             }
             gradleTests != null -> {
@@ -52,11 +51,25 @@ private fun copyDir(source: File, destination: File, exclude: File) {
     source.walkTopDown()
         .onEnter { it.canonicalFile != exclude.canonicalFile }
         .filter { it.isFile }
-        .forEach { file ->
-            val target = File(destination, file.relativeTo(source).path)
-            target.parentFile?.mkdirs()
-            file.copyTo(target, overwrite = true)
-        }
+        .forEach { file -> copyFile(file, File(destination, file.relativeTo(source).path)) }
+}
+
+// Tool reports are styled for white backgrounds but rarely declare it, so dark-mode
+// browsers paint their canvas black. Pin the copies to light.
+private const val LIGHT_PIN = """<style>:root{color-scheme:only light;background:#fff}</style>"""
+
+private fun copyFile(source: File, target: File) {
+    target.parentFile?.mkdirs()
+    if (source.extension.lowercase() !in setOf("html", "htm")) {
+        source.copyTo(target, overwrite = true)
+        return
+    }
+    val text = source.readText()
+    val head = Regex("<head[^>]*>", RegexOption.IGNORE_CASE).find(text)
+    target.writeText(
+        if (head == null) LIGHT_PIN + text
+        else text.replaceRange(head.range.last + 1, head.range.last + 1, LIGHT_PIN)
+    )
 }
 
 private fun relative(outputDir: File, file: File) =

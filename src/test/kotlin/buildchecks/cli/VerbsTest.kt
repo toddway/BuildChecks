@@ -59,8 +59,10 @@ class VerbsTest {
         }
         assertTrue(File(outputDir, "summary.json").readText().contains("\"passed\": true"))
         assertTrue(File(outputDir, "merged.sarif").readText().contains("ESLint"))
-        // jacoco html/ dir sits next to the ingested xml -> copied and linked
-        assertTrue(File(outputDir, "tools/build-reports-jvmTestCoverage/html/index.html").isFile)
+        // jacoco html/ dir sits next to the ingested xml -> copied, linked, pinned to light mode
+        val copied = File(outputDir, "tools/build-reports-jvmTestCoverage/html/index.html")
+        assertTrue(copied.isFile)
+        assertTrue(copied.readText().contains("color-scheme:only light"), copied.readText())
         val html = File(outputDir, "index.html").readText()
         assertTrue(html.contains("tools/build-reports-jvmTestCoverage/html/index.html"))
         // junit xml under test-results/jvmTest -> Gradle's reports/tests/jvmTest html
