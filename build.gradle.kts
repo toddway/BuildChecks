@@ -26,6 +26,23 @@ dependencies {
     testRuntimeOnly(libs.junit.launcher)
 }
 
+tasks.jar {
+    manifest { attributes["Main-Class"] = application.mainClass }
+}
+
+// Self-contained jar for GitHub Releases / JavaExec without dependency resolution.
+val fatJar by tasks.registering(Jar::class) {
+    archiveClassifier = "all"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest { attributes["Main-Class"] = application.mainClass }
+    from(sourceSets.main.get().output)
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
+        exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "META-INF/versions/**/module-info.class", "module-info.class")
+    }
+}
+
+tasks.assemble { dependsOn(fatJar) }
+
 tasks.test {
     useJUnitPlatform()
     testLogging {
