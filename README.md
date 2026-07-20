@@ -1,142 +1,163 @@
-> **⚠️ v4 in development.** BuildChecks is being rewritten as a toolchain-agnostic CLI —
-> see [V4-PLAN.md](V4-PLAN.md) for the plan and [MAINTAINING.md](MAINTAINING.md) for how to
-> build, test, and try it. The Gradle plugin described below is v3, preserved at the
-> [`3.3.2` tag](https://github.com/toddway/BuildChecks/tree/3.3.2) and still available on the
-> [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.toddway.buildchecks).
+# BuildChecks
 
-A Gradle plugin to post summaries from code analyzers to [GitHub](https://developer.github.com/v3/repos/statuses/) & [BitBucket](https://developer.atlassian.com/server/bitbucket/how-tos/updating-build-status-for-commits/).  E.g.:
+A toolchain-agnostic CLI that reads the report files your analyzers and test runners already
+produce — SARIF, JUnit XML, JaCoCo/Cobertura/LCOV, Checkstyle, CPD — and turns them into **one
+gated summary**: a browsable HTML report plus standard machine formats, with a single exit code
+that passes or fails the build.
 
-[ ![Gradle Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/toddway/buildchecks/com.toddway.buildchecks.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugin) ](https://plugins.gradle.org/plugin/com.toddway.buildchecks)
+It runs analysis tools? No. It aggregates and **gates** their output, the same way on every
+toolchain and every CI. There is no server, no account, no history database, and no code that
+talks to a platform API — the whole gate is one file in your repo that runs in the same build
+you run locally.
 
+> **Upgrading from the v3 Gradle plugin?** v4 is a rewrite from a Gradle plugin into a CLI.
+> The plugin is preserved at the [`3.3.2` tag](https://github.com/toddway/BuildChecks/tree/3.3.2)
+> and on the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.toddway.buildchecks).
+> See [docs/migrating-from-v3.md](docs/migrating-from-v3.md).
 
-    BUILD SUCCESSFUL in 11s
-    9 actionable tasks: 7 executed, 2 up-to-date
-    ✔ 10.05s for gradle postChecks
-    ✔ 79.33% coverage, threshold is 70.0%
-    ✔ 5 rule violations (5 warning), threshold is 5
-    ✔ Posting to GITHUB
-    ✔ Browse reports at file:/Users/user1/BuildChecks/build/reports/buildChecks/index.html
+## How it works
 
+```
+your tools write reports  ─►  buildchecks check  ─►  gated summary + exit code
+ (SARIF, JUnit, JaCoCo…)      ingest → gate → render     (0 pass, 1 gate fail, 2 config/IO)
+```
 
-<img src="img/report.png"/><br/>
+1. **Ingest** — discover report files by location, identify them by *content* (never by
+   filename), parse into one unified model. Unrecognized files are listed, never silently
+   skipped.
+2. **Gate** — evaluate against absolute *and* baseline/diff-aware thresholds (below).
+3. **Render** — write `index.html` and the machine formats to the output dir, print a console
+   summary, and exit non-zero if any gate failed.
 
-The plugin parses common output formats (Cobertura, JaCoCo, Checkstyle, Android Lint, CPD)
-supported by many lint and coverage tools (Detekt, SwiftLint, ESLint, TSLint, Istanbul, Slather, CPD, Checkstyle)
+## Install & run
 
-## Installation
-If you're not already using Gradle on your project,
-you should [install it](https://docs.gradle.org/current/userguide/installation.html)
-and [initialize it for your project](https://guides.gradle.org/creating-new-gradle-builds/).
+BuildChecks is a single self-contained jar. Pick whichever entry point fits your CI.
 
-Then add the following to the build.gradle file at the root of your project:
+### GitHub Actions
 
-    plugins {
-        id "com.toddway.buildchecks" version "$buildchecks_version"
-    }
+```yaml
+- uses: toddway/BuildChecks@v4.0.0
+  with:
+    args: check          # optional; this is the default
+- run: cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
+  if: always()
+```
 
-## Usage
-To print build checks only to the console, add `printChecks` to a Gradle task (likely one that generates supported lint and coverage reports).  For example:
+### Any CI, or locally — the fat jar
 
-    task checks {
-        dependsOn 'testDebugUnitTestCoverage'
-        dependsOn 'lintDebug'
-        dependsOn 'cpdCheck'
-        dependsOn 'detekt'
-        finalizedBy ':printChecks'
-    }
+Download `buildchecks-<version>-all.jar` from the
+[latest release](https://github.com/toddway/BuildChecks/releases) and run it:
 
-To post build checks to your remote source control system, add `postChecks`:
+```bash
+java -jar buildchecks-4.0.0-all.jar check
+```
 
-    task checks {
-        dependsOn 'testDebugUnitTestCoverage'
-        dependsOn 'lintDebug'
-        dependsOn 'cpdCheck'
-        dependsOn 'detekt'
-        finalizedBy ':postChecks'
-    }
+### Gradle — resolve from Maven Central, no plugin
 
-If you're running a non-Gradle command (e.g. `npm deploy`, `myBuildScript.sh`, `fastlane`),
-you can attach postChecks by letting Gradle execute your command.
-Gradle lets you define custom executables like this:
+```kotlin
+// root build.gradle.kts
+val buildchecks by configurations.creating
+dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
 
-    task myCustomTask(type: Exec) {
-        workingDir 'path/to/optional/subdirectory'
-        commandLine 'npm', 'deploy'
-    }
+tasks.register<JavaExec>("buildchecks") {
+    classpath = buildchecks
+    args("check")
+}
+tasks.named("check") { finalizedBy("buildchecks") }
+```
 
-    myCustomTask.finalizedBy(postChecks)
+Maven, npm, and Make snippets are in [docs/integration.md](docs/integration.md); complete
+end-to-end recipes per ecosystem are in [docs/recipes/](docs/recipes/).
 
+## Supported report formats
 
-The exit value of the external command (0 or 1) will determine if success or failure is posted for the build.
+Identified by content, so any tool that emits one of these works:
 
-## Config
-To configure the details of your build output and your source control system, add a buildChecks block to your build.gradle.
-All example properties below are optional.
+| Format | Common producers |
+|---|---|
+| SARIF 2.1.0 | detekt, ktlint, Android Lint, ESLint, SwiftLint, Semgrep, … |
+| JUnit XML | any JVM/JS/Swift test runner; also Konsist/ArchUnit layering rules |
+| JaCoCo XML | JVM coverage |
+| Cobertura XML | coverage.py, coverlet/.NET, many others |
+| LCOV | JS/TS (Istanbul/nyc), Swift (slather) |
+| Checkstyle XML | kotlinter and many linters |
+| CPD XML | copy-paste / duplication detectors |
 
-    buildChecks {
-        baseUrl = "https://api.github.com/repos/<owner>/<repo>" 
-        authorization = "Basic <your generated token>"
-        buildUrl = System.getenv('BUILD_URL') ? System.getenv('BUILD_URL') : "http://localhost"
-        reports = "$projectDir/build/reports" //comma separated paths to reports, all descendant files will be scanned
-        minCoveragePercent = 80 
-        maxLintViolations = 5
-        maxDuration = 60 //in seconds
-        allowUncommittedChanges = true
-     }
+## The gates
 
+Evaluated in order; any failure exits `1` (config/IO errors exit `2`). All are optional and
+off by default unless a threshold or baseline gives them something to check.
 
-#### baseUrl
-Github - `https://api.github.com/repos/<owner>/<repo>`
+| Gate | What it checks |
+|---|---|
+| **changed-line coverage** | Lines changed vs a git base ref must be covered at ≥ the minimum. Skips with a notice when git or a base ref isn't available. |
+| **findings** | No finding absent from the committed baseline, and the total must not rise above the baseline's total. Content-fingerprinted, so line shifts and renames don't churn. |
+| **coverage** | Overall line coverage stays at or above the higher of (baseline − tolerance) and a configured floor. |
+| **caps** | Optional absolute maxima for errors, warnings, and test failures (test failures default to 0 when JUnit reports are present). |
+| **expected reports** | Every report present at baseline time is still ingested — catches a check silently disabled or a source that stopped emitting. |
 
-Bitbucket (REST 2.0) - `https://api.bitbucket.org/2.0/repositories/<owner>/<repo>/`
+The **baseline** (`buildchecks-baseline.txt`, committed) is a single human-readable snapshot
+that replaces per-tool suppression files. Accept the current state — or an intentional removal —
+with `buildchecks baseline`, reviewable as a one-file diff in the same PR.
 
-Bitbucket Server (REST 1.0) - `https://bitbucket.yourserver.com`
+## Outputs
 
+Written to `build/reports/buildchecks/` every run:
 
-#### authorization
-Generate basic authorization for Github (or Bitbucket) with this command:
+- **`index.html`** — self-contained (no CDN), self-explaining: gate results, filterable
+  findings, test failures, coverage, links into each tool's own copied HTML report.
+- **`summary.md`** — for `$GITHUB_STEP_SUMMARY` / PR comments.
+- **`summary.json`** — small, stable, versioned; the scripting contract for CI status.
+- **`findings.json`** — the full model for power users.
+- **`codeclimate.json`** — GitLab MR code-quality widget.
+- **`merged.sarif`** — all ingested SARIF combined, for GitHub code-scanning upload.
+- **Console** — a compact table plus one line per gate, always printed.
 
-    curl -v -u username:password github.com
-    
-Then find the following line and use the result in your BuildChecks config. 
+## Configuration
 
-    > Authorization: Basic <your generated token>
+Zero config works: with no file, BuildChecks scans standard report locations from the working
+directory. An optional `buildchecks.toml` at the repo root tunes it (all keys optional):
 
-Instead of using your actual account password in the curl command, Github and Bitbucket both offer safer substitutes.  
- 
-Github - Your profile image -> Settings -> Developer Settings -> Personal Access Tokens.
+```toml
+[reports]
+paths = ["**/build/reports/**", "coverage/lcov.info"]   # default = discovery set
+output_dir = "build/reports/buildchecks"
+freshness_tolerance_minutes = 15
 
-Bitbucket - Your profile image -> Bitbucket settings -> App passwords. 
+[gates]
+min_changed_line_coverage = 80
+max_new_findings = 0
+ratchet = true
+coverage_tolerance = 0.1
+min_coverage_percent = 52.0
+max_errors = 0
+max_warnings = 1000
 
-Bitbucket Server - Your profile image -> Manage account -> Personal access tokens.
+[git]
+base_ref = "origin/main"
+baseline_file = "buildchecks-baseline.txt"
+```
 
+String values support `${VAR}` environment interpolation. No tokens or secrets ever belong in
+config — nothing in BuildChecks needs one.
 
-#### History report
-Currently includes an experimental feature to store artifacts on an orphan repository branch and generate a history report.  In the buildChecks config block add:
+## CLI
 
-    buildChecks {
-        artifactsBranch = "<choose your own name for branch>"
-    }
+```
+buildchecks check      # ingest → gate → render → exit code   (default command)
+buildchecks baseline   # ingest → snapshot the baseline file
+  --config <path>  --base-ref <ref>  --output-dir <path>  --open  --verbose
+```
 
-Then run:
+## Documentation
 
-    ./gradlew pushArtifacts
+- [docs/integration.md](docs/integration.md) — Gradle, Maven, npm, Make snippets
+- [docs/recipes/](docs/recipes/) — complete end-to-end recipes (Gradle, npm, Python, .NET, Swift)
+- [docs/ci-recipes.md](docs/ci-recipes.md) — posting status from any CI; GitLab/Bitbucket
+- [docs/migrating-from-v3.md](docs/migrating-from-v3.md) — upgrading from the Gradle plugin
+- [MAINTAINING.md](MAINTAINING.md) — build, test, dogfood, release
+- [V4-PLAN.md](V4-PLAN.md) — scope, architecture, and design rules (source of truth)
 
+## License
 
-License
--------
-
-    Copyright 2018-Present Todd Way
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-    
+Apache 2.0 — see [LICENSE](LICENSE). Copyright 2018-Present Todd Way.
