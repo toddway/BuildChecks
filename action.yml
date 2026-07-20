@@ -1,0 +1,42 @@
+name: BuildChecks
+description: Aggregate code-analysis and test/coverage reports into one gated summary and gate the build on it.
+author: toddway
+branding:
+  icon: check-square
+  color: green
+
+inputs:
+  args:
+    description: 'Arguments passed to buildchecks (e.g. "check", "check --base-ref origin/main").'
+    required: false
+    default: check
+  version:
+    description: 'BuildChecks release to run (a published version like 4.0.0).'
+    required: false
+    default: 4.0.0
+  working-directory:
+    description: 'Directory to run buildchecks in (defaults to the workspace root).'
+    required: false
+    default: .
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
+    - name: Download BuildChecks ${{ inputs.version }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release download "v${{ inputs.version }}" \
+          --repo toddway/BuildChecks \
+          --pattern 'buildchecks-*-all.jar' \
+          --output "$RUNNER_TEMP/buildchecks.jar"
+    - name: Run BuildChecks
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: java -jar "$RUNNER_TEMP/buildchecks.jar" ${{ inputs.args }}
