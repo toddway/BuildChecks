@@ -373,6 +373,10 @@ class HtmlReport : Renderer {
             "test failures" to "Failed tests must not exceed the configured maximum (0 unless configured).",
             "changed-line coverage" to "Coverage of only the lines added or changed relative to the git " +
                 "base ref. Skipped with a notice when git or a base ref isn't available.",
+            "expected reports" to "Every report present when the baseline was snapshotted must still be " +
+                "ingested this run, grouped by origin (module/source). Catches a check silently disabled " +
+                "or a source that stopped emitting its report. Run `buildchecks baseline` to accept an " +
+                "intentional removal. Skipped against a baseline taken before this was recorded.",
         )
 
         val CSS = resource("report.css")

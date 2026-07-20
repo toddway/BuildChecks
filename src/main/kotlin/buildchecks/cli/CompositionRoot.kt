@@ -6,6 +6,7 @@ import buildchecks.gate.CoverageGate
 import buildchecks.gate.FindingsGate
 import buildchecks.gate.Gate
 import buildchecks.gate.GateConfig
+import buildchecks.gate.MissingReportGate
 import buildchecks.parse.CheckstyleParser
 import buildchecks.parse.CoberturaParser
 import buildchecks.parse.CpdParser
@@ -39,6 +40,7 @@ fun gates(config: GateConfig): List<Gate> = listOf(
     FindingsGate(config),
     CoverageGate(config),
     CapsGate(config),
+    MissingReportGate(),
 )
 
 // Every file written to the output dir on each check run (V4-PLAN.md §7).

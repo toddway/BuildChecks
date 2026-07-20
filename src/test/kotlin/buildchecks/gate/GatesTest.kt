@@ -31,7 +31,8 @@ class GatesTest {
         coverage: CoverageData? = null,
         baseline: Baseline? = null,
         changedLines: ChangedLines? = null,
-    ) = GateContext(findings, tests, coverage, baseline, changedLines)
+        presentOrigins: Set<OriginKind> = emptySet(),
+    ) = GateContext(findings, tests, coverage, baseline, changedLines, presentOrigins)
 
     // -- changed-line coverage --
 
@@ -228,5 +229,51 @@ class GatesTest {
         val result = gate.evaluate(context(tests = tests)).single()
         assertEquals(GateStatus.FAILED, result.status)
         assertEquals("1 failed of 2 tests (max 0)", result.detail)
+    }
+
+    // -- expected reports (origin presence) --
+
+    private val missingReportGate = MissingReportGate()
+
+    @Test
+    fun `expected-reports gate skips without a baseline or against a pre-v2 baseline`() {
+        val noBaseline = missingReportGate.evaluate(context()).single()
+        assertEquals(GateStatus.SKIPPED, noBaseline.status)
+        assertEquals("no baseline", noBaseline.detail)
+
+        val preV2 = Baseline(emptySet(), 0, null, manifest = null)
+        val old = missingReportGate.evaluate(context(baseline = preV2)).single()
+        assertEquals(GateStatus.SKIPPED, old.status)
+        assertTrue(old.detail.contains("re-baseline"), old.detail)
+    }
+
+    @Test
+    fun `expected-reports gate passes when every manifest entry is present this run`() {
+        val manifest = setOf(OriginKind(".", "detekt"), OriginKind("services/auth", "jacoco"))
+        val baseline = Baseline(emptySet(), 0, null, manifest = manifest)
+        val result = missingReportGate.evaluate(context(baseline = baseline, presentOrigins = manifest)).single()
+        assertEquals(GateStatus.PASSED, result.status)
+        assertEquals("2 expected report(s) present", result.detail)
+    }
+
+    @Test
+    fun `expected-reports gate fails naming what stopped being emitted`() {
+        val manifest = setOf(OriginKind(".", "detekt"), OriginKind("services/auth", "jacoco"))
+        val baseline = Baseline(emptySet(), 0, null, manifest = manifest)
+        // services/auth stopped emitting its jacoco report; detekt still present
+        val present = setOf(OriginKind(".", "detekt"))
+        val result = missingReportGate.evaluate(context(baseline = baseline, presentOrigins = present)).single()
+        assertEquals(GateStatus.FAILED, result.status)
+        assertEquals("1 expected report(s) missing: jacoco in services/auth", result.detail)
+    }
+
+    @Test
+    fun `a tool going clean does not read as a missing report`() {
+        // detekt is keyed by its driver name (ParsedReport.tool), not its finding count, so a
+        // run with zero detekt findings still presents (origin, "detekt") — no false failure.
+        val manifest = setOf(OriginKind(".", "detekt"))
+        val baseline = Baseline(emptySet(), 0, null, manifest = manifest)
+        val result = missingReportGate.evaluate(context(baseline = baseline, presentOrigins = manifest)).single()
+        assertEquals(GateStatus.PASSED, result.status)
     }
 }

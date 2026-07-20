@@ -82,6 +82,35 @@ class VerbsTest {
     }
 
     @Test
+    fun `a report that stops being emitted fails until re-baselined`() {
+        copyPassingReports()
+        runBaseline(root) { out += it }
+        assertTrue(text.contains("origins: . (3 report(s))"), text)
+
+        // the detekt check is silently disabled -> its report vanishes this run
+        File(root, "build/reports/detekt.xml").delete()
+        out.clear()
+        assertEquals(1, runCheck(root) { out += it })
+        assertTrue(text.contains("FAIL  expected reports: 1 expected report(s) missing: checkstyle in ."), text)
+
+        // intentional removal is accepted the same way new findings are: a visible re-baseline
+        out.clear()
+        runBaseline(root) { out += it }
+        assertEquals(0, runCheck(root) { out += it })
+        assertTrue(text.contains("PASS  expected reports:"), text)
+    }
+
+    @Test
+    fun `check skips the presence gate against a pre-v2 baseline`() {
+        copyPassingReports()
+        // a baseline written before the manifest existed (v1, no origin lines)
+        File(root, "buildchecks-baseline.txt").writeText("# buildchecks baseline v1\n# findings: 8\n")
+
+        runCheck(root) { out += it }
+        assertTrue(text.contains("SKIP  expected reports: baseline predates the origin manifest"), text)
+    }
+
+    @Test
     fun `failing tests exit one even without a baseline`() {
         copy("shelf/TEST-com.toddway.shelf.JvmTests.xml", "build/test-results/jvmTest/TEST-JvmTests.xml")
 

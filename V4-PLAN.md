@@ -176,6 +176,9 @@ Evaluated in this order; any failure → exit code 1 (config/IO errors → exit 
    % minus `coverage_tolerance` (default 0.1). Catches deleted tests and any fingerprint miss.
 4. **Absolute floors** (optional): `min_coverage_percent`, `max_errors`, `max_warnings`,
    `max_test_failures` (default 0 when JUnit reports are present).
+5. **Missing expected reports** (origin-presence, severable): every `(origin, kind)` recorded
+   in the baseline manifest must have a matching ingested report this run; absentees fail the
+   gate. Skips with a notice when the baseline predates the manifest. See §5.5.
 
 Thresholds are severity-aware where applicable. No expression language — named keys only.
 
@@ -192,13 +195,48 @@ XML, etc. Content-based, so it survives line shifts and unrelated edits.
   stream + token count. A new clone of old code produces a new fingerprint → correctly gated.
 - **Baseline file:** committed, sorted, one finding per line, human-readable and diffable:
   `fingerprint  tool  rule  path:line  first-8-words-of-message`. Header records totals used
-  by the ratchets (finding count, coverage %). Re-baselining in a PR is the escape hatch and
-  must be reviewable at a glance.
+  by the ratchets (finding count, coverage %) and, from format v2, the origin manifest (§5.5).
+  Re-baselining in a PR is the escape hatch and must be reviewable at a glance.
 - **Known imperfection (documented):** heavily rewritten code changes its hash, so an old
   violation can resurface as "new." Acceptable — the code was rewritten — and the fix is a
   visible re-baseline in the same PR.
 - **False positives** do not belong in the baseline: use in-code suppressions
   (`@Suppress`, ktlint-disable, etc.). Baseline = legacy debt only.
+
+## 5.5 Origins & missing-report detection
+
+The baseline also answers *"is every report that used to be here still here?"* — catching a
+check that was silently disabled or a source that stopped emitting its report. That regression
+otherwise reads as an *improvement*: fewer findings, ratchet satisfied, no warning. Freshness
+(§3) can't see it — a report that stopped being generated leaves no stale file to flag; it is
+simply absent.
+
+- **Origin (derived, no config, no domain entity):** each ingested report's source group,
+  computed from its path as the prefix before the build-output marker discovery already keys
+  on (`build/`, `target/`, `coverage/`, `lcov.info`). `services/auth/build/reports/…` → origin
+  `services/auth`; root or aggregated reports → the root origin. A single-module repo collapses
+  to one origin, so the feature is inert where the pattern is absent. The term is toolchain-
+  agnostic on purpose — "origin" spans module / project / package / workspace / crate. It is a
+  computed property of the ingested file, not a new package, config key, or model entity.
+- **Presence manifest:** the baseline gains a sorted `(origin, kind)` manifest recording every
+  report present at snapshot time, where `kind` is the producing tool when the report carries
+  findings (detekt, eslint, checkstyle, cpd…) and otherwise the coverage/test format (jacoco,
+  cobertura, lcov, junit). Baseline format bumps `v1` → `v2`; readers accept both.
+- **Origin-presence gate (severable):** any `(origin, kind)` in the manifest with no matching
+  ingested report this run fails the gate, naming exactly what is missing and where. Severable
+  like changed-line coverage — starts warn-only, promoted to failing once the manifest
+  stabilizes; skips with a notice against a pre-v2 baseline that has no manifest. Intentional
+  removal is accepted exactly as new findings are: a visible re-baseline in the same PR.
+- **Relationship to freshness:** freshness catches *present-but-stale*; this catches
+  *expected-but-absent*. Together they close the orphaned/partial-build family §3 names.
+- **Known limitation (documented, not chased):** two reports sharing both an origin *and* a
+  kind (e.g. two JaCoCo files under one origin) are not individually distinguished — losing one
+  while the other remains is invisible. Same redundancy blind spot as the ratchets; full-path
+  keying would catch it but churns on every file rename. The report `log`s per-origin source
+  counts so a 2→1 drop is at least visible.
+- **Deferred polish:** per-origin grouping in the HTML/console report (v3 had this, likewise
+  auto-derived by path prefix) reuses the same origin key. Now secondary — the gate automates
+  the manual scan that made it valuable — so it lands only if the flat report grows unwieldy.
 
 ## 6. CLI surface & config
 
@@ -283,8 +321,19 @@ Equivalent snippets documented for Maven (`exec-maven-plugin`), npm scripts, Mak
   Plus the first-party action shim (§11).
 - **GitLab:** declare `codeclimate.json` as a `codequality` artifact → native MR widget.
 - **Bitbucket:** curl to the build-status endpoint.
+- **Architecture rules (any ecosystem):** Konsist/ArchUnit (JVM), dependency-cruiser (JS),
+  import-linter (Python) run as tests and emit JUnit XML — already parsed, so layering rules
+  gate today with no new code. Document as a supported pattern; distinguishing it as its own
+  category is a 4.1 enhancement (post-v1 roadmap #2).
 - **Recipe pages (5):** Gradle+detekt+JaCoCo, npm+ESLint+Jest, Python+Ruff+pytest-cov,
   .NET+coverlet, Swift+SwiftLint. Each proves the platform-agnostic claim end to end.
+  The Swift page must be the *complete* iOS story, not lint-only: SwiftLint → SARIF (findings),
+  slather → Cobertura or lcov (coverage), and xcbeautify → JUnit (tests). All three formats are
+  already parsed, so iOS integration is converter glue in the build — no engine work. (This is
+  why a native `.xcresult` parser is deliberately *not* pursued: `.xcresult` is a proprietary,
+  version-unstable directory bundle readable only via `xcresulttool`, which would violate the
+  no-running-tools and outside-world rules and add a macOS/Xcode-version dependency — for no gain
+  over the converter recipe.)
 
 ## 10. Validation testbed
 
@@ -312,6 +361,7 @@ coverage %, violation counts, and report content. SW migration notes (written du
 | 4 | CLI | clikt commands, TOML config + env interpolation, zero-config discovery, `--open`; runnable jar + fat jar | 1 session |
 | 5 | Changed-line coverage | Diff-hunk parsing, line mapping vs JaCoCo/Cobertura/LCOV line data, graceful skip w/o git; unit tests incl. renames/no-data files | 1–2 sessions |
 | 6 | SW validation | Side-by-side vs v3.3 on the SW repo; migration notes; fix discrepancies; Gradle/Maven/npm/Make snippets in docs | 1–2 sessions |
+| 6.5 | Origins & missing-report gate | Origin derived from path; baseline v2 `(origin, kind)` manifest (`baseline` writes it, reader accepts v1+v2); severable origin-presence gate with graceful skip on pre-v2 baselines; per-origin source counts in report; tests incl. single-origin collapse, multi-origin drop, intentional-removal re-baseline | 1 session |
 | 7 | Release 4.0.0 | Maven Central publishing, GitHub Releases fat jar, first-party GitHub Action shim, README rewrite, 5 recipe pages, CI recipes | 1–2 sessions |
 
 **Total: ~8–12 focused sessions.** User checkpoints: end of each phase (~20–30 min);
@@ -320,9 +370,24 @@ marketplace listing.
 
 ### Post-v1 roadmap (explicitly deferred)
 
-1. GraalVM native binaries (fallback if fiddly: keep fat jar + jbang) → then Homebrew/mise.
-2. `buildchecks export --format detekt-baseline` (IDE quiet) — generalizable per-tool later.
-3. `core`/`cli` module split if embedding demand appears.
+1. **Mutation-testing signal (PIT), targeted for 4.1.** New parser for PIT `mutations.xml`
+   (flat, stable XML; JDK SAX/DOM, no new dependency; sniff `<mutations>` root) plus a
+   `MutationResult` model type wired through `ParsedReport`/`CheckSummary`, a severable mutation
+   gate (`CoverageGate` as template), and render — including surfacing the coverage-up /
+   mutation-down contradiction. Golden fixture by dogfooding PIT on this repo. ~3–5 days.
+   Deferred from 4.0 on purpose: it is net-new feature work, additive/non-breaking, and demand
+   is better proven by real adoption (agents gaming coverage) than built speculatively.
+   Follow-up within the item: scope mutation to changed files (builds on phase 5) for runtime
+   sanity on large multi-module projects. Swift mutation (`muter`, JSON) is a separate parser —
+   defer until an iOS team asks.
+2. **Distinguish the architecture signal.** Konsist/ArchUnit layering rules already gate *today*
+   because they run as tests and emit JUnit XML (ingested by `JunitParser`) — but they land as
+   generic `TestResult` failures. Enhancement: tag architecture rules as their own category so
+   the report can headline layering drift instead of burying it among test failures. (No parser
+   needed; a 4.0 recipe/doc note should already state that layering-as-JUnit gates now.)
+3. GraalVM native binaries (fallback if fiddly: keep fat jar + jbang) → then Homebrew/mise.
+4. `buildchecks export --format detekt-baseline` (IDE quiet) — generalizable per-tool later.
+5. `core`/`cli` module split if embedding demand appears.
 
 ## 12. Risks
 
@@ -331,5 +396,6 @@ marketplace listing.
 | Fingerprint instability on heavy refactors | Documented behavior; reviewable one-line re-baseline; ratchets as backstop |
 | Changed-line mapping edge cases (renames, generated code, files w/o coverage data) | Severable gate (skip-with-notice); dedicated test matrix in phase 5 |
 | SARIF producer variance (tools emit spec subsets) | Golden fixtures per real producer, not just spec samples |
+| Origin derivation misgroups reports on non-standard layouts | Prefix rule reuses discovery's own build-output markers; degrades to the root origin; gate is severable and re-baselineable |
 | Scope creep (per-CI clients, DSLs, tool-running) | §1 identity sentence is the review gate; dependency allowlist in §2 |
 | v3 users surprised by direction change | 3.3.2 stays published & tagged; README migration section |

@@ -6,6 +6,7 @@ import buildchecks.gate.GateContext
 import buildchecks.git.GitDiff
 import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
+import buildchecks.model.IngestedFile
 import buildchecks.model.ReportedFinding
 import buildchecks.model.freshness
 import buildchecks.model.merged
@@ -28,8 +29,10 @@ fun runCheck(
     val fingerprinted = Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
     val baseline = FingerprintBaseline(File(root, config.git.baselineFile)).read()
     val changedLines = changedLines(root, config, baseRefFlag, verbose, env, echo)
-    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedLines)
+    val presentOrigins = presentManifest(ingestion.files)
+    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedLines, presentOrigins)
     val results = gates(config.gates).flatMap { it.evaluate(context) }
+    logOriginCounts(ingestion.files, echo)
 
     val summary = CheckSummary(
         gates = results,
@@ -66,12 +69,23 @@ fun runBaseline(
     val merged = ingestion.files.map { it.report }.merged()
     val fingerprinted = Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
     val coveragePercent = merged.coverage?.linePercent
+    val manifest = presentManifest(ingestion.files)
     val file = File(root, config.git.baselineFile)
-    FingerprintBaseline(file).write(fingerprinted, coveragePercent)
+    FingerprintBaseline(file).write(fingerprinted, coveragePercent, manifest)
+    logOriginCounts(ingestion.files, echo)
     echo("")
     echo("baseline written: ${file.name} (${fingerprinted.size} findings" +
-        (coveragePercent?.let { ", coverage %.2f%%".format(it) } ?: "") + ")")
+        (coveragePercent?.let { ", coverage %.2f%%".format(it) } ?: "") +
+        ", ${manifest.size} expected report(s))")
     return 0
+}
+
+// Per-origin source counts (V4-PLAN.md §5.5): so a dropped report (e.g. 2→1 under one origin)
+// stays visible even where the presence gate can't individually distinguish same-kind reports.
+private fun logOriginCounts(files: List<IngestedFile>, echo: (String) -> Unit) {
+    if (files.isEmpty()) return
+    val counts = originCounts(files)
+    echo("origins: " + counts.entries.joinToString(", ") { "${it.key} (${it.value} report(s))" })
 }
 
 private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (String) -> Unit): Ingestion {

@@ -22,8 +22,14 @@ class SarifParser : ReportParser {
 
     override fun parse(content: String): ParsedReport {
         val root = Json.parseToJsonElement(content).jsonObject
-        val findings = root["runs"]?.jsonArray.orEmpty().flatMap { run(it.jsonObject) }
-        return ParsedReport(findings = findings)
+        val runs = root["runs"]?.jsonArray.orEmpty().map { it.jsonObject }
+        val findings = runs.flatMap { run(it) }
+        // The driver name is present even with zero results, so it keys the origin manifest
+        // stably (V4-PLAN.md §5.5). Aggregated multi-tool SARIF is keyed by its first driver.
+        val tool = runs.firstNotNullOfOrNull {
+            it["tool"]?.jsonObject?.get("driver")?.jsonObject?.get("name")?.jsonPrimitive?.content
+        }
+        return ParsedReport(findings = findings, tool = tool)
     }
 
     private fun run(run: JsonObject): List<Finding> {

@@ -11,6 +11,7 @@ data class GateContext(
     val coverage: CoverageData?,
     val baseline: Baseline?,
     val changedLines: ChangedLines?, // null = no base ref was resolvable (or the gate is off)
+    val presentOrigins: Set<OriginKind> = emptySet(), // (origin, kind) derived from this run's reports
 )
 
 interface Gate {
