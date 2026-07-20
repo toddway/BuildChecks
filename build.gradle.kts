@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.ktoml)
     implementation(libs.clikt)
+    implementation(libs.kotlinx.html)
 
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.launcher)

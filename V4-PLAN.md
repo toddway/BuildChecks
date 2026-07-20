@@ -47,9 +47,16 @@ src/main/kotlin/
   cli/       clikt commands, TOML config, discovery, exit codes
 ```
 
-**Dependencies (complete list):** kotlin-stdlib, kotlinx-serialization-json, ktoml, clikt.
-XML parsing uses the JDK's built-in SAX/DOM — no dependency. Anything beyond this list needs
-a written justification in the PR.
+**Dependencies (complete list):** kotlin-stdlib, kotlinx-serialization-json, ktoml, clikt,
+kotlinx-html. XML parsing uses the JDK's built-in SAX/DOM — no dependency. Anything beyond
+this list needs a written justification in the PR.
+
+*kotlinx-html justification:* the HTML report was the one renderer maintained as bare string
+concatenation — manual escaping at every call site and tag balancing by eyeball, both silent
+failure modes. kotlinx-html removes both by construction (text/attributes escaped always,
+unclosed tags don't compile). It is JetBrains-maintained, pure Kotlin, and its only transitive
+dependency is kotlin-stdlib, which we already ship — consistent with the "depend only on
+frozen things" bet.
 
 **Toolchain:** current stable Kotlin, JVM 17 floor, Gradle (current) with version catalog for
 building the tool itself, GitHub Actions CI.
