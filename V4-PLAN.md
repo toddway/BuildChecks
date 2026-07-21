@@ -390,6 +390,28 @@ marketplace listing. (The distribution pipeline is `GITHUB_TOKEN`-only — no So
    4.0 as a jar-wrapping formula; a native binary would later let the formula drop `openjdk`.)
 4. `buildchecks export --format detekt-baseline` (IDE quiet) — generalizable per-tool later.
 5. `core`/`cli` module split if embedding demand appears.
+6. **Per-gate enforcement level (advisory vs required), targeted for 4.1.** Today the exit code is
+   all-or-nothing: any `FAILED` gate fails the run. Teams want some gates to block a merge and
+   others to be advisory (visible but non-blocking) — v3 did this by posting a separate commit-status
+   context per gate, which is un-portable (each host configures branch protection differently) and
+   forces granular per-gate status-posting glue. The correct home for this policy is `buildchecks.toml`,
+   not per-platform branch-protection UI, so the CI side stays **one required check** everywhere.
+   Design: add an `advisory` list to the `[gates]` config (referencing the stable gate names —
+   `findings`, `coverage`, `test failures`, `changed-line coverage`, `expected reports`); e.g.
+   `advisory = ["findings"]`. Semantics: the process exits non-zero iff an *enforced* gate is
+   `FAILED`; an advisory gate still evaluates and reports but never affects the exit code. Surface it
+   as an additive `enforced: bool` field on each `summary.json` gate entry (purely additive — likely
+   no `schemaVersion` bump, but decide explicitly) and in `findings.json`. Keep gate classes
+   unchanged/pure — they only produce `GateResult`s; enforcement is applied at aggregation in the
+   composition root (`cli`) from config, and the console/HTML render advisory failures distinctly
+   (a WARN marker, not red) with an in-place explanation that advisory = shown, not blocking
+   ([[self-explanatory-output]]). Pairs with a small, opt-in commit-status convenience in the
+   first-party Action (`action.yml with: commit-status: true`) that posts a single `buildchecks`
+   status from `summary.json` — platform glue in the platform shim, engine stays agnostic (§1 holds:
+   no per-CI client in the engine). Net effect: required/optional is versioned config in the repo,
+   portable across GitHub/GitLab/Bitbucket/local, gated by one check — strictly simpler and more
+   portable than v3's per-context model. Additive/non-breaking; deferred from 4.0 as net-new feature
+   work whose exact shape is better proven by real team adoption.
 
 ## 12. Risks
 
