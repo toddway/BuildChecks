@@ -41,7 +41,7 @@ report, BuildChecks gates.
   `build/` directory survives skews totals. The freshness warning ("reports differ in age…")
   is the tell; delete the stale directory or scope `paths` globs to live modules.
 
-## Validation: side-by-side on the Sherwin-Williams Android project
+## Validation: side-by-side on a real Android project
 
 Both versions were run against the same on-disk reports (45 modules, 34 JaCoCo XML, 92
 checkstyle-format XML, 644 JUnit XML, 44 SARIF, 1 CPD) on the same day:
@@ -60,7 +60,7 @@ discovery additionally surfaced an orphaned module directory (deleted from
 `settings.gradle.kts`, stale reports still on disk) that v3 silently ignored — excluded via
 `paths` globs after v4's freshness warning flagged it.
 
-### SW-specific steps
+### Project-specific steps
 
 - Replace the `buildChecksPlugin` dependency and `com.toddway.buildchecks` application in
   `gradle-plugins` with the JavaExec snippet inside the existing `checks` lifecycle wiring.
@@ -75,7 +75,7 @@ discovery additionally surfaced an orphaned module directory (deleted from
   lost, but v4 will not read the proprietary XML when findings appear.
 - Delete the orphaned top-level `registration/` build outputs (module now lives at
   `feature/registration`).
-- Test-duration reporting stays in SW's convention plugins (project-side, out of scope).
+- Test-duration reporting stays in the project's convention plugins (project-side, out of scope).
 
 Working config used for the validation run:
 

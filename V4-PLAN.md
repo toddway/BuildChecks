@@ -144,7 +144,7 @@ Rules:
 - **Sniff content, never trust filenames.** Discovery feeds candidate files; parsers claim them.
 - Unrecognized files are listed in output as "found but not understood" — no silent skips.
 - Every parser ships with golden-file tests using real reports (fixtures harvested from the
-  Sherwin-Williams project build and canonical samples per ecosystem).
+  a real Android project build and canonical samples per ecosystem).
 
 ### Discovery (zero-config)
 
@@ -340,9 +340,9 @@ Equivalent snippets documented for Maven (`exec-maven-plugin`), npm scripts, Mak
 
 ## 10. Validation testbed
 
-The Sherwin-Williams Android project is the continuous acceptance test. Each phase ends with a
-run against real SW build reports; phase 6 runs v4 side-by-side with v3.3 and reconciles
-coverage %, violation counts, and report content. SW migration notes (written during phase 6):
+A real Android project (anonymized here) is the continuous acceptance test. Each phase ends
+with a run against its real build reports; phase 6 runs v4 side-by-side with v3.3 and reconciles
+coverage %, violation counts, and report content. Migration notes (written during phase 6):
 
 - Replace the `buildChecksPlugin` dependency and `com.toddway.buildchecks` application in
   `gradle-plugins` with the JavaExec snippet inside the existing `checks` lifecycle wiring.
@@ -351,19 +351,19 @@ coverage %, violation counts, and report content. SW migration notes (written du
 - Migrate per-tool baselines (detekt/checkstyle/CPD) to one `buildchecks baseline` snapshot;
   delete the per-tool files and the custom CPD-baseline code; set tools to emit SARIF where
   supported (detekt, Android Lint) and keep `ignoreFailures = true` everywhere.
-- Test-duration reporting stays in SW's convention plugins (project-side, out of scope here).
+- Test-duration reporting stays in the project's convention plugins (project-side, out of scope here).
 
 ## 11. Phases
 
 | # | Phase | Deliverable / acceptance | Est. |
 |---|---|---|---|
 | 0 | Repo reset | Tag `3.3.2`; clear v3 build/CI/source from main (history preserved); fresh Kotlin/Gradle scaffold incl. composition-root skeleton, CI, golden-test harness, this plan committed | ½ session |
-| 1 | Model + parsers | 7 parsers → unified model; content sniffing; golden tests green against SW + per-ecosystem fixtures | 2 sessions |
+| 1 | Model + parsers | 7 parsers → unified model; content sniffing; golden tests green against the real project + per-ecosystem fixtures | 2 sessions |
 | 2 | Baseline + gates | Fingerprinting, baseline read/write (`baseline` verb), new-finding gate, ratchets, absolute floors; exit codes | 1 session |
 | 3 | Renderers | HTML (self-contained, filterable, drill-down), Markdown, summary.json, findings.json, CodeClimate, merged SARIF, console table, freshness warnings | 1–2 sessions |
 | 4 | CLI | clikt commands, TOML config + env interpolation, zero-config discovery, `--open`; runnable jar + fat jar | 1 session |
 | 5 | Changed-line coverage | Diff-hunk parsing, line mapping vs JaCoCo/Cobertura/LCOV line data, graceful skip w/o git; unit tests incl. renames/no-data files | 1–2 sessions |
-| 6 | SW validation | Side-by-side vs v3.3 on the SW repo; migration notes; fix discrepancies; Gradle/Maven/npm/Make snippets in docs | 1–2 sessions |
+| 6 | Project validation | Side-by-side vs v3.3 on the real project repo; migration notes; fix discrepancies; Gradle/Maven/npm/Make snippets in docs | 1–2 sessions |
 | 6.5 | Origins & missing-report gate | Origin derived from path; baseline v2 `(origin, kind)` manifest (`baseline` writes it, reader accepts v1+v2); severable origin-presence gate with graceful skip on pre-v2 baselines; per-origin source counts in report; tests incl. single-origin collapse, multi-origin drop, intentional-removal re-baseline | 1 session |
 | 7 | Release 4.0.0 | GitHub Pages Maven repo + Homebrew formula + install script, GitHub Releases fat jar, first-party GitHub Action shim, README rewrite, recipe pages, CI recipes | 1–2 sessions |
 
