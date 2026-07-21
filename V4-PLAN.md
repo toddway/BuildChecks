@@ -20,7 +20,7 @@ storage, and no HTTP code anywhere in the project.
 
 | Dropped | Replacement |
 |---|---|
-| Gradle plugin (`com.toddway.buildchecks` plugin ID) | 8-line `JavaExec` snippet (§7); jar resolved from Maven Central |
+| Gradle plugin (`com.toddway.buildchecks` plugin ID) | 8-line `JavaExec` snippet (§7); jar resolved from the GitHub Pages Maven repo |
 | GitHub/Bitbucket status posting (Retrofit/OkHttp/RxJava/Gson stack) | `summary.json` + documented curl/CI recipes (§9) |
 | History chart, `pushArtifacts`, orphan-branch git plumbing | none (deliberately cut) |
 | Remote stats endpoint (`RetrofitStatsDatasource`) | none |
@@ -292,6 +292,7 @@ All written to `output_dir` every run:
 
 ```kotlin
 // root build.gradle.kts
+repositories { maven { url = uri("https://toddway.github.io/BuildChecks") } }  // Pages Maven repo
 val buildchecks by configurations.creating
 dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
 
@@ -362,11 +363,11 @@ coverage %, violation counts, and report content. SW migration notes (written du
 | 5 | Changed-line coverage | Diff-hunk parsing, line mapping vs JaCoCo/Cobertura/LCOV line data, graceful skip w/o git; unit tests incl. renames/no-data files | 1–2 sessions |
 | 6 | SW validation | Side-by-side vs v3.3 on the SW repo; migration notes; fix discrepancies; Gradle/Maven/npm/Make snippets in docs | 1–2 sessions |
 | 6.5 | Origins & missing-report gate | Origin derived from path; baseline v2 `(origin, kind)` manifest (`baseline` writes it, reader accepts v1+v2); severable origin-presence gate with graceful skip on pre-v2 baselines; per-origin source counts in report; tests incl. single-origin collapse, multi-origin drop, intentional-removal re-baseline | 1 session |
-| 7 | Release 4.0.0 | Maven Central publishing, GitHub Releases fat jar, first-party GitHub Action shim, README rewrite, 5 recipe pages, CI recipes | 1–2 sessions |
+| 7 | Release 4.0.0 | GitHub Pages Maven repo + Homebrew formula + install script, GitHub Releases fat jar, first-party GitHub Action shim, README rewrite, recipe pages, CI recipes | 1–2 sessions |
 
 **Total: ~8–12 focused sessions.** User checkpoints: end of each phase (~20–30 min);
-credentials/infra only you can do: Maven Central (Sonatype) keys, repo settings, Action
-marketplace listing.
+infra only you can do: enable GitHub Pages (gh-pages branch), repo settings, Action
+marketplace listing. (The distribution pipeline is `GITHUB_TOKEN`-only — no Sonatype/PGP.)
 
 ### Post-v1 roadmap (explicitly deferred)
 
@@ -385,7 +386,8 @@ marketplace listing.
    generic `TestResult` failures. Enhancement: tag architecture rules as their own category so
    the report can headline layering drift instead of burying it among test failures. (No parser
    needed; a 4.0 recipe/doc note should already state that layering-as-JUnit gates now.)
-3. GraalVM native binaries (fallback if fiddly: keep fat jar + jbang) → then Homebrew/mise.
+3. GraalVM native binaries (fallback if fiddly: keep fat jar + jbang). (Homebrew delivered in
+   4.0 as a jar-wrapping formula; a native binary would later let the formula drop `openjdk`.)
 4. `buildchecks export --format detekt-baseline` (IDE quiet) — generalizable per-tool later.
 5. `core`/`cli` module split if embedding demand appears.
 

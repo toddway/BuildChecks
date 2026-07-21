@@ -3,8 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     application
     jacoco // core Gradle plugin; enables dogfooding: the CLI gates its own build
-    `maven-publish` // core; publishes the thin jar + POM to Maven Central
-    signing // core; PGP signatures Maven Central requires
+    `maven-publish` // core; publishes the thin jar + POM to the GitHub Pages Maven repo
 }
 
 group = "com.toddway"
@@ -12,8 +11,6 @@ version = "4.0.0"
 
 java {
     toolchain { languageVersion = JavaLanguageVersion.of(17) }
-    withSourcesJar() // Maven Central requires -sources and -javadoc jars alongside the artifact
-    withJavadocJar()
 }
 
 application {
@@ -61,10 +58,12 @@ tasks.jacocoTestReport {
 }
 
 // --- Publishing (V4-PLAN.md §7, §11) ---
-// Maven Central gets the thin jar + POM so the Gradle JavaExec snippet can resolve it and its
-// deps; the fat jar (`assemble`) ships on GitHub Releases for `java -jar` use without resolution.
-// Only core plugins are used, and signing is required only when a key is present, so a plain
-// `./gradlew build` on a contributor machine never needs credentials.
+// The thin jar + POM + Gradle module metadata are published to a plain file-based Maven layout
+// under build/maven-repo; the release workflow pushes that layout to the `gh-pages` branch, where
+// GitHub Pages serves it as https://toddway.github.io/BuildChecks. JVM consumers resolve
+// `com.toddway:buildchecks:<version>` from there (its transitives come from the POM, fetched from
+// the consumer's own mavenCentral()). The fat jar (`assemble`) ships on GitHub Releases for
+// `java -jar` use without resolution. No signing, no Sonatype — publishing needs only GITHUB_TOKEN.
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -95,27 +94,11 @@ publishing {
             }
         }
     }
-    // A local Maven layout to zip and upload to the Central Portal (see MAINTAINING.md).
+    // A local Maven layout the release workflow copies onto the `gh-pages` branch.
     repositories {
         maven {
-            name = "staging"
-            url = uri(layout.buildDirectory.dir("staging-deploy"))
+            name = "pages"
+            url = uri(layout.buildDirectory.dir("maven-repo"))
         }
     }
-}
-
-signing {
-    // Two supported credential shapes, whichever you have on hand:
-    //  - in-memory: SIGNING_KEY (ASCII-armored private key) + SIGNING_PASSWORD env — CI-friendly,
-    //    and avoids depending on a secretKeyRingFile path;
-    //  - classic: signing.keyId / signing.password / signing.secretKeyRingFile gradle properties
-    //    (put them in the gitignored repo-root gradle.properties).
-    // With neither present, signing is skipped so a plain `./gradlew build` needs no key.
-    val inMemoryKey = providers.environmentVariable("SIGNING_KEY").orNull
-    val hasKeyringProps = providers.gradleProperty("signing.keyId").isPresent
-    isRequired = inMemoryKey != null || hasKeyringProps
-    if (inMemoryKey != null) {
-        useInMemoryPgpKeys(inMemoryKey, providers.environmentVariable("SIGNING_PASSWORD").orNull)
-    }
-    sign(publishing.publications["maven"])
 }

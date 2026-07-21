@@ -43,6 +43,23 @@ BuildChecks is a single self-contained jar. Pick whichever entry point fits your
   if: always()
 ```
 
+### Local or non-JVM (iOS/Swift, JS, Python) — install the command
+
+Put a `buildchecks` command on your PATH. Java is the only prerequisite (Homebrew pulls it in
+for you):
+
+```bash
+# Homebrew (macOS/Linux) — installs Java as a dependency
+brew tap toddway/buildchecks https://github.com/toddway/BuildChecks
+brew install buildchecks
+
+# or the install script (needs a JRE already present)
+curl -fsSL https://raw.githubusercontent.com/toddway/BuildChecks/main/install.sh | sh
+```
+
+Then call `buildchecks check` from your existing test command (a Fastlane lane, an npm script,
+a Makefile, …).
+
 ### Any CI, or locally — the fat jar
 
 Download `buildchecks-<version>-all.jar` from the
@@ -52,12 +69,14 @@ Download `buildchecks-<version>-all.jar` from the
 java -jar buildchecks-4.0.0-all.jar check
 ```
 
-### Gradle — resolve from Maven Central, no plugin
+### Gradle (Android/Java/Kotlin) — resolve it, no plugin, no committed jar
 
 ```kotlin
 // root build.gradle.kts
+repositories { maven { url = uri("https://toddway.github.io/BuildChecks") } }  // the BuildChecks Maven repo
+
 val buildchecks by configurations.creating
-dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
+dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }                 // keep mavenCentral() too, for transitives
 
 tasks.register<JavaExec>("buildchecks") {
     classpath = buildchecks
@@ -66,8 +85,10 @@ tasks.register<JavaExec>("buildchecks") {
 tasks.named("check") { finalizedBy("buildchecks") }
 ```
 
+Gradle downloads and caches the jar like any other dependency — nothing lands in your repo.
 Maven, npm, and Make snippets are in [docs/integration.md](docs/integration.md); complete
-end-to-end recipes per ecosystem are in [docs/recipes/](docs/recipes/).
+end-to-end recipes per ecosystem (including [Android](docs/recipes/android-gradle.md)) are in
+[docs/recipes/](docs/recipes/).
 
 ## Supported report formats
 

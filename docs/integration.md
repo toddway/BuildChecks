@@ -9,6 +9,8 @@ a `buildchecks` launcher on the PATH.
 
 ```kotlin
 // root build.gradle.kts
+repositories { maven { url = uri("https://toddway.github.io/BuildChecks") } }  // the BuildChecks Maven repo
+
 val buildchecks by configurations.creating
 dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
 
@@ -18,6 +20,13 @@ tasks.register<JavaExec>("buildchecks") {
 }
 tasks.named("check") { finalizedBy("buildchecks") }
 ```
+
+Keep your usual `mavenCentral()` (or `google()`) repository alongside the line above — Gradle
+resolves the BuildChecks jar from the Pages repo and its four runtime dependencies from Central.
+Nothing is committed to your repo; Gradle caches the jar like any other dependency.
+
+For Android specifically (per-variant JaCoCo report task, Lint SARIF), see
+[docs/recipes/android-gradle.md](recipes/android-gradle.md).
 
 Why this is cache-safe (what v3 used a `BuildEventService` for):
 

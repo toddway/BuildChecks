@@ -8,6 +8,7 @@ that produces reports does.
 | Recipe | Findings | Coverage | Tests |
 |---|---|---|---|
 | [Gradle + detekt + JaCoCo](gradle-detekt-jacoco.md) | detekt → SARIF | JaCoCo XML | JUnit XML |
+| [Android (Gradle)](android-gradle.md) | Android Lint / detekt → SARIF | JaCoCo XML | JUnit XML |
 | [npm + ESLint + Jest](npm-eslint-jest.md) | ESLint → SARIF | LCOV | Jest → JUnit XML |
 | [Python + Ruff + pytest-cov](python-ruff-pytest.md) | Ruff → SARIF | Cobertura XML | pytest → JUnit XML |
 | [.NET + coverlet](dotnet-coverlet.md) | analyzers → SARIF | Cobertura XML | JUnit XML |

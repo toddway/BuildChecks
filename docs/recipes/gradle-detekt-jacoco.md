@@ -1,8 +1,8 @@
 # Gradle + detekt + JaCoCo
 
 Findings from [detekt](https://detekt.dev/) as SARIF, coverage from JaCoCo XML, tests as JUnit
-XML — all already produced by a standard Gradle build. BuildChecks resolves from Maven Central
-and gates without a plugin.
+XML — all already produced by a standard Gradle build. BuildChecks resolves from its
+[Pages Maven repo](https://toddway.github.io/BuildChecks) and gates without a plugin.
 
 ## Build wiring
 
@@ -26,7 +26,8 @@ tasks.jacocoTestReport {
     reports { xml.required = true }     // build/reports/jacoco/test/jacocoTestReportXml/...
 }
 
-// Resolve BuildChecks from Maven Central and run it as the single gate.
+// Resolve BuildChecks from its Pages Maven repo and run it as the single gate.
+repositories { maven { url = uri("https://toddway.github.io/BuildChecks") } }  // alongside your mavenCentral()
 val buildchecks by configurations.creating
 dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
 tasks.register<JavaExec>("buildchecks") {

@@ -16,6 +16,10 @@ tool — against BuildChecks' no-running-tools rule, for no gain over these conv
 ```bash
 brew install swiftlint xcbeautify
 gem install slather
+
+# BuildChecks itself — Homebrew pulls in Java for you, and puts `buildchecks` on your PATH
+brew tap toddway/buildchecks https://github.com/toddway/BuildChecks
+brew install buildchecks
 ```
 
 ## Run the tools (failures tolerated)
@@ -39,8 +43,11 @@ slather coverage --cobertura-xml \
   --scheme MyApp MyApp.xcodeproj || true
 
 # the single gate
-java -jar tools/buildchecks-4.0.0-all.jar check
+buildchecks check
 ```
+
+Wire this into whatever runs your tests — a Fastlane lane (`sh "buildchecks check"` after
+`scan` + `slather`), this shell block in CI, or a `Makefile` target.
 
 ## Notes
 

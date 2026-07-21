@@ -44,50 +44,37 @@ file (documented in V4-PLAN.md §6). The repo's own `./gradlew run --args="check
 
 ## Release
 
-A release has two artifacts: the **thin jar + POM on Maven Central** (so the Gradle `JavaExec`
-snippet resolves `com.toddway:buildchecks:<version>` and its deps) and the **fat jar on GitHub
-Releases** (for `java -jar` and the first-party Action). Set `version` in `build.gradle.kts` to
-the release number (no `-SNAPSHOT`) before tagging.
+A release produces three things, all from one tag and all authenticated with the built-in
+`GITHUB_TOKEN` — there are no signing keys, Sonatype tokens, or other secrets to manage:
 
-### 1. GitHub Release + fat jar (automated)
+- the **fat jar on GitHub Releases** (for `java -jar`, the first-party Action, Homebrew, and the
+  install script),
+- the **thin jar + POM in the `gh-pages` Maven repo** (so Gradle resolves
+  `com.toddway:buildchecks:<version>` from `https://toddway.github.io/BuildChecks`),
+- an updated **Homebrew formula** (`Formula/buildchecks.rb`, `url` + `sha256` bumped on `main`).
 
-Tag and push; [`.github/workflows/release.yml`](.github/workflows/release.yml) builds the fat
-jar and attaches it to a GitHub Release named for the tag:
+Set `version` in `build.gradle.kts` to the release number (no `-SNAPSHOT`), then tag and push:
 
     git tag v4.0.0 && git push origin v4.0.0
 
-The first-party Action (`action.yml`, used as `toddway/BuildChecks@v4.0.0`) and the `java -jar`
-recipes download `buildchecks-<version>-all.jar` from that release.
+[`.github/workflows/release.yml`](.github/workflows/release.yml) does the rest: builds the fat
+jar and attaches it to a GitHub Release; runs `publishMavenPublicationToPagesRepository` and
+copies `build/maven-repo/` onto the `gh-pages` branch (previous versions accumulate; a `.nojekyll`
+marker keeps Pages from mangling the Maven metadata); and rewrites the formula's `url`/`sha256`
+to the new release. Nothing here needs credentials, so a plain `./gradlew build` on any machine
+works with no setup.
 
-### 2. Maven Central (manual — needs credentials only the owner has)
+To sanity-check the Maven layout locally before tagging:
 
-Publishing signs the artifacts and uploads a bundle to the [Central Portal](https://central.sonatype.com).
-It is deliberately manual: it needs a PGP signing key and a Central Portal token, which never
-live in the repo. Only core Gradle plugins are used (`maven-publish` + `signing`), so a plain
-`./gradlew build` needs none of this.
-
-    # PGP key (ASCII-armored) and its passphrase; the public key must be on a keyserver
-    export SIGNING_KEY="$(gpg --armor --export-secret-keys <KEY_ID>)"
-    export SIGNING_PASSWORD="…"
-
-    # Alternatively, the classic gradle-signing properties in the gitignored repo-root
-    # gradle.properties work too: signing.keyId / signing.password / signing.secretKeyRingFile.
-    # The in-memory env form above is preferred — it needs no keyring file on disk.
-
-    ./gradlew publishMavenPublicationToStagingRepository   # signed artifacts → build/staging-deploy
-
-    # zip the bundle and upload to the Central Portal Publisher API
-    (cd build/staging-deploy && zip -qr ../central-bundle.zip .)
-    curl --fail -H "Authorization: Bearer $CENTRAL_TOKEN" \
-      -F bundle=@build/central-bundle.zip \
-      https://central.sonatype.com/api/v1/publisher/upload
-
-Then approve the deployment in the Central Portal UI (or pass `?publishingType=AUTOMATIC`).
-`CENTRAL_TOKEN` is the base64 user-token from your Central Portal account settings.
+    ./gradlew publishMavenPublicationToPagesRepository
+    ls build/maven-repo/com/toddway/buildchecks/4.0.0/   # jar, .pom, .module
 
 ### One-time owner setup
 
-- **Central Portal namespace** `com.toddway` verified (via the GitHub-account verification flow).
-- **PGP key** generated and its public half published to a keyserver.
+- **Enable GitHub Pages** for the repo, serving the **`gh-pages` branch** (Settings → Pages).
+  The first tagged release creates that branch; after Pages is enabled the Maven repo is live at
+  `https://toddway.github.io/BuildChecks`.
+- **Branch protection:** the workflow pushes a formula-bump commit to `main`. If `main` requires
+  PRs, either allow the `github-actions[bot]` actor to bypass, or move the formula-bump to a PR.
 - **Action Marketplace listing** (optional): publish `action.yml` from a tagged release through
   the repo's *Releases → Publish this Action to the Marketplace* flow.

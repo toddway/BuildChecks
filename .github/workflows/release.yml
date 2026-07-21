@@ -1,9 +1,10 @@
 name: Release
 
-# Tag a release (e.g. `git tag v4.0.0 && git push origin v4.0.0`) to build the self-contained
-# fat jar and attach it to a GitHub Release. The first-party Action (action.yml) and the
-# `java -jar` recipes download this asset. Maven Central publishing is a separate manual step
-# (see MAINTAINING.md) because it needs the signing key and Central token.
+# Tag a release (e.g. `git tag v4.0.0 && git push origin v4.0.0`) to run the whole pipeline. On a
+# tag this workflow: builds the self-contained fat jar and attaches it to a GitHub Release; publishes
+# the thin jar + POM to the `gh-pages` Maven repo (so Gradle can resolve `com.toddway:buildchecks`);
+# and bumps the in-repo Homebrew formula. Everything authenticates with the built-in GITHUB_TOKEN —
+# there are no signing keys, Sonatype tokens, or other secrets to manage.
 on:
   push:
     tags: ['v*']
@@ -22,6 +23,7 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew assemble
+
       - name: Create release with the fat jar
         env:
           GH_TOKEN: ${{ github.token }}
@@ -31,3 +33,51 @@ jobs:
           --repo "$GITHUB_REPOSITORY"
           --title "$GITHUB_REF_NAME"
           --generate-notes
+
+      - name: Publish Maven repo to the gh-pages branch
+        run: |
+          ./gradlew publishMavenPublicationToPagesRepository
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check out gh-pages in a separate worktree, creating it as an orphan on the first release.
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git worktree add pages gh-pages
+          else
+            git worktree add --detach pages
+            git -C pages checkout --orphan gh-pages
+            git -C pages rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          # Merge the new artifacts in (previous versions accumulate); .nojekyll keeps GitHub Pages
+          # from mangling the Maven metadata files.
+          touch pages/.nojekyll
+          cp -R build/maven-repo/. pages/
+          git -C pages add -A
+          git -C pages commit -m "Publish Maven artifacts for ${GITHUB_REF_NAME}" \
+            || { echo "nothing new to publish"; exit 0; }
+          git -C pages push origin gh-pages
+
+      - name: Bump the Homebrew formula on main
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          ASSET="buildchecks-${VERSION}-all.jar"
+          SHA=$(sha256sum "build/libs/${ASSET}" | awk '{print $1}')
+
+          git fetch origin main
+          git worktree add main-wt origin/main
+          FORMULA="main-wt/Formula/buildchecks.rb"
+          sed -i \
+            -e "s|url \".*\", using: :nounzip|url \"https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/${ASSET}\", using: :nounzip|" \
+            -e "s|sha256 \".*\"|sha256 \"${SHA}\"|" \
+            -e "s|buildchecks-[0-9][^\"]*-all\.jar|${ASSET}|g" \
+            "$FORMULA"
+
+          git -C main-wt config user.name "github-actions[bot]"
+          git -C main-wt config user.email "github-actions[bot]@users.noreply.github.com"
+          git -C main-wt add Formula/buildchecks.rb
+          git -C main-wt commit -m "Update Homebrew formula to ${GITHUB_REF_NAME}" \
+            || { echo "formula unchanged"; exit 0; }
+          git -C main-wt push origin HEAD:main
