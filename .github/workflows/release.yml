@@ -1,10 +1,11 @@
 name: Release
 
-# Tag a release (e.g. `git tag v4.0.0 && git push origin v4.0.0`) to run the whole pipeline. On a
-# tag this workflow: builds the self-contained fat jar and attaches it to a GitHub Release; publishes
-# the thin jar + POM to the `gh-pages` Maven repo (so Gradle can resolve `com.toddway:buildchecks`);
-# and bumps the in-repo Homebrew formula. Everything authenticates with the built-in GITHUB_TOKEN —
-# there are no signing keys, Sonatype tokens, or other secrets to manage.
+# Cut a release with `./release.sh <version>` then `git push origin main <tag>`. release.sh bumps
+# the version, builds the reproducible fat jar, pins the Homebrew formula to its checksum, commits,
+# and tags — so the tag already carries a correct formula. On the tag this workflow: builds the fat
+# jar and attaches it to a GitHub Release; publishes the thin jar + POM to the `gh-pages` Maven repo
+# (so Gradle can resolve `com.toddway:buildchecks`); and verifies the formula checksum matches.
+# Everything authenticates with the built-in GITHUB_TOKEN — no signing keys or Sonatype tokens.
 on:
   push:
     tags: ['v*']
@@ -60,24 +61,15 @@ jobs:
             || { echo "nothing new to publish"; exit 0; }
           git -C pages push origin gh-pages
 
-      - name: Bump the Homebrew formula on main
+      - name: Verify the Homebrew formula matches the released jar
         run: |
+          # The formula is pinned by release.sh before tagging (reproducible jar → matching sha).
+          # This fails the release loudly if they drift, so a bad checksum is never published.
           VERSION="${GITHUB_REF_NAME#v}"
-          ASSET="buildchecks-${VERSION}-all.jar"
-          SHA=$(sha256sum "build/libs/${ASSET}" | awk '{print $1}')
-
-          git fetch origin main
-          git worktree add main-wt origin/main
-          FORMULA="main-wt/Formula/buildchecks.rb"
-          sed -i \
-            -e "s|url \".*\", using: :nounzip|url \"https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/${ASSET}\", using: :nounzip|" \
-            -e "s|sha256 \".*\"|sha256 \"${SHA}\"|" \
-            -e "s|buildchecks-[0-9][^\"]*-all\.jar|${ASSET}|g" \
-            "$FORMULA"
-
-          git -C main-wt config user.name "github-actions[bot]"
-          git -C main-wt config user.email "github-actions[bot]@users.noreply.github.com"
-          git -C main-wt add Formula/buildchecks.rb
-          git -C main-wt commit -m "Update Homebrew formula to ${GITHUB_REF_NAME}" \
-            || { echo "formula unchanged"; exit 0; }
-          git -C main-wt push origin HEAD:main
+          built=$(sha256sum "build/libs/buildchecks-${VERSION}-all.jar" | awk '{print $1}')
+          pinned=$(grep -oE '[0-9a-f]{64}' Formula/buildchecks.rb | head -1)
+          if [ "$built" != "$pinned" ]; then
+            echo "::error::Formula sha256 ($pinned) != built jar ($built). Run ./release.sh $VERSION and re-tag." >&2
+            exit 1
+          fi
+          echo "Formula checksum verified: $built"

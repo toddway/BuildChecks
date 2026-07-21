@@ -44,30 +44,32 @@ file (documented in V4-PLAN.md §6). The repo's own `./gradlew run --args="check
 
 ## Release
 
-A release produces three things, all from one tag and all authenticated with the built-in
-`GITHUB_TOKEN` — there are no signing keys, Sonatype tokens, or other secrets to manage:
+A release is two commands, and everything authenticates with the built-in `GITHUB_TOKEN` — there
+are no signing keys, Sonatype tokens, or other secrets to manage:
 
-- the **fat jar on GitHub Releases** (for `java -jar`, the first-party Action, Homebrew, and the
-  install script),
-- the **thin jar + POM in the `gh-pages` Maven repo** (so Gradle resolves
-  `com.toddway:buildchecks:<version>` from `https://toddway.github.io/BuildChecks`),
-- an updated **Homebrew formula** (`Formula/buildchecks.rb`, `url` + `sha256` bumped on `main`).
+    ./release.sh 4.0.1              # prep: version bump + jar + formula pin + commit + tag
+    git push origin main v4.0.1     # release: triggers the workflow
 
-Set `version` in `build.gradle.kts` to the release number (no `-SNAPSHOT`), then tag and push:
+The push is deliberately separate — it's the irreversible, public step, so the default stops just
+before it and you can inspect the commit/diff first. Pass `--push` to do both at once
+(`./release.sh 4.0.1 --push`) once you're confident.
 
-    git tag v4.0.0 && git push origin v4.0.0
+[`release.sh`](release.sh) refuses to run unless the tree is clean and on `main`, then: sets
+`version` in `build.gradle.kts`, builds the **reproducible** fat jar, pins `Formula/buildchecks.rb`
+to that jar's `url` + `sha256`, commits, and tags. Because the jar is reproducible, the checksum it
+pins matches the jar the workflow rebuilds — so the formula is correct *before* the tag exists, with
+no bot pushing back to the protected `main` branch.
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) does the rest: builds the fat
-jar and attaches it to a GitHub Release; runs `publishMavenPublicationToPagesRepository` and
-copies `build/maven-repo/` onto the `gh-pages` branch (previous versions accumulate; a `.nojekyll`
-marker keeps Pages from mangling the Maven metadata); and rewrites the formula's `url`/`sha256`
-to the new release. Nothing here needs credentials, so a plain `./gradlew build` on any machine
-works with no setup.
+The push then triggers [`.github/workflows/release.yml`](.github/workflows/release.yml), which:
+builds the fat jar and attaches it to a GitHub Release; runs `publishMavenPublicationToPagesRepository`
+and copies `build/maven-repo/` onto the `gh-pages` branch (previous versions accumulate; a `.nojekyll`
+marker keeps Pages from mangling the Maven metadata); and **verifies** the formula's `sha256` matches
+the built jar, failing the release loudly if they ever drift. Nothing needs credentials, so a plain
+`./gradlew build` on any machine works with no setup.
 
-To sanity-check the Maven layout locally before tagging:
-
-    ./gradlew publishMavenPublicationToPagesRepository
-    ls build/maven-repo/com/toddway/buildchecks/4.0.0/   # jar, .pom, .module
+The `main` branch is protected (the `build` status check is required for PRs). `release.sh`'s commit
+lands via your normal push to `main`; the formula is never bumped by a bot afterward, so no
+branch-protection bypass is needed.
 
 ### One-time owner setup
 

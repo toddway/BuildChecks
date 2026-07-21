@@ -35,6 +35,9 @@ tasks.jar {
 // Self-contained jar for GitHub Releases / JavaExec without dependency resolution.
 val fatJar by tasks.registering(Jar::class) {
     archiveClassifier = "all"
+    // Reproducible bytes so the sha256 computed by release.sh matches the jar CI publishes.
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest { attributes["Main-Class"] = application.mainClass }
     from(sourceSets.main.get().output)
