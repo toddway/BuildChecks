@@ -53,8 +53,11 @@ class FingerprintBaseline(private val file: File) {
     }
 
     private fun originKind(line: String): OriginKind? {
-        val tokens = line.removePrefix(ORIGIN_PREFIX).trim().split(Regex("\\s+"))
-        return if (tokens.size >= 2) OriginKind(tokens[0], tokens[1]) else null
+        // Origin and kind are joined by two spaces (see write); the kind may itself contain
+        // spaces (e.g. "Android Lint"), so split on that separator, not on any whitespace.
+        val rest = line.removePrefix(ORIGIN_PREFIX).trim()
+        val sep = rest.indexOf("  ")
+        return if (sep > 0) OriginKind(rest.take(sep), rest.substring(sep + 2).trim()) else null
     }
 
     private fun entry(fingerprinted: FingerprintedFinding): String {

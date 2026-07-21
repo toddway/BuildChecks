@@ -75,6 +75,17 @@ class FingerprintBaselineTest {
     }
 
     @Test
+    fun `round trips a manifest kind that contains a space`() {
+        // Android Lint's SARIF tool name is "Android Lint"; the reader must not split it on the
+        // space and drop "Lint", or the presence gate reports the report missing on every run.
+        val file = File(dir, "buildchecks-baseline.txt")
+        val manifest = setOf(OriginKind("app", "Android Lint"), OriginKind("app", "detekt"))
+        FingerprintBaseline(file).write(listOf(entry("ffff000011112222")), 80.0, manifest)
+
+        assertEquals(manifest, FingerprintBaseline(file).read()!!.manifest)
+    }
+
+    @Test
     fun `a v1 baseline reads with a null manifest so the presence gate stays inert`() {
         val file = File(dir, "buildchecks-baseline.txt")
         file.writeText(
