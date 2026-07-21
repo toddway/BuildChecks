@@ -29,19 +29,24 @@ The exit code already fails the job. Add the human summary, attach the full repo
 - uses: toddway/BuildChecks@v4.0.0        # or: run java -jar …
   id: buildchecks
 
-- name: Job summary
-  if: always()
-  run: cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
-
 # Attach the browsable HTML report + its copied sub-reports as a downloadable artifact.
+# (Artifacts inherit repo visibility, so this works identically for private and public repos.)
 - name: Upload BuildChecks report
   if: always()
+  id: report
   uses: actions/upload-artifact@v4
   with:
     name: buildchecks-report
     path: build/reports/buildchecks
 
-# A `buildchecks` status on the commit: pass/fail + the one-line summary, linking to the run.
+- name: Job summary
+  if: always()
+  run: |
+    cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
+    echo "" >> "$GITHUB_STEP_SUMMARY"
+    echo "📦 **[Download full HTML report](${{ steps.report.outputs.artifact-url }})** (zip — open \`index.html\`)" >> "$GITHUB_STEP_SUMMARY"
+
+# A `buildchecks` status on the commit: pass/fail + the one-line summary; "Details" → the report.
 - name: Commit status
   if: always()
   env:
@@ -51,7 +56,7 @@ The exit code already fails the job. Add the human summary, attach the full repo
     gh api -X POST "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha || github.sha }}" \
       -f state="$state" -f context="buildchecks" \
       -f description="$(cat build/reports/buildchecks/summary.txt)" \
-      -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      -f target_url="${{ steps.report.outputs.artifact-url }}"
 ```
 
 Needs `permissions: { statuses: write }`. Fork PRs get a read-only token, so the status step is

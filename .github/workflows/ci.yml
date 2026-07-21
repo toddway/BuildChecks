@@ -25,16 +25,21 @@ jobs:
         id: gate
         run: ./gradlew run --args="check"          # gates on the aggregate; non-zero fails the job
 
-      - name: Job summary
-        if: always()
-        run: cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
-
+      # Upload first so its artifact-url can be linked from the summary and the commit status.
       - name: Upload BuildChecks report
         if: always()
+        id: report
         uses: actions/upload-artifact@v4
         with:
           name: buildchecks-report                 # zip includes index.html + copied sub-reports
           path: build/reports/buildchecks
+
+      - name: Job summary
+        if: always()
+        run: |
+          cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "📦 **[Download full HTML report](${{ steps.report.outputs.artifact-url }})** (zip — open \`index.html\`)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Post BuildChecks commit status
         if: always()
@@ -42,9 +47,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # State from the gate step; description is BuildChecks' own one-line summary (no jq needed).
+          # "Details" links straight to the report artifact (works for private and public repos alike).
           state="${{ steps.gate.outcome == 'success' && 'success' || 'failure' }}"
           gh api -X POST "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha || github.sha }}" \
             -f state="$state" \
             -f context="buildchecks" \
             -f description="$(cat build/reports/buildchecks/summary.txt)" \
-            -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            -f target_url="${{ steps.report.outputs.artifact-url }}"
