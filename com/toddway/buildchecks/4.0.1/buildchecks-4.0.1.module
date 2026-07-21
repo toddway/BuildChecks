@@ -1,0 +1,110 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.toddway",
+    "module": "buildchecks",
+    "version": "4.0.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.2.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "buildchecks-4.0.1.jar",
+          "url": "buildchecks-4.0.1.jar",
+          "size": 359675,
+          "sha512": "4c627d48989cf9d66a9a9aae4d9bff922ba9cf61d3e02f8d8011bbfbea3170edb75c7207c16242363ec7e11f0a3f6d8ee536b8b8de3102f740485110c5af0a03",
+          "sha256": "5717057a617688a8bae197b748ee61122fc2ba29a831192fdc3cc9dff27ff9a3",
+          "sha1": "c8c7fff75c30e92f42cc1d533781ae4a746fc574",
+          "md5": "1d4e5874e3d342a8f94687c4ab9997c5"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "com.akuleshov7",
+          "module": "ktoml-core",
+          "version": {
+            "requires": "0.7.1"
+          }
+        },
+        {
+          "group": "com.github.ajalt.clikt",
+          "module": "clikt",
+          "version": {
+            "requires": "5.0.3"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-html-jvm",
+          "version": {
+            "requires": "0.12.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.2.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "buildchecks-4.0.1.jar",
+          "url": "buildchecks-4.0.1.jar",
+          "size": 359675,
+          "sha512": "4c627d48989cf9d66a9a9aae4d9bff922ba9cf61d3e02f8d8011bbfbea3170edb75c7207c16242363ec7e11f0a3f6d8ee536b8b8de3102f740485110c5af0a03",
+          "sha256": "5717057a617688a8bae197b748ee61122fc2ba29a831192fdc3cc9dff27ff9a3",
+          "sha1": "c8c7fff75c30e92f42cc1d533781ae4a746fc574",
+          "md5": "1d4e5874e3d342a8f94687c4ab9997c5"
+        }
+      ]
+    }
+  ]
+}
