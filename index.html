@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BuildChecks Maven repository</title>
+  <style>
+    body { font: 16px/1.6 system-ui, sans-serif; max-width: 42rem; margin: 4rem auto; padding: 0 1.25rem; color: #1a1a1a; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    pre { background: #f4f4f5; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    a { color: #2563eb; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0d0d0f; color: #e5e5e5; }
+      pre { background: #1a1a1d; }
+      a { color: #7aa2ff; }
+    }
+  </style>
+</head>
+<body>
+  <h1>BuildChecks Maven repository</h1>
+  <p>This branch (<code>gh-pages</code>) is a static Maven repository serving the
+  <a href="https://github.com/toddway/BuildChecks">BuildChecks</a> CLI. Resolve it from Gradle:</p>
+  <pre>repositories { maven { url = uri("https://toddway.github.io/BuildChecks") } }
+dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }</pre>
+  <p>Artifacts are published automatically on each tagged release. See the
+  <a href="https://github.com/toddway/BuildChecks#readme">README</a> for full integration recipes,
+  including Homebrew and the install script for non-JVM projects.</p>
+</body>
+</html>
