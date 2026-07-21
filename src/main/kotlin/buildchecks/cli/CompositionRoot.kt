@@ -22,6 +22,7 @@ import buildchecks.render.MarkdownSummary
 import buildchecks.render.MergedSarif
 import buildchecks.render.Renderer
 import buildchecks.render.SummaryJson
+import buildchecks.render.SummaryText
 
 // Manual composition root (V4-PLAN.md §2): explicit ordered lists, no framework.
 fun reportParsers(): List<ReportParser> = listOf(
@@ -48,6 +49,7 @@ fun renderers(): List<Renderer> = listOf(
     HtmlReport(),
     MarkdownSummary(),
     SummaryJson(),
+    SummaryText(),
     FindingsJson(),
     CodeClimateReport(),
     MergedSarif(),

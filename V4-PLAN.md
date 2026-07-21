@@ -281,6 +281,8 @@ All written to `output_dir` every run:
   own copied HTML report (v3's best feature, kept: tool report dirs are copied under
   `output_dir` and linked). Footer: ingested-files list with freshness ages.
 - **`summary.md`** — Markdown gate summary for `$GITHUB_STEP_SUMMARY` / PR comments.
+- **`summary.txt`** — single-line gate headline BuildChecks composes for a commit-status
+  description (posted verbatim, no jq); required/advisory-aware once roadmap #6 lands.
 - **`summary.json`** — small, stable, versioned (`schemaVersion`): overall pass/fail,
   per-gate results, coverage %, finding counts. The scripting contract.
 - **`findings.json`** — full finding/test/coverage model for power users.

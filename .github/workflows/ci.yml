@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+  statuses: write   # post the `buildchecks` commit status
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,4 +19,32 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew build
+
+      - run: ./gradlew build                       # compile + tests → JUnit XML + JaCoCo XML
+      - name: BuildChecks gate
+        id: gate
+        run: ./gradlew run --args="check"          # gates on the aggregate; non-zero fails the job
+
+      - name: Job summary
+        if: always()
+        run: cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload BuildChecks report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildchecks-report                 # zip includes index.html + copied sub-reports
+          path: build/reports/buildchecks
+
+      - name: Post BuildChecks commit status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # State from the gate step; description is BuildChecks' own one-line summary (no jq needed).
+          state="${{ steps.gate.outcome == 'success' && 'success' || 'failure' }}"
+          gh api -X POST "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha || github.sha }}" \
+            -f state="$state" \
+            -f context="buildchecks" \
+            -f description="$(cat build/reports/buildchecks/summary.txt)" \
+            -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

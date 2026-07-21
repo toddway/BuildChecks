@@ -4,6 +4,11 @@ BuildChecks stays out of the platform-API business: it writes `summary.json` (a 
 versioned contract) and exits non-zero on failure. Everything below is glue *you* own that reads
 those two things. No BuildChecks code talks to any CI.
 
+It also writes **`summary.txt`** — a single-line, ready-to-post gate headline it composes itself
+(e.g. `all gates passed · coverage 94.08% · 108 tests, 0 failed · 0 new findings`), kept short
+enough for a commit-status description. Post it verbatim with `"$(cat summary.txt)"` instead of
+assembling a sentence from `summary.json` in every project.
+
 `summary.json` shape (the fields these recipes use):
 
 ```json
@@ -17,23 +22,42 @@ those two things. No BuildChecks code talks to any CI.
 
 ## GitHub Actions
 
-The exit code already fails the job. Add the human summary and, optionally, code scanning:
+The exit code already fails the job. Add the human summary, attach the full report, and post a
+`buildchecks` commit status whose description is BuildChecks' own `summary.txt`:
 
 ```yaml
 - uses: toddway/BuildChecks@v4.0.0        # or: run java -jar …
+  id: buildchecks
 
 - name: Job summary
   if: always()
   run: cat build/reports/buildchecks/summary.md >> "$GITHUB_STEP_SUMMARY"
 
-- name: Upload merged SARIF to code scanning
+# Attach the browsable HTML report + its copied sub-reports as a downloadable artifact.
+- name: Upload BuildChecks report
   if: always()
-  uses: github/codeql-action/upload-sarif@v3
+  uses: actions/upload-artifact@v4
   with:
-    sarif_file: build/reports/buildchecks/merged.sarif
+    name: buildchecks-report
+    path: build/reports/buildchecks
+
+# A `buildchecks` status on the commit: pass/fail + the one-line summary, linking to the run.
+- name: Commit status
+  if: always()
+  env:
+    GH_TOKEN: ${{ github.token }}
+  run: |
+    state="${{ steps.buildchecks.outcome == 'success' && 'success' || 'failure' }}"
+    gh api -X POST "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha || github.sha }}" \
+      -f state="$state" -f context="buildchecks" \
+      -f description="$(cat build/reports/buildchecks/summary.txt)" \
+      -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 ```
 
-For PR comments, feed `summary.md` to any sticky-comment action.
+Needs `permissions: { statuses: write }`. Fork PRs get a read-only token, so the status step is
+skipped there — the job's own pass/fail check still covers them. For code scanning, also upload
+`merged.sarif` with `github/codeql-action/upload-sarif`. For PR comments, feed `summary.md` to any
+sticky-comment action.
 
 ## GitHub commit status from any CI (Bitrise, Jenkins, CircleCI…)
 

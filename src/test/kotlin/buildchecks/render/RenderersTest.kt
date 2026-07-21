@@ -105,6 +105,17 @@ class RenderersTest {
     }
 
     @Test
+    fun `summary text is a one-line gate headline for commit statuses`() {
+        val line = SummaryText().render(summary)
+        assertEquals(
+            "gates failed: test failures · coverage 93.24% · 4 tests, 1 failed · 1 new finding",
+            line,
+        )
+        assertFalse(line.contains("\n"), "must be a single line")
+        assertTrue(line.length <= 140, "must fit a commit-status description")
+    }
+
+    @Test
     fun `markdown summary shows gates, totals, and the freshness warning`() {
         val markdown = MarkdownSummary().render(summary)
         assertTrue(markdown.startsWith("## BuildChecks: ❌ failed"))

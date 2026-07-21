@@ -37,7 +37,7 @@ JaCoCo, Cobertura, LCOV, Checkstyle XML, CPD XML):
     java -jar /path/to/BuildChecks/build/libs/buildchecks-4.0.0-all.jar check --open
 
 `--open` launches `build/reports/buildchecks/index.html`; the same directory holds
-`summary.md`, `summary.json`, `findings.json`, `codeclimate.json`, and `merged.sarif`.
+`summary.md`, `summary.txt`, `summary.json`, `findings.json`, `codeclimate.json`, and `merged.sarif`.
 An optional `buildchecks.toml` at the project root tunes paths, gates, and the baseline
 file (documented in V4-PLAN.md §6). The repo's own `./gradlew run --args="check"` writes a
 (findings-free) report for this codebase.
