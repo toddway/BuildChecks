@@ -2,6 +2,8 @@ package buildchecks.cli
 
 import buildchecks.model.IngestedFile
 import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * Copies each tool's own HTML report next to ours so index.html can drill down and the
@@ -12,31 +14,41 @@ import java.io.File
  * alone; JUnit XML under `test-results/<name>/` links Gradle's html report at
  * `reports/tests/<name>/`. Report files with none of these are skipped.
  */
-fun copyToolReports(root: File, files: List<IngestedFile>, outputDir: File): List<IngestedFile> =
-    files.map { ingested ->
-        val parent = File(root, ingested.path).parentFile ?: return@map ingested
-        val destination = File(outputDir, "tools/${ingested.path.substringBeforeLast('/').replace('/', '-')}")
-        val htmlRoot = listOf(File(parent, "html"), File(parent, "index.html")).any { it.exists() }
-        val sibling = File(parent, File(ingested.path).nameWithoutExtension + ".html")
-        val gradleTests = gradleTestsHtml(root, ingested.path)
-        when {
-            htmlRoot -> {
-                copyDir(parent, destination, exclude = outputDir)
-                val index = listOf("index.html", "html/index.html").firstOrNull { File(destination, it).isFile }
-                ingested.copy(toolReport = index?.let { relative(outputDir, File(destination, it)) })
+fun copyToolReports(root: File, files: List<IngestedFile>, outputDir: File): List<IngestedFile> {
+    // Report trees run to thousands of tiny HTML files (a page per class for JaCoCo), each of
+    // which we rewrite; the copy dominates a large run's wall clock, so fan it across cores.
+    val pool = Executors.newFixedThreadPool(
+        (Runtime.getRuntime().availableProcessors()).coerceIn(4, 16)
+    )
+    try {
+        return files.map { ingested ->
+            val parent = File(root, ingested.path).parentFile ?: return@map ingested
+            val destination = File(outputDir, "tools/${ingested.path.substringBeforeLast('/').replace('/', '-')}")
+            val htmlRoot = listOf(File(parent, "html"), File(parent, "index.html")).any { it.exists() }
+            val sibling = File(parent, File(ingested.path).nameWithoutExtension + ".html")
+            val gradleTests = gradleTestsHtml(root, ingested.path)
+            when {
+                htmlRoot -> {
+                    copyDir(parent, destination, exclude = outputDir, pool = pool)
+                    val index = listOf("index.html", "html/index.html").firstOrNull { File(destination, it).isFile }
+                    ingested.copy(toolReport = index?.let { relative(outputDir, File(destination, it)) })
+                }
+                sibling.isFile -> {
+                    copyFile(sibling, File(destination, sibling.name))
+                    ingested.copy(toolReport = relative(outputDir, File(destination, sibling.name)))
+                }
+                gradleTests != null -> {
+                    val testsDestination = File(outputDir, "tools/${relative(root, gradleTests).replace('/', '-')}")
+                    copyDir(gradleTests, testsDestination, exclude = outputDir, pool = pool)
+                    ingested.copy(toolReport = relative(outputDir, File(testsDestination, "index.html")))
+                }
+                else -> ingested
             }
-            sibling.isFile -> {
-                copyFile(sibling, File(destination, sibling.name))
-                ingested.copy(toolReport = relative(outputDir, File(destination, sibling.name)))
-            }
-            gradleTests != null -> {
-                val testsDestination = File(outputDir, "tools/${relative(root, gradleTests).replace('/', '-')}")
-                copyDir(gradleTests, testsDestination, exclude = outputDir)
-                ingested.copy(toolReport = relative(outputDir, File(testsDestination, "index.html")))
-            }
-            else -> ingested
         }
+    } finally {
+        pool.shutdown()
     }
+}
 
 // Gradle writes JUnit XML to build/test-results/<name>/ and html to build/reports/tests/<name>/.
 private fun gradleTestsHtml(root: File, ingestedPath: String): File? {
@@ -46,17 +58,23 @@ private fun gradleTestsHtml(root: File, ingestedPath: String): File? {
     return html.takeIf { File(it, "index.html").isFile }
 }
 
-// A tool's report root can contain our own output dir; never copy that into itself.
-private fun copyDir(source: File, destination: File, exclude: File) {
+// A tool's report root can contain our own output dir; never copy that into itself. Each file
+// is independent (distinct target paths), so the copies fan out across the shared pool and we
+// join on their futures before returning.
+private fun copyDir(source: File, destination: File, exclude: File, pool: ExecutorService) {
+    val excludeCanon = exclude.canonicalFile
     source.walkTopDown()
-        .onEnter { it.canonicalFile != exclude.canonicalFile }
+        .onEnter { it.canonicalFile != excludeCanon }
         .filter { it.isFile }
-        .forEach { file -> copyFile(file, File(destination, file.relativeTo(source).path)) }
+        .map { file -> pool.submit { copyFile(file, File(destination, file.relativeTo(source).path)) } }
+        .toList()
+        .forEach { it.get() }
 }
 
 // Tool reports are styled for white backgrounds but rarely declare it, so dark-mode
 // browsers paint their canvas black. Pin the copies to light.
 private const val LIGHT_PIN = """<style>:root{color-scheme:only light;background:#fff}</style>"""
+private val HEAD_TAG = Regex("<head[^>]*>", RegexOption.IGNORE_CASE)
 
 private fun copyFile(source: File, target: File) {
     target.parentFile?.mkdirs()
@@ -65,7 +83,7 @@ private fun copyFile(source: File, target: File) {
         return
     }
     val text = source.readText()
-    val head = Regex("<head[^>]*>", RegexOption.IGNORE_CASE).find(text)
+    val head = HEAD_TAG.find(text)
     target.writeText(
         if (head == null) LIGHT_PIN + text
         else text.replaceRange(head.range.last + 1, head.range.last + 1, LIGHT_PIN)
