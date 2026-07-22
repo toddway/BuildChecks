@@ -415,6 +415,39 @@ Marketplace listing is optional and not required for distribution; the pipeline 
    portable across GitHub/GitLab/Bitbucket/local, gated by one check — strictly simpler and more
    portable than v3's per-context model. Additive/non-breaking; deferred from 4.0 as net-new feature
    work whose exact shape is better proven by real team adoption.
+7. **Run-confidence axis + change-integrity signals, targeted for 4.1–4.2.** Motivation: the
+   green/red verdict answers "did the tracked metrics hold" but not "how much is that green worth."
+   Every way a pass can quietly mean less than it looks — a severable gate that `SKIPPED`, a stale
+   or unparsed report, a loosened baseline, a lowered threshold — reduces to one property:
+   *effective checks < intended checks*, or *the ruler moved in this same PR*. Rather than enumerate
+   each evasion as its own gate, add one orthogonal, always-shown **confidence** axis (a tier +
+   contributing reasons on `CheckSummary`, rendered next to `passed`) that these signals feed.
+   Confidence is informational and never sets the exit code by itself; individual signals may be
+   *promoted* to hard gates via off-by-default `[gates]` knobs (same gate mechanism; the inverse
+   direction of roadmap #6's advisory lever — enforced-vs-not). Split into two releases along the
+   base-ref line, because that is the real dependency boundary (delta signals need a "before";
+   point-in-time signals don't), and each release makes exactly one pass through the ~4 human-facing
+   renderers + their golden fixtures — the actual cost here:
+
+   - **4.1 (local-friendly, no base ref):** the confidence axis itself; a **new-report notice**
+     (`presentOrigins − manifest`, the inverse of `MissingReportGate` — a report source ingested
+     this run but not baselined, surfaced as a notice not a failure, since adding coverage is
+     legitimate); and rolling the signals that *already exist* — skipped gates, freshness
+     (`Freshness.stale`), `notUnderstood` — into the axis. Add `failOnSkippedGates` and
+     `requireBaseRef` here (off by default): their signals are already present, so promotion is
+     ~1h each and there's no reason to hold them. All of this works on a bare
+     `./gradlew run --args="check"` with no PR context.
+   - **4.2 (needs a base ref → CI PR dogfooding):** a **baseline diff** (`git show <ref>:baseline`
+     vs the on-disk baseline we gated with — the git-backed companion to changed-line coverage,
+     reusing the same base-ref resolution) surfacing findings added/removed, coverage-threshold
+     delta, and manifest changes; a **config diff** (`git show <ref>:buildchecks.toml`) catching a
+     threshold lowered or a gate disabled in the same PR; both feeding the same axis, plus
+     `failOnBaselineLoosened`. Compare against the on-disk file we *used* (HEAD-vs-working-tree
+     decided deliberately). The base ref is auto-detected across CI providers as of 4.0.5.
+
+   Out of scope (holds §1): no in-report re-implementation of the git diff of the committed baseline
+   file — a reviewer already sees that in the PR; confidence surfaces the *summary* of the change,
+   not a second diff view. Additive/non-breaking; enforcement stays opt-in.
 
 ## 12. Risks
 
