@@ -73,6 +73,8 @@ branch-protection bypass is needed.
 
 ### One-time owner setup
 
+> Already completed for `toddway/BuildChecks` — kept here as reference for a fork or new maintainer.
+
 - **Enable GitHub Pages** for the repo, serving the **`gh-pages` branch** (Settings → Pages).
   The first tagged release creates that branch; after Pages is enabled the Maven repo is live at
   `https://toddway.github.io/BuildChecks`.

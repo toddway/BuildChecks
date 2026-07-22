@@ -1,6 +1,6 @@
 # BuildChecks v4 — Implementation Plan
 
-**Status:** approved plan, pre-implementation
+**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Remaining items are the deferred post-v1 roadmap in §11 (targeted for 4.1+).
 **Repo:** `toddway/BuildChecks` (v4 developed in place; `3.3.2` tagged as the final Gradle-plugin release)
 **License:** Apache 2.0 (unchanged)
 
@@ -367,9 +367,10 @@ coverage %, violation counts, and report content. Migration notes (written durin
 | 6.5 | Origins & missing-report gate | Origin derived from path; baseline v2 `(origin, kind)` manifest (`baseline` writes it, reader accepts v1+v2); severable origin-presence gate with graceful skip on pre-v2 baselines; per-origin source counts in report; tests incl. single-origin collapse, multi-origin drop, intentional-removal re-baseline | 1 session |
 | 7 | Release 4.0.0 | GitHub Pages Maven repo + Homebrew formula + install script, GitHub Releases fat jar, first-party GitHub Action shim, README rewrite, recipe pages, CI recipes | 1–2 sessions |
 
-**Total: ~8–12 focused sessions.** User checkpoints: end of each phase (~20–30 min);
-infra only you can do: enable GitHub Pages (gh-pages branch), repo settings, Action
-marketplace listing. (The distribution pipeline is `GITHUB_TOKEN`-only — no Sonatype/PGP.)
+**All phases complete and released** (latest v4.0.2). The one-time owner-only infra is
+done: GitHub Pages serves the `gh-pages` branch and release tags have been cut. (Action
+Marketplace listing is optional and not required for distribution; the pipeline is
+`GITHUB_TOKEN`-only — no Sonatype/PGP.)
 
 ### Post-v1 roadmap (explicitly deferred)
 
