@@ -32,6 +32,7 @@ data class ChangedFileCoverage(
     val covered: List<Int>,         // sorted executable changed lines that were hit
     val uncovered: List<Int>,       // sorted executable changed lines not hit
     val toolReport: String? = null, // output-dir-relative link to this file's coverage report; attached post-copy
+    val reportPath: String? = null, // repo-relative path of the source coverage report; for the stale flag
 ) {
     val executable: Int get() = covered.size + uncovered.size
 }

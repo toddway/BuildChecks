@@ -1,7 +1,9 @@
 package buildchecks.render
 
+import buildchecks.model.ChangedFileCoverage
 import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
+import buildchecks.model.Freshness
 import buildchecks.model.GateStatus
 import buildchecks.model.Severity
 import buildchecks.model.TestStatus
@@ -77,12 +79,13 @@ class HtmlReport : Renderer {
             }
             body {
                 pageHeader(summary)
-                freshnessBanner(summary)
                 gates(summary)
                 findings(summary)
+                // Changed-line coverage answers "is the work in this diff tested?" — more actionable
+                // than the whole-project Tests/Coverage rollups, so it leads them.
+                changedCoverage(summary)
                 tests(summary)
                 coverage(summary)
-                changedCoverage(summary)
                 ingested(summary)
                 script { unsafe { raw(JS) } }
             }
@@ -103,13 +106,34 @@ class HtmlReport : Renderer {
         }
     }
 
-    private fun BODY.freshnessBanner(summary: CheckSummary) {
-        val freshness = summary.freshness?.takeIf { it.stale } ?: return
-        div("warning") {
-            +("⚠️ Ingested reports differ in age by ${freshness.spreadMinutes} minutes " +
-                "(tolerance ${freshness.toleranceMinutes}) — some numbers here may come from an earlier build. " +
-                "Usual causes: a partial build, or a removed module whose old reports are still on disk. " +
-                "Sort the Age column under Report files to find the outliers.")
+    // Report-level staleness surfaces per row rather than as one banner: a `stale?` chip on any row
+    // (or aggregate) whose source report is an age-outlier, so a reader sees exactly which numbers to
+    // trust. Both helpers no-op unless the freshness set as a whole is stale (Freshness.outlier).
+
+    // Chip for a single row, keyed on the ingested report that produced it.
+    private fun FlowOrPhrasingContent.staleChip(reportPath: String?, freshness: Freshness?) {
+        val path = reportPath ?: return
+        if (freshness?.outlier(path) != true) return
+        +" "
+        span("badge stale") {
+            title = "From $path, ${freshness.ageMinutes[path]} min old — much older than the freshest " +
+                "report this run, so it may predate the latest build and no longer be current."
+            +"stale?"
+        }
+    }
+
+    // Chip for an aggregate (a section total), flagged when any report of the given formats feeding
+    // it is an outlier — the number blends a stale input even if no single visible row shows it.
+    private fun FlowOrPhrasingContent.staleAggregateChip(summary: CheckSummary, formats: Set<String>) {
+        val freshness = summary.freshness ?: return
+        val stale = summary.files.filter { it.format in formats && freshness.outlier(it.path) }.map { it.path }
+        if (stale.isEmpty()) return
+        +" "
+        span("badge stale") {
+            title = "This total blends ${stale.size} report(s) much older than the freshest this run " +
+                "(${stale.joinToString(", ")}) — some of it may predate the latest build. Any flagged " +
+                "rows below show which."
+            +"stale?"
         }
     }
 
@@ -226,10 +250,12 @@ class HtmlReport : Renderer {
                 tbody {
                     summary.findings.forEach { reported ->
                         val finding = reported.finding
+                        val stale = reported.reportPath?.let { summary.freshness?.outlier(it) } == true
                         tr {
                             attributes["data-severity"] = finding.severity.name
                             attributes["data-tool"] = finding.tool
                             attributes["data-new"] = reported.isNew.toString()
+                            if (stale) attributes["data-stale"] = "true"
                             td("sev-${finding.severity.name.lowercase()}") { +finding.severity.name }
                             td { +finding.tool }
                             td { +finding.ruleId }
@@ -244,6 +270,7 @@ class HtmlReport : Renderer {
                                         }
                                     else -> +loc
                                 }
+                                staleChip(reported.reportPath, summary.freshness)
                             }
                             td { +finding.message }
                             td {
@@ -264,7 +291,10 @@ class HtmlReport : Renderer {
         val failed = summary.tests.filter { it.status == TestStatus.FAILED || it.status == TestStatus.ERROR }
         val skipped = summary.tests.count { it.status == TestStatus.SKIPPED }
         section {
-            h2 { +"Tests (${summary.tests.size} total, ${failed.size} failed, $skipped skipped)" }
+            h2 {
+                +"Tests (${summary.tests.size} total, ${failed.size} failed, $skipped skipped)"
+                staleAggregateChip(summary, setOf("junit"))
+            }
             p("muted") {
                 +("From the JUnit XML the test runs wrote. Failures are listed here; " +
                     "full output is in the tool reports.")
@@ -278,7 +308,11 @@ class HtmlReport : Renderer {
                 thead { tr { th { +"Suite" }; th { +"Test" }; th { +"Message" } } }
                 tbody {
                     failed.forEach { result ->
-                        tr { td { +result.suite }; td { +result.name }; td { +(result.message ?: "") } }
+                        tr {
+                            td { +result.suite }
+                            td { +result.name; staleChip(result.reportPath, summary.freshness) }
+                            td { +(result.message ?: "") }
+                        }
                     }
                 }
             }
@@ -289,7 +323,10 @@ class HtmlReport : Renderer {
         val coverage = summary.coverage ?: return
         val percent = coverage.linePercent?.let { "%.2f%%".format(it) } ?: "n/a"
         section {
-            h2 { +"Coverage $percent" }
+            h2 {
+                +"Coverage $percent"
+                staleAggregateChip(summary, setOf("jacoco", "cobertura", "lcov"))
+            }
             p("muted") {
                 +("${"%,d".format(coverage.linesCovered)} of ${"%,d".format(coverage.linesTotal)} " +
                     "executable lines covered, totaled across every ingested coverage report. This is the " +
@@ -303,7 +340,7 @@ class HtmlReport : Renderer {
                     tbody {
                         coverage.files.sortedBy { it.path }.forEach { file ->
                             tr {
-                                td("path") { +file.path }
+                                td("path") { +file.path; staleChip(file.reportPath, summary.freshness) }
                                 td { +file.linesCovered.toString() }
                                 td { +file.lines.size.toString() }
                                 td {
@@ -337,23 +374,27 @@ class HtmlReport : Renderer {
             }
             table(classes = "sortable") {
                 thead {
-                    tr { th { +"File" }; th { +"Uncovered lines" }; th { +"Covered" }; th { +"Changed" } }
+                    tr { th { +"File" }; th { +"Uncovered" }; th { +"Covered" }; th { +"Changed" } }
                 }
                 tbody {
-                    uncoveredFiles.sortedBy { it.path }.forEach { file ->
-                        tr {
-                            td("path") {
-                                val report = file.toolReport
-                                if (report != null) a(href = report) {
-                                    title = "Open this file's coverage report"
-                                    +file.path
-                                } else +file.path
+                    // Worst-first: the files with the most uncovered changed lines are where the
+                    // gap is; the specific line numbers live in each file's linked coverage report.
+                    uncoveredFiles.sortedWith(compareByDescending<ChangedFileCoverage> { it.uncovered.size }.thenBy { it.path })
+                        .forEach { file ->
+                            tr {
+                                td("path") {
+                                    val report = file.toolReport
+                                    if (report != null) a(href = report) {
+                                        title = "Open this file's coverage report"
+                                        +file.path
+                                    } else +file.path
+                                    staleChip(file.reportPath, summary.freshness)
+                                }
+                                td { +file.uncovered.size.toString() }
+                                td { +file.covered.size.toString() }
+                                td { +file.executable.toString() }
                             }
-                            td("path") { +file.uncovered.joinToString(", ") }
-                            td { +file.covered.size.toString() }
-                            td { +file.executable.toString() }
                         }
-                    }
                 }
             }
         }

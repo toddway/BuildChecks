@@ -15,6 +15,7 @@ summary { cursor: pointer; font-weight: 600; margin-bottom: .4rem; }
 .badge { border-radius: .3rem; font-size: .75em; font-weight: 700; padding: .15rem .5rem; vertical-align: middle; }
 .badge.pass, td.pass { background: #1a7f37; color: #fff; }
 .badge.fail, td.fail { background: #cf222e; color: #fff; }
+.badge.stale { background: #fff8c5; border: 1px solid #d4a72c; color: #4d3800; cursor: help; }
 td.skip { background: #9a6700; color: #fff; }
 td.pass, td.fail, td.skip { font-weight: 700; text-align: center; width: 4rem; }
 .sev-error { color: #cf222e; font-weight: 700; }

@@ -4,7 +4,11 @@ import buildchecks.Fixtures
 import buildchecks.model.ChangedFileCoverage
 import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
+import buildchecks.model.CoverageData
+import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
+import buildchecks.model.LineCoverage
+import buildchecks.model.ParsedReport
 import buildchecks.model.Freshness
 import buildchecks.model.GateResult
 import buildchecks.model.GateStatus
@@ -150,7 +154,8 @@ class RenderersTest {
         assertTrue(html.contains("Coverage 93.24%"))
         // each finding's Location drills into the report of the tool that produced it
         assertTrue(html.contains("<td class=\"path\"><a href=\"tools/detekt/detekt.html\""))
-        assertTrue(html.contains("differ in age by 45 minutes"))
+        // staleness is surfaced per-row (stale? chips), not as a top-of-report banner
+        assertFalse(html.contains("differ in age"))
         assertTrue(html.contains("found but not understood") || html.contains("Found but not understood"))
     }
 
@@ -180,25 +185,27 @@ class RenderersTest {
     }
 
     @Test
-    fun `html lists uncovered changed lines and links files with a coverage report`() {
+    fun `html counts uncovered changed lines worst-first and links files with a coverage report`() {
         val measured = ChangedLineCoverage.Measured(
             baseRef = "origin/main",
             files = listOf(
-                ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = listOf(10),
-                    uncovered = listOf(12, 15), toolReport = "tools/jacoco/index.html"),
+                // fewer uncovered, listed first in the input — must sort BELOW Shelf.kt in output
                 ChangedFileCoverage("web/app.js", covered = emptyList(),
                     uncovered = listOf(3), toolReport = null), // no HTML report -> plain text
+                ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = listOf(10),
+                    uncovered = listOf(12, 15), toolReport = "tools/jacoco/index.html"),
             ),
             filesWithoutData = 0,
         )
         val html = HtmlReport().render(summary.copy(changedLineCoverage = measured))
         assertTrue(html.contains("Changed lines not covered (3)")) // 3 uncovered lines total
         assertTrue(html.contains("origin/main"))
-        // a file with a coverage report links into it; the uncovered line numbers are listed
+        // a file with a coverage report links into it; a file without one is plain text
         assertTrue(html.contains("<a href=\"tools/jacoco/index.html\""))
-        assertTrue(html.contains("12, 15"))
-        // a file without one is plain text, not a link
         assertTrue(html.contains("<td class=\"path\">web/app.js</td>"))
+        // the table shows the uncovered COUNT (not the raw line numbers), worst-first
+        assertFalse(html.contains("12, 15"))
+        assertTrue(html.indexOf("Shelf.kt") < html.indexOf("web/app.js")) // 2 uncovered before 1
     }
 
     @Test
@@ -211,6 +218,71 @@ class RenderersTest {
         )
         assertFalse(HtmlReport().render(summary.copy(changedLineCoverage = fullyCovered))
             .contains("Changed lines not covered"))
+    }
+
+    @Test
+    fun `only findings from a stale age-outlier report are flagged`() {
+        // In the fixture freshness, eslint.sarif is 45 min old vs detekt.xml at 0 (tolerance 15),
+        // so a finding sourced from eslint.sarif is an outlier and one from detekt.xml is not.
+        val stale = ReportedFinding(
+            Finding("eslint", "no-unused-vars", Severity.INFO, "unused", Location("web/app.js", 1)),
+            "fpStale", isNew = false, reportPath = "build/reports/eslint.sarif",
+        )
+        val fresh = ReportedFinding(
+            Finding("detekt", "MagicNumber", Severity.ERROR, "magic", Location("A.kt", 1)),
+            "fpFresh", isNew = false, reportPath = "build/reports/detekt.xml",
+        )
+        val html = HtmlReport().render(summary.copy(findings = listOf(stale, fresh)))
+        // exactly one of the two finding rows is flagged (the outlier), the fresh one is not
+        assertEquals(1, Regex("data-stale=\"true\"").findAll(html).count())
+        assertTrue(html.contains("class=\"badge stale\""))
+    }
+
+    @Test
+    fun `stale age-outlier reports flag test and coverage rows and their aggregates`() {
+        val s = CheckSummary(
+            gates = emptyList(),
+            findings = emptyList(),
+            tests = listOf(TestResult("Suite", "staleTest", TestStatus.FAILED, "boom",
+                reportPath = "build/test-results/old/TEST-x.xml")),
+            coverage = CoverageData(listOf(
+                FileCoverage("Cov.kt", listOf(LineCoverage(1, 0)), reportPath = "build/reports/jacoco/old.xml"))),
+            files = listOf(
+                IngestedFile("build/reports/jacoco/old.xml", "jacoco", 0, ParsedReport()),
+                IngestedFile("build/test-results/old/TEST-x.xml", "junit", 0, ParsedReport()),
+                IngestedFile("build/reports/detekt.xml", "checkstyle", 0, ParsedReport()),
+            ),
+            notUnderstood = emptyList(),
+            freshness = Freshness(
+                mapOf(
+                    "build/reports/detekt.xml" to 0,           // freshest
+                    "build/reports/jacoco/old.xml" to 90,      // outlier -> coverage row + aggregate
+                    "build/test-results/old/TEST-x.xml" to 90, // outlier -> test row + aggregate
+                ),
+                toleranceMinutes = 15,
+            ),
+        )
+        val html = HtmlReport().render(s)
+        // per-row chips carry the source report + age in their tooltip
+        assertTrue(html.contains("From build/test-results/old/TEST-x.xml, 90 min old"))
+        assertTrue(html.contains("From build/reports/jacoco/old.xml, 90 min old"))
+        // the blended Tests/Coverage totals are flagged too (per-file coverage table is collapsed)
+        assertTrue(html.contains("This total blends"))
+    }
+
+    @Test
+    fun `changed-line coverage renders above tests and whole-project coverage`() {
+        val measured = ChangedLineCoverage.Measured(
+            "origin/main",
+            listOf(ChangedFileCoverage("a.kt", covered = emptyList(), uncovered = listOf(1))),
+            filesWithoutData = 0,
+        )
+        val html = HtmlReport().render(summary.copy(changedLineCoverage = measured))
+        val changed = html.indexOf("Changed lines not covered")
+        val tests = html.indexOf("Tests (")
+        val coverage = html.indexOf("Coverage 93.24%")
+        assertTrue(changed in 0 until tests, "changed-coverage should precede Tests")
+        assertTrue(tests < coverage, "Tests should precede whole-project Coverage")
     }
 
     @Test

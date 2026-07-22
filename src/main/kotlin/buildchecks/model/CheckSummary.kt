@@ -26,4 +26,7 @@ data class ReportedFinding(
     // Output-dir-relative link to the HTML report of the tool that produced this finding
     // (the human-readable sibling of the parsed SARIF/XML), or null if none was copied.
     val toolReport: String? = null,
+    // Repo-relative path of the ingested report this finding came from, so the renderer can flag
+    // findings whose source report is a stale age-outlier (see Freshness.outlier). null if unknown.
+    val reportPath: String? = null,
 )

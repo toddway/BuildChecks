@@ -74,20 +74,32 @@ class HtmlReportPreviewTest {
             ),
             findings = findings.mapIndexed { index, finding ->
                 // detekt emits an HTML report (Location links into it); eslint/cpd here don't (plain text).
-                val report = if (finding.tool == "detekt") "tools/detekt/detekt.html" else null
-                ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0, toolReport = report)
+                // reportPath drives the stale-outlier flag below — eslint's source is the old report.
+                val (report, source) = when (finding.tool) {
+                    "detekt" -> "tools/detekt/detekt.html" to "build/reports/detekt/detekt.xml"
+                    "eslint" -> null to "web/build/eslint.sarif"
+                    else -> null to "build/reports/cpd/cpdCheck.xml"
+                }
+                ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0,
+                    toolReport = report, reportPath = source)
             },
-            tests = listOf(
-                TestResult("com.example.ShelfTest", "stores and loads", TestStatus.PASSED),
-                TestResult("com.example.ShelfTest", "expires old entries", TestStatus.FAILED,
-                    "expected: <3> but was: <2>"),
-                TestResult("com.example.LoaderTest", "slow network", TestStatus.SKIPPED),
-            ),
-            coverage = CoverageData(listOf(
-                FileCoverage("src/main/kotlin/Shelf.kt", (1..40).map { LineCoverage(it, if (it % 5 == 0) 0 else 1) }),
-                FileCoverage("src/main/kotlin/Loader.kt", (1..24).map { LineCoverage(it, 1) }),
-                FileCoverage("src/main/kotlin/Copy.kt", emptyList()),
-            )),
+            // The test report is the old outlier below, so its failed row + the Tests total flag stale.
+            tests = "build/test-results/test/TEST-com.example.ShelfTest.xml".let { src ->
+                listOf(
+                    TestResult("com.example.ShelfTest", "stores and loads", TestStatus.PASSED, reportPath = src),
+                    TestResult("com.example.ShelfTest", "expires old entries", TestStatus.FAILED,
+                        "expected: <3> but was: <2>", reportPath = src),
+                    TestResult("com.example.LoaderTest", "slow network", TestStatus.SKIPPED, reportPath = src),
+                )
+            },
+            // The JaCoCo report is an outlier too, so coverage rows + the Coverage total flag stale.
+            coverage = "build/reports/jacoco/test/jacocoTestReport.xml".let { src ->
+                CoverageData(listOf(
+                    FileCoverage("src/main/kotlin/Shelf.kt", (1..40).map { LineCoverage(it, if (it % 5 == 0) 0 else 1) }, src),
+                    FileCoverage("src/main/kotlin/Loader.kt", (1..24).map { LineCoverage(it, 1) }, src),
+                    FileCoverage("src/main/kotlin/Copy.kt", emptyList(), src),
+                ))
+            },
             files = listOf(
                 IngestedFile("build/reports/detekt/detekt.xml", "checkstyle", 0, ParsedReport(),
                     toolReport = "tools/detekt/detekt.html"),
@@ -102,7 +114,8 @@ class HtmlReportPreviewTest {
                 baseRef = "origin/main",
                 files = listOf(
                     ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = listOf(10, 11),
-                        uncovered = listOf(12, 15, 16), toolReport = "tools/jacoco/index.html"),
+                        uncovered = listOf(12, 15, 16), toolReport = "tools/jacoco/index.html",
+                        reportPath = "build/reports/jacoco/test/jacocoTestReport.xml"),
                     ChangedFileCoverage("web/app.js", covered = emptyList(),
                         uncovered = listOf(101), toolReport = null),
                 ),
@@ -111,8 +124,9 @@ class HtmlReportPreviewTest {
             freshness = Freshness(
                 mapOf(
                     "build/reports/detekt/detekt.xml" to 0,
-                    "build/reports/jacoco/test/jacocoTestReport.xml" to 52,
-                    "build/test-results/test/TEST-com.example.ShelfTest.xml" to 1,
+                    "web/build/eslint.sarif" to 90, // old outlier -> its finding gets the stale? flag
+                    "build/reports/jacoco/test/jacocoTestReport.xml" to 52, // outlier -> coverage flags
+                    "build/test-results/test/TEST-com.example.ShelfTest.xml" to 70, // outlier -> tests flag
                 ),
                 toleranceMinutes = 15,
             ),

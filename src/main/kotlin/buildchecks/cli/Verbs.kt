@@ -52,13 +52,26 @@ fun runCheck(
     // by identity (structurally-equal findings from different files stay distinct here).
     val findingReports = IdentityHashMap<Finding, String?>()
     copiedFiles.forEach { file -> file.report.findings.forEach { findingReports[it] = file.toolReport } }
+    // Same identity trick to remember which ingested report each finding/test/coverage-file came
+    // from, so the report can flag rows whose source is a stale age-outlier (Freshness.outlier
+    // keys on this path). merged() flat-maps the rows, so instances are shared by identity.
+    val findingSources = IdentityHashMap<Finding, String>()
+    copiedFiles.forEach { file -> file.report.findings.forEach { findingSources[it] = file.path } }
+    val testSources = IdentityHashMap<buildchecks.model.TestResult, String>()
+    copiedFiles.forEach { file -> file.report.tests.forEach { testSources[it] = file.path } }
+    val coverageSources = IdentityHashMap<FileCoverage, String>()
+    copiedFiles.forEach { file -> file.report.coverage?.files?.forEach { coverageSources[it] = file.path } }
     // Same identity trick for coverage: link each changed file to the copied coverage report that
     // measured it (FileCoverage instances are shared between merged.coverage and copiedFiles).
     val coverageReports = IdentityHashMap<FileCoverage, String?>()
     copiedFiles.forEach { file -> file.report.coverage?.files?.forEach { coverageReports[it] = file.toolReport } }
     val linkedChangedCoverage = when (changedCoverage) {
         is ChangedLineCoverage.Measured -> changedCoverage.copy(files = changedCoverage.files.map { changed ->
-            changed.copy(toolReport = merged.coverage?.matching(changed.path)?.firstNotNullOfOrNull { coverageReports[it] })
+            val matches = merged.coverage?.matching(changed.path)
+            changed.copy(
+                toolReport = matches?.firstNotNullOfOrNull { coverageReports[it] },
+                reportPath = matches?.firstNotNullOfOrNull { coverageSources[it] },
+            )
         })
         else -> changedCoverage
     }
@@ -70,10 +83,13 @@ fun runCheck(
                 it.fingerprint,
                 baseline != null && it.fingerprint !in baseline.fingerprints,
                 findingReports[it.finding],
+                findingSources[it.finding],
             )
         },
-        tests = merged.tests,
-        coverage = merged.coverage,
+        tests = merged.tests.map { it.copy(reportPath = testSources[it]) },
+        coverage = merged.coverage?.let { cov ->
+            cov.copy(files = cov.files.map { it.copy(reportPath = coverageSources[it]) })
+        },
         files = copiedFiles,
         notUnderstood = ingestion.notUnderstood,
         freshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes),
