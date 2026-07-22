@@ -208,6 +208,44 @@ class VerbsTest {
         assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs base (min 80%)"), text)
     }
 
+    // A repo whose only diff vs the `base` branch touches one covered line (4) and one uncovered
+    // line (11) of calculator.js -> 50% changed-line coverage, below the 80% gate. The base ref is
+    // left to the caller (env or flag), so these tests exercise resolution, not just the diff.
+    private fun setUpChangedLineRepo() {
+        copy("lcov.info", "coverage/lcov.info")
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            min_changed_line_coverage = 80
+        """.trimIndent())
+        git("init", "-q")
+        File(root, "src").mkdirs()
+        val calculator = File(root, "src/calculator.js")
+        calculator.writeText((1..20).joinToString("\n") { "// line $it" } + "\n")
+        git("add", "src")
+        git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "base")
+        git("branch", "base")
+        calculator.writeText((1..20).joinToString("\n") { if (it == 4 || it == 11) "// line $it changed" else "// line $it" } + "\n")
+        git("add", "src")
+        git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "change")
+        runBaseline(root, loadConfig(null, root)) { }
+    }
+
+    @Test
+    fun `changed-line coverage resolves the base ref from a CI env var`() {
+        setUpChangedLineRepo()
+        val env = mapOf("BITRISEIO_GIT_BRANCH_DEST" to "base")
+        assertEquals(1, runCheck(root, loadConfig(null, root), env = { env[it] }) { out += it })
+        assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs base (min 80%)"), text)
+    }
+
+    @Test
+    fun `a refs-heads-prefixed CI base ref is normalized`() {
+        setUpChangedLineRepo()
+        val env = mapOf("SYSTEM_PULLREQUEST_TARGETBRANCH" to "refs/heads/base")
+        assertEquals(1, runCheck(root, loadConfig(null, root), env = { env[it] }) { out += it })
+        assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs base (min 80%)"), text)
+    }
+
     private fun git(vararg args: String) {
         val process = ProcessBuilder("git", *args).directory(root).redirectErrorStream(true).start()
         assertEquals(0, process.waitFor(), "git failed: ${process.inputStream.bufferedReader().readText()}")

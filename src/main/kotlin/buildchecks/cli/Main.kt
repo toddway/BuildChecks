@@ -37,7 +37,9 @@ class Check : CliktCommand(name = "check") {
             reportDir = File(root, config.reports.outputDir)
             runCheck(root, config, baseRef, verbose, echo = ::echo)
         }
-        if (open) reportDir?.let { openInBrowser(File(it, "index.html")) }
+        // --open is a no-op under CI so a consumer can pass it unconditionally: opening a browser
+        // on a build agent is never wanted, and the CI env var is the reliable signal for that.
+        if (open && System.getenv("CI").isNullOrBlank()) reportDir?.let { openInBrowser(File(it, "index.html")) }
         exit(code)
     }
 }

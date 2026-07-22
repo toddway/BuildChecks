@@ -159,7 +159,7 @@ private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (S
     return ingestion
 }
 
-// Base ref resolution order per V4-PLAN.md §4: flag -> config -> GITHUB_BASE_REF -> gate skips.
+// Base ref resolution order per V4-PLAN.md §4: flag -> config -> CI env -> gate skips.
 private fun changedLines(
     root: File,
     config: Config,
@@ -171,11 +171,32 @@ private fun changedLines(
     if (config.gates.minChangedLineCoverage == null) return null
     val baseRef = baseRefFlag
         ?: config.git.baseRef
-        ?: env("GITHUB_BASE_REF")?.takeIf { it.isNotBlank() }
+        ?: ciBaseRef(env)
         ?: return null
     if (verbose) echo("base ref: $baseRef")
     return GitDiff(root).changedLines(baseRef)
 }
+
+// The PR/MR target branch, as each common CI provider exposes it. Every one of these is set
+// only on a merge build, so a plain branch build leaves them all empty and the gate skips —
+// which means a consumer (Gradle, a shell step, the Action) needs no per-CI base-ref wiring of
+// its own. An explicit --base-ref or config base_ref still wins, since both are tried first.
+private fun ciBaseRef(env: (String) -> String?): String? {
+    for (key in CI_BASE_REF_VARS) {
+        val value = env(key)?.takeIf { it.isNotBlank() } ?: continue
+        return value.removePrefix("refs/heads/") // Azure DevOps reports the full refs/heads/<branch>
+    }
+    return null
+}
+
+private val CI_BASE_REF_VARS = listOf(
+    "GITHUB_BASE_REF",                     // GitHub Actions (pull_request)
+    "BITRISEIO_GIT_BRANCH_DEST",           // Bitrise
+    "BITBUCKET_PR_DESTINATION_BRANCH",     // Bitbucket Pipelines
+    "CI_MERGE_REQUEST_TARGET_BRANCH_NAME", // GitLab CI (merge request)
+    "CHANGE_TARGET",                       // Jenkins multibranch
+    "SYSTEM_PULLREQUEST_TARGETBRANCH",     // Azure DevOps
+)
 
 // Wall-clock timing per phase, printed only under --verbose so we can spot where a large
 // project spends the run (e.g. copy-reports on a many-module Android build). nanoTime is
