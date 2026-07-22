@@ -1,6 +1,6 @@
 package buildchecks.gate
 
-import buildchecks.model.ChangedLines
+import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CoverageData
 import buildchecks.model.GateResult
 import buildchecks.model.TestResult
@@ -10,7 +10,7 @@ data class GateContext(
     val tests: List<TestResult>,
     val coverage: CoverageData?,
     val baseline: Baseline?,
-    val changedLines: ChangedLines?, // null = no base ref was resolvable (or the gate is off)
+    val changedLineCoverage: ChangedLineCoverage?, // null = gate off (no changed-line coverage computed)
     val presentOrigins: Set<OriginKind> = emptySet(), // (origin, kind) derived from this run's reports
 )
 

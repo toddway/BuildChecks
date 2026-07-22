@@ -6,6 +6,7 @@ import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
 import buildchecks.model.GateStatus
 import buildchecks.model.LineCoverage
+import buildchecks.model.changedLineCoverage
 import buildchecks.model.Location
 import buildchecks.model.Severity
 import buildchecks.model.TestResult
@@ -32,7 +33,10 @@ class GatesTest {
         baseline: Baseline? = null,
         changedLines: ChangedLines? = null,
         presentOrigins: Set<OriginKind> = emptySet(),
-    ) = GateContext(findings, tests, coverage, baseline, changedLines, presentOrigins)
+    ) = GateContext(
+        findings, tests, coverage, baseline,
+        changedLineCoverage(changedLines, coverage), presentOrigins,
+    )
 
     // -- changed-line coverage --
 

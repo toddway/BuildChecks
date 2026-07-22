@@ -1,5 +1,6 @@
 package buildchecks.render
 
+import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
 import buildchecks.model.GateStatus
 import buildchecks.model.Severity
@@ -81,6 +82,7 @@ class HtmlReport : Renderer {
                 findings(summary)
                 tests(summary)
                 coverage(summary)
+                changedCoverage(summary)
                 ingested(summary)
                 script { unsafe { raw(JS) } }
             }
@@ -310,6 +312,46 @@ class HtmlReport : Renderer {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // The uncovered changed lines behind the changed-line coverage gate, so a reader can jump
+    // straight to the gaps instead of opening every module's coverage report. Rendered only when
+    // a diff was measured and something it changed is uncovered.
+    private fun BODY.changedCoverage(summary: CheckSummary) {
+        val measured = summary.changedLineCoverage as? ChangedLineCoverage.Measured ?: return
+        val uncoveredFiles = measured.uncoveredFiles
+        if (uncoveredFiles.isEmpty()) return
+        section {
+            h2 { +"Changed lines not covered (${measured.executableCount - measured.coveredCount})" }
+            p("muted") {
+                +"Executable lines this diff added or changed relative to "
+                code { +measured.baseRef }
+                +(" that no test exercised — the gaps behind the changed-line coverage gate " +
+                    "(${"%.2f".format(measured.percent)}% of ${measured.executableCount} covered). " +
+                    "Where a coverage tool wrote an HTML report, the file links into it.")
+            }
+            table(classes = "sortable") {
+                thead {
+                    tr { th { +"File" }; th { +"Uncovered lines" }; th { +"Covered" }; th { +"Changed" } }
+                }
+                tbody {
+                    uncoveredFiles.sortedBy { it.path }.forEach { file ->
+                        tr {
+                            td("path") {
+                                val report = file.toolReport
+                                if (report != null) a(href = report) {
+                                    title = "Open this file's coverage report"
+                                    +file.path
+                                } else +file.path
+                            }
+                            td("path") { +file.uncovered.joinToString(", ") }
+                            td { +file.covered.size.toString() }
+                            td { +file.executable.toString() }
                         }
                     }
                 }

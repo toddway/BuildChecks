@@ -1,6 +1,8 @@
 package buildchecks.render
 
 import buildchecks.Fixtures
+import buildchecks.model.ChangedFileCoverage
+import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
 import buildchecks.model.Finding
 import buildchecks.model.Freshness
@@ -175,6 +177,40 @@ class RenderersTest {
         val noBaseline = HtmlReport().render(summary)
         assertTrue(noBaseline.contains("Findings (8)"))
         assertFalse(noBaseline.contains("checked=\"checked\""))
+    }
+
+    @Test
+    fun `html lists uncovered changed lines and links files with a coverage report`() {
+        val measured = ChangedLineCoverage.Measured(
+            baseRef = "origin/main",
+            files = listOf(
+                ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = listOf(10),
+                    uncovered = listOf(12, 15), toolReport = "tools/jacoco/index.html"),
+                ChangedFileCoverage("web/app.js", covered = emptyList(),
+                    uncovered = listOf(3), toolReport = null), // no HTML report -> plain text
+            ),
+            filesWithoutData = 0,
+        )
+        val html = HtmlReport().render(summary.copy(changedLineCoverage = measured))
+        assertTrue(html.contains("Changed lines not covered (3)")) // 3 uncovered lines total
+        assertTrue(html.contains("origin/main"))
+        // a file with a coverage report links into it; the uncovered line numbers are listed
+        assertTrue(html.contains("<a href=\"tools/jacoco/index.html\""))
+        assertTrue(html.contains("12, 15"))
+        // a file without one is plain text, not a link
+        assertTrue(html.contains("<td class=\"path\">web/app.js</td>"))
+    }
+
+    @Test
+    fun `html omits the changed-coverage section when nothing changed is uncovered`() {
+        assertFalse(HtmlReport().render(summary).contains("Changed lines not covered"))
+        val fullyCovered = ChangedLineCoverage.Measured(
+            "origin/main",
+            listOf(ChangedFileCoverage("a.kt", covered = listOf(1, 2), uncovered = emptyList())),
+            filesWithoutData = 0,
+        )
+        assertFalse(HtmlReport().render(summary.copy(changedLineCoverage = fullyCovered))
+            .contains("Changed lines not covered"))
     }
 
     @Test

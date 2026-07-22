@@ -4,12 +4,16 @@ import buildchecks.gate.FingerprintBaseline
 import buildchecks.gate.Fingerprinter
 import buildchecks.gate.GateContext
 import buildchecks.git.GitDiff
+import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
+import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
 import buildchecks.model.IngestedFile
 import buildchecks.model.ReportedFinding
+import buildchecks.model.changedLineCoverage
 import buildchecks.model.freshness
+import buildchecks.model.matching
 import buildchecks.model.merged
 import buildchecks.render.ConsoleSummary
 import java.io.File
@@ -36,8 +40,9 @@ fun runCheck(
     val changedLines = timed("diff", verbose, echo) {
         changedLines(root, config, baseRefFlag, verbose, env, echo)
     }
+    val changedCoverage = changedLineCoverage(changedLines, merged.coverage)
     val presentOrigins = presentManifest(ingestion.files)
-    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedLines, presentOrigins)
+    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedCoverage, presentOrigins)
     val results = timed("gates", verbose, echo) { gates(config.gates).flatMap { it.evaluate(context) } }
     logOriginCounts(ingestion.files, echo)
 
@@ -47,6 +52,16 @@ fun runCheck(
     // by identity (structurally-equal findings from different files stay distinct here).
     val findingReports = IdentityHashMap<Finding, String?>()
     copiedFiles.forEach { file -> file.report.findings.forEach { findingReports[it] = file.toolReport } }
+    // Same identity trick for coverage: link each changed file to the copied coverage report that
+    // measured it (FileCoverage instances are shared between merged.coverage and copiedFiles).
+    val coverageReports = IdentityHashMap<FileCoverage, String?>()
+    copiedFiles.forEach { file -> file.report.coverage?.files?.forEach { coverageReports[it] = file.toolReport } }
+    val linkedChangedCoverage = when (changedCoverage) {
+        is ChangedLineCoverage.Measured -> changedCoverage.copy(files = changedCoverage.files.map { changed ->
+            changed.copy(toolReport = merged.coverage?.matching(changed.path)?.firstNotNullOfOrNull { coverageReports[it] })
+        })
+        else -> changedCoverage
+    }
     val summary = CheckSummary(
         gates = results,
         findings = fingerprinted.map {
@@ -63,6 +78,7 @@ fun runCheck(
         notUnderstood = ingestion.notUnderstood,
         freshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes),
         hasBaseline = baseline != null,
+        changedLineCoverage = linkedChangedCoverage,
     )
 
     outputDir.mkdirs()

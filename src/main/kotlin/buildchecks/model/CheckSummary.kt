@@ -12,6 +12,9 @@ data class CheckSummary(
     // Whether a baseline snapshot was read this run; drives whether `isNew` is meaningful,
     // so renderers can default to showing only new findings when there is a baseline.
     val hasBaseline: Boolean = false,
+    // Coverage of the lines this diff changed, when a base ref resolved; drives the
+    // "changed lines not covered" report section. null when the gate is off.
+    val changedLineCoverage: ChangedLineCoverage? = null,
 ) {
     val passed: Boolean get() = gates.none { it.status == GateStatus.FAILED }
 }

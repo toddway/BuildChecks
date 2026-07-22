@@ -1,5 +1,7 @@
 package buildchecks.render
 
+import buildchecks.model.ChangedFileCoverage
+import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
@@ -95,6 +97,17 @@ class HtmlReportPreviewTest {
             ),
             notUnderstood = listOf("build/reports/detekt/detekt.txt"),
             hasBaseline = true,
+            // changed-line coverage: one file links into its copied JaCoCo report, one has none.
+            changedLineCoverage = ChangedLineCoverage.Measured(
+                baseRef = "origin/main",
+                files = listOf(
+                    ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = listOf(10, 11),
+                        uncovered = listOf(12, 15, 16), toolReport = "tools/jacoco/index.html"),
+                    ChangedFileCoverage("web/app.js", covered = emptyList(),
+                        uncovered = listOf(101), toolReport = null),
+                ),
+                filesWithoutData = 1,
+            ),
             freshness = Freshness(
                 mapOf(
                     "build/reports/detekt/detekt.xml" to 0,
