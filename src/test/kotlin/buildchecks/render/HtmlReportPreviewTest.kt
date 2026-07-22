@@ -36,7 +36,19 @@ class HtmlReportPreviewTest {
         val out = Path.of("build/reports/buildchecks-preview/index.html")
         Files.createDirectories(out.parent)
         Files.writeString(out, HtmlReport().render(previewSummary()))
+        // A real check run copies each tool's own HTML under tools/; the preview builds a
+        // summary by hand, so write matching stubs to make the drill-down links resolve here.
+        stubToolReport(out.parent, "tools/detekt/detekt.html", "detekt")
+        stubToolReport(out.parent, "tools/jacoco/index.html", "JaCoCo coverage")
         println("preview: ${out.toAbsolutePath()}")
+    }
+
+    private fun stubToolReport(dir: Path, relative: String, tool: String) {
+        val file = dir.resolve(relative)
+        Files.createDirectories(file.parent)
+        Files.writeString(file, "<!DOCTYPE html><title>$tool</title>" +
+            "<h1>$tool report</h1><p>Preview stub — a real run copies the tool's own HTML here.</p>" +
+            "<p><a href=\"../../index.html\">← back to BuildChecks</a></p>")
     }
 
     private fun previewSummary(): CheckSummary {
@@ -59,7 +71,9 @@ class HtmlReportPreviewTest {
                 GateResult("changed-line coverage", GateStatus.SKIPPED, "no git base ref available"),
             ),
             findings = findings.mapIndexed { index, finding ->
-                ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0)
+                // detekt emits an HTML report (Location links into it); eslint/cpd here don't (plain text).
+                val report = if (finding.tool == "detekt") "tools/detekt/detekt.html" else null
+                ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0, toolReport = report)
             },
             tests = listOf(
                 TestResult("com.example.ShelfTest", "stores and loads", TestStatus.PASSED),
@@ -80,6 +94,7 @@ class HtmlReportPreviewTest {
                 IngestedFile("build/test-results/test/TEST-com.example.ShelfTest.xml", "junit", 0, ParsedReport()),
             ),
             notUnderstood = listOf("build/reports/detekt/detekt.txt"),
+            hasBaseline = true,
             freshness = Freshness(
                 mapOf(
                     "build/reports/detekt/detekt.xml" to 0,

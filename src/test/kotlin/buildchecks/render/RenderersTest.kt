@@ -43,7 +43,7 @@ class RenderersTest {
                 GateResult("test failures", GateStatus.FAILED, "1 failed of 4 tests (max 0)"),
             ),
             findings = reports.findings.mapIndexed { index, finding ->
-                ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0)
+                ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0, toolReport = "tools/detekt/detekt.html")
             },
             tests = reports.tests,
             coverage = reports.coverage,
@@ -146,7 +146,8 @@ class RenderersTest {
         assertTrue(html.contains(">NEW</span>"))
         assertTrue(html.contains("test_with_ktor[jvm]"))
         assertTrue(html.contains("Coverage 93.24%"))
-        assertTrue(html.contains("Tool reports: <a href=\"tools/detekt/detekt.html\">detekt</a>"))
+        // each finding's Location drills into the report of the tool that produced it
+        assertTrue(html.contains("<td class=\"path\"><a href=\"tools/detekt/detekt.html\""))
         assertTrue(html.contains("differ in age by 45 minutes"))
         assertTrue(html.contains("found but not understood") || html.contains("Found but not understood"))
     }
@@ -163,6 +164,17 @@ class RenderersTest {
         assertTrue(html.contains("<details><summary>Found but not understood (1)</summary>"))
         // the coverage aggregate is stated in lines, not just a percentage
         assertTrue(html.contains("executable lines covered"))
+    }
+
+    @Test
+    fun `with a baseline the findings table defaults to new-only`() {
+        val html = HtmlReport().render(summary.copy(hasBaseline = true))
+        assertTrue(html.contains("Findings — 1 new (8 total)"))
+        assertTrue(html.contains("id=\"newonly\" checked=\"checked\""))
+        // without a baseline the count is a plain total and the box is unchecked
+        val noBaseline = HtmlReport().render(summary)
+        assertTrue(noBaseline.contains("Findings (8)"))
+        assertFalse(noBaseline.contains("checked=\"checked\""))
     }
 
     @Test

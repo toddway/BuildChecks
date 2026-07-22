@@ -15,6 +15,7 @@ if (table) {
     });
   };
   [search, severity, tool, newonly].forEach(el => el.addEventListener('input', apply));
+  apply(); // honor controls rendered pre-checked (new-only defaults on when there's a baseline)
 }
 document.querySelectorAll('table.sortable').forEach(sortable => {
   [...sortable.tHead.rows[0].cells].forEach((th, index) => {

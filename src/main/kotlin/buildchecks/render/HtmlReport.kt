@@ -170,14 +170,22 @@ class HtmlReport : Renderer {
     }
 
     private fun BODY.findings(summary: CheckSummary) {
+        val newCount = summary.findings.count { it.isNew }
         section {
-            h2 { +"Findings (${summary.findings.size})" }
+            h2 {
+                if (summary.hasBaseline) +"Findings — $newCount new (${summary.findings.size} total)"
+                else +"Findings (${summary.findings.size})"
+            }
             p("muted") {
                 +"Every issue the ingested analysis tools reported. "
                 help("NEW", NEW_EXPLANATION)
-                +" marks findings introduced since the baseline snapshot."
+                +" marks findings introduced since the baseline snapshot"
+                if (summary.hasBaseline) {
+                    +" — shown on their own by default (the rest are already in the baseline); clear "
+                    em { +"new only" }
+                    +" to see all."
+                } else +"."
             }
-            toolLinks(summary, setOf("sarif", "checkstyle", "cpd"))
             if (summary.findings.isEmpty()) {
                 p { +"None of the ingested analysis reports contain findings." }
                 return@section
@@ -196,7 +204,12 @@ class HtmlReport : Renderer {
                     tools.forEach { option { +it } }
                 }
                 label {
-                    input(InputType.checkBox) { id = "newonly" }
+                    // Default to new-only when there is a baseline: most rows are intentionally
+                    // suppressed history, so the new findings are what a reader needs to see.
+                    input(InputType.checkBox) {
+                        id = "newonly"
+                        if (summary.hasBaseline) attributes["checked"] = "checked"
+                    }
                     +" new only"
                 }
             }
@@ -218,7 +231,18 @@ class HtmlReport : Renderer {
                             td("sev-${finding.severity.name.lowercase()}") { +finding.severity.name }
                             td { +finding.tool }
                             td { +finding.ruleId }
-                            td("path") { +(finding.location?.let { "${it.path}:${it.line ?: 0}" } ?: "") }
+                            td("path") {
+                                val loc = finding.location?.let { "${it.path}:${it.line ?: 0}" }
+                                when {
+                                    loc == null -> {}
+                                    reported.toolReport != null ->
+                                        a(href = reported.toolReport!!) {
+                                            title = "Open ${reported.finding.tool}'s report"
+                                            +loc
+                                        }
+                                    else -> +loc
+                                }
+                            }
                             td { +finding.message }
                             td {
                                 if (reported.isNew) span("badge fail") {

@@ -6,12 +6,14 @@ import buildchecks.gate.GateContext
 import buildchecks.git.GitDiff
 import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
+import buildchecks.model.Finding
 import buildchecks.model.IngestedFile
 import buildchecks.model.ReportedFinding
 import buildchecks.model.freshness
 import buildchecks.model.merged
 import buildchecks.render.ConsoleSummary
 import java.io.File
+import java.util.IdentityHashMap
 
 /** ingest -> gate -> render; returns the process exit code (0 pass, 1 gate failure). */
 fun runCheck(
@@ -23,33 +25,53 @@ fun runCheck(
     env: (String) -> String? = System::getenv,
     echo: (String) -> Unit,
 ): Int {
+    val overall = Stopwatch()
     val outputDir = File(root, config.reports.outputDir)
     val ingestion = ingestReports(root, config, verbose, echo)
     val merged = ingestion.files.map { it.report }.merged()
-    val fingerprinted = Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
+    val fingerprinted = timed("fingerprint", verbose, echo) {
+        Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
+    }
     val baseline = FingerprintBaseline(File(root, config.git.baselineFile)).read()
-    val changedLines = changedLines(root, config, baseRefFlag, verbose, env, echo)
+    val changedLines = timed("diff", verbose, echo) {
+        changedLines(root, config, baseRefFlag, verbose, env, echo)
+    }
     val presentOrigins = presentManifest(ingestion.files)
     val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedLines, presentOrigins)
-    val results = gates(config.gates).flatMap { it.evaluate(context) }
+    val results = timed("gates", verbose, echo) { gates(config.gates).flatMap { it.evaluate(context) } }
     logOriginCounts(ingestion.files, echo)
 
+    val copiedFiles = timed("copy-reports", verbose, echo) { copyToolReports(root, ingestion.files, outputDir) }
+    // Each finding links to the copied HTML report of the file that produced it. copyToolReports
+    // returns shallow copies, so the Finding instances are shared with `fingerprinted` and match
+    // by identity (structurally-equal findings from different files stay distinct here).
+    val findingReports = IdentityHashMap<Finding, String?>()
+    copiedFiles.forEach { file -> file.report.findings.forEach { findingReports[it] = file.toolReport } }
     val summary = CheckSummary(
         gates = results,
         findings = fingerprinted.map {
-            ReportedFinding(it.finding, it.fingerprint, baseline != null && it.fingerprint !in baseline.fingerprints)
+            ReportedFinding(
+                it.finding,
+                it.fingerprint,
+                baseline != null && it.fingerprint !in baseline.fingerprints,
+                findingReports[it.finding],
+            )
         },
         tests = merged.tests,
         coverage = merged.coverage,
-        files = copyToolReports(root, ingestion.files, outputDir),
+        files = copiedFiles,
         notUnderstood = ingestion.notUnderstood,
         freshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes),
+        hasBaseline = baseline != null,
     )
 
     outputDir.mkdirs()
-    renderers().forEach { renderer ->
-        File(outputDir, renderer.fileName).writeText(renderer.render(summary))
+    timed("render", verbose, echo) {
+        renderers().forEach { renderer ->
+            File(outputDir, renderer.fileName).writeText(renderer.render(summary))
+        }
     }
+    if (verbose) echo("timing: total ${overall.elapsedMillis()}ms")
 
     echo("")
     echo(ConsoleSummary().render(summary))
@@ -89,14 +111,16 @@ private fun logOriginCounts(files: List<IngestedFile>, echo: (String) -> Unit) {
 }
 
 private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (String) -> Unit): Ingestion {
-    val candidates = ReportDiscovery(config.reports.paths, config.reports.outputDir).discover(root)
+    val candidates = timed("discover", verbose, echo) {
+        ReportDiscovery(config.reports.paths, config.reports.outputDir).discover(root)
+    }
     if (verbose) {
         echo("root: ${root.absolutePath}")
         echo("report paths: ${config.reports.paths ?: "zero-config defaults"}")
         echo("baseline file: ${config.git.baselineFile}")
         candidates.forEach { echo("candidate: ${it.relativeTo(root).path}") }
     }
-    val ingestion = ingest(root, candidates, reportParsers())
+    val ingestion = timed("ingest", verbose, echo) { ingest(root, candidates, reportParsers()) }
     ingestion.files.forEach { echo("ingested: ${it.path} (${it.format})") }
     ingestion.notUnderstood.forEach { echo("not understood: $it") }
     if (ingestion.files.isEmpty()) echo("no report files found under ${root.absolutePath}")
@@ -119,6 +143,22 @@ private fun changedLines(
         ?: return null
     if (verbose) echo("base ref: $baseRef")
     return GitDiff(root).changedLines(baseRef)
+}
+
+// Wall-clock timing per phase, printed only under --verbose so we can spot where a large
+// project spends the run (e.g. copy-reports on a many-module Android build). nanoTime is
+// monotonic and independent of the freshness clock (nowMillis).
+private inline fun <T> timed(label: String, verbose: Boolean, echo: (String) -> Unit, block: () -> T): T {
+    if (!verbose) return block()
+    val stopwatch = Stopwatch()
+    val result = block()
+    echo("timing: $label ${stopwatch.elapsedMillis()}ms")
+    return result
+}
+
+private class Stopwatch {
+    private val start = System.nanoTime()
+    fun elapsedMillis(): Long = (System.nanoTime() - start) / 1_000_000
 }
 
 // Report paths may be absolute (JVM tools) or repo-relative (JS/TS tools).
