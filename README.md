@@ -80,6 +80,7 @@ dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }                 //
 
 tasks.register<JavaExec>("buildchecks") {
     classpath = buildchecks
+    mainClass.set("buildchecks.cli.MainKt")   // JavaExec is a classpath launch; name the entry point
     args("check")
 }
 tasks.named("check") { finalizedBy("buildchecks") }
@@ -87,8 +88,8 @@ tasks.named("check") { finalizedBy("buildchecks") }
 
 Gradle downloads and caches the jar like any other dependency — nothing lands in your repo.
 Maven, npm, and Make snippets are in [docs/integration.md](docs/integration.md); complete
-end-to-end recipes per ecosystem (including [Android](docs/recipes/android-gradle.md)) are in
-[docs/recipes/](docs/recipes/).
+end-to-end recipes per ecosystem (including [Android](docs/recipes/gradle-detekt-jacoco.md#android))
+are in [docs/recipes/](docs/recipes/).
 
 ## Supported report formats
 

@@ -16,6 +16,8 @@ dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
 
 tasks.register<JavaExec>("buildchecks") {
     classpath = buildchecks
+    mainClass.set("buildchecks.cli.MainKt")   // JavaExec is a classpath launch (java -cp … <mainClass>);
+                                               // it never reads the jar's Main-Class, so name it here
     args("check")
 }
 tasks.named("check") { finalizedBy("buildchecks") }
@@ -25,8 +27,8 @@ Keep your usual `mavenCentral()` (or `google()`) repository alongside the line a
 resolves the BuildChecks jar from the Pages repo and its four runtime dependencies from Central.
 Nothing is committed to your repo; Gradle caches the jar like any other dependency.
 
-For Android specifically (per-variant JaCoCo report task, Lint SARIF), see
-[docs/recipes/android-gradle.md](recipes/android-gradle.md).
+For Android specifically (per-variant JaCoCo report task, Lint SARIF), see the Android section of
+[docs/recipes/gradle-detekt-jacoco.md](recipes/gradle-detekt-jacoco.md#android).
 
 Why this is cache-safe (what v3 used a `BuildEventService` for):
 

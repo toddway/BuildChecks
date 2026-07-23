@@ -27,6 +27,24 @@ pytest \
 java -jar tools/buildchecks-4.0.0-all.jar check
 ```
 
+## Viewable report (drill-down)
+
+BuildChecks links any tool HTML that sits **beside** the parsed file (see
+[recipes/README.md](README.md)). For coverage drill-down, emit pytest-cov's HTML into the same
+folder as its XML so the folder's `index.html` is picked up:
+
+```bash
+pytest \
+  --junitxml=build/reports/junit.xml \
+  --cov=. \
+  --cov-report=xml:build/reports/coverage/coverage.xml \
+  --cov-report=html:build/reports/coverage \
+  || true
+```
+
+BuildChecks then links `build/reports/coverage/index.html` from the coverage row. Ruff has no
+HTML report, so findings stay text-only in the summary.
+
 ## Notes
 
 - `pytest-cov --cov-report=xml` writes Cobertura-format XML — the same parser used for

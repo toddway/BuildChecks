@@ -39,3 +39,10 @@ java -jar tools/buildchecks-4.0.0-all.jar check
   aggregates and gates.
 - The coverage file lands in a GUID subfolder under `build/reports/`; the default discovery
   globs already reach it, so no `buildchecks.toml` is needed for the standard layout.
+- **Viewable report (drill-down):** BuildChecks links any tool HTML that sits **beside** the
+  parsed file (see [recipes/README.md](README.md)). The Roslyn analyzers' SARIF and the JUnit
+  XML have no HTML, and coverlet's Cobertura lands in a GUID subfolder, so there's no sibling
+  HTML to link out of the box. If you want coverage drill-down, run
+  [ReportGenerator](https://github.com/danielpalme/ReportGenerator) to emit an HTML report into
+  the same folder as a copy of the Cobertura XML — its `index.html` beside that XML is then
+  linked like any other.

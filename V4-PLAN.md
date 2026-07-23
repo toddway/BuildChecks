@@ -300,6 +300,7 @@ dependencies { buildchecks("com.toddway:buildchecks:4.0.0") }
 
 tasks.register<JavaExec>("buildchecks") {
     classpath = buildchecks
+    mainClass.set("buildchecks.cli.MainKt")   // classpath launch; JavaExec never reads Main-Class
     args("check")
 }
 tasks.named("check") { finalizedBy("buildchecks") }

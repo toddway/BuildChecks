@@ -35,6 +35,21 @@ npm run check
 Jest writes `coverage/lcov.info` (discovered by default) and `build/reports/junit.xml`; ESLint
 writes `build/reports/eslint.sarif`. `buildchecks check` ingests all three and gates.
 
+## Viewable report (drill-down)
+
+BuildChecks links any tool HTML that sits **beside** the parsed file (see
+[recipes/README.md](README.md)). ESLint gives you that for free with a second, HTML-format run
+whose output is the same-basename sibling of the SARIF:
+
+```json
+"lint:html": "eslint . --format html --output-file build/reports/eslint.html || true"
+```
+
+Add `npm run lint:html` to the `check` script; BuildChecks links `eslint.html` next to
+`eslint.sarif`. Jest's `lcov` reporter also writes an HTML tree, but under
+`coverage/lcov-report/` — not beside `coverage/lcov.info` — so it isn't linked automatically;
+point Jest's HTML output into a folder alongside `lcov.info` if you want coverage drill-down.
+
 ## Notes
 
 - The `|| true` after each tool keeps a lint error or a failing test from short-circuiting the

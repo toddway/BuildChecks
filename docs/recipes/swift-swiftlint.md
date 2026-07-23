@@ -49,6 +49,23 @@ buildchecks check
 Wire this into whatever runs your tests — a Fastlane lane (`sh "buildchecks check"` after
 `scan` + `slather`), this shell block in CI, or a `Makefile` target.
 
+## Viewable report (drill-down)
+
+BuildChecks links any tool HTML that sits **beside** the parsed file (see
+[recipes/README.md](README.md)). Both signals here can supply it:
+
+```bash
+# SwiftLint HTML, same-basename sibling of the SARIF
+swiftlint lint --reporter html > build/reports/swiftlint.html || true
+
+# slather HTML into the same folder as its Cobertura XML, so index.html sits beside it
+slather coverage --cobertura-xml --output-directory build/reports/coverage --scheme MyApp MyApp.xcodeproj || true
+slather coverage --html         --output-directory build/reports/coverage --scheme MyApp MyApp.xcodeproj || true
+```
+
+BuildChecks links `swiftlint.html` next to the SARIF and `build/reports/coverage/index.html`
+from the coverage row.
+
 ## Notes
 
 - xcbeautify writes `build/reports/junit.xml`; slather writes `build/reports/cobertura.xml`;
