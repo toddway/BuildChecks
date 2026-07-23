@@ -61,7 +61,7 @@ class GatesTest {
     fun `changed-line gate skips with a hint when no base ref resolved`() {
         val result = changedLineGate.evaluate(context(coverage = perLineCoverage(1 to 1))).single()
         assertEquals(GateStatus.SKIPPED, result.status)
-        assertTrue(result.detail.contains("GITHUB_BASE_REF"), result.detail)
+        assertTrue(result.detail.contains("default branch"), result.detail)
     }
 
     @Test

@@ -246,6 +246,18 @@ class VerbsTest {
         assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs base (min 80%)"), text)
     }
 
+    @Test
+    fun `changed-line coverage falls back to the remote default branch, and says so`() {
+        setUpChangedLineRepo()
+        // Stand in for a clone: a remote-tracking ref at the base commit + origin/HEAD pointing at it.
+        git("update-ref", "refs/remotes/origin/base", "base")
+        git("symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/base")
+        // No flag, no config base_ref, no CI env -> the default-branch fallback resolves the ref.
+        assertEquals(1, runCheck(root, loadConfig(null, root), env = { null }) { out += it })
+        assertTrue(text.contains("diffing against origin/base (default branch)"), text)
+        assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs origin/base (min 80%)"), text)
+    }
+
     private fun git(vararg args: String) {
         val process = ProcessBuilder("git", *args).directory(root).redirectErrorStream(true).start()
         assertEquals(0, process.waitFor(), "git failed: ${process.inputStream.bufferedReader().readText()}")

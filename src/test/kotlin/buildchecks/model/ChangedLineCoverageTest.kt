@@ -20,7 +20,7 @@ class ChangedLineCoverageTest {
     fun `no base ref is unavailable with the flag hint`() {
         val result = changedLineCoverage(null, coverage(1 to 1))
         assertTrue(result is ChangedLineCoverage.Unavailable)
-        assertTrue((result as ChangedLineCoverage.Unavailable).reason.contains("GITHUB_BASE_REF"))
+        assertTrue((result as ChangedLineCoverage.Unavailable).reason.contains("default branch"))
     }
 
     @Test

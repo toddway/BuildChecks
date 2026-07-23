@@ -45,7 +45,7 @@ data class ChangedFileCoverage(
 fun changedLineCoverage(changed: ChangedLines?, coverage: CoverageData?): ChangedLineCoverage =
     when (changed) {
         null -> ChangedLineCoverage.Unavailable(
-            "no base ref (set --base-ref, git.base_ref, or GITHUB_BASE_REF)")
+            "no base ref and no origin/HEAD default branch (set --base-ref or git.base_ref)")
         is ChangedLines.Unavailable -> ChangedLineCoverage.Unavailable(changed.reason)
         is ChangedLines.Diff -> measure(changed, coverage)
     }

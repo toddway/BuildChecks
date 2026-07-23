@@ -159,7 +159,9 @@ private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (S
     return ingestion
 }
 
-// Base ref resolution order per V4-PLAN.md §4: flag -> config -> CI env -> gate skips.
+// Base ref resolution order per V4-PLAN.md §4: flag -> config -> CI env -> remote default branch
+// -> gate skips. The default-branch fallback is a guessed-but-named default (like zero-config
+// report discovery): it's noted in the output so a reader always knows what the diff was against.
 private fun changedLines(
     root: File,
     config: Config,
@@ -169,12 +171,17 @@ private fun changedLines(
     echo: (String) -> Unit,
 ): ChangedLines? {
     if (config.gates.minChangedLineCoverage == null) return null
+    val git = GitDiff(root)
     val baseRef = baseRefFlag
         ?: config.git.baseRef
         ?: ciBaseRef(env)
+        ?: git.defaultBranch()?.also {
+            echo("changed-line coverage: no base ref set; diffing against $it (default branch) — " +
+                "override with --base-ref or git.base_ref")
+        }
         ?: return null
     if (verbose) echo("base ref: $baseRef")
-    return GitDiff(root).changedLines(baseRef)
+    return git.changedLines(baseRef)
 }
 
 // The PR/MR target branch, as each common CI provider exposes it. Every one of these is set

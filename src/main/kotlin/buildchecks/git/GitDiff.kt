@@ -22,6 +22,16 @@ class GitDiff(private val root: File) {
         return diff("origin/$baseRef").takeIf { it is ChangedLines.Diff } ?: direct
     }
 
+    /**
+     * The remote's default branch as `origin/<name>` (e.g. `origin/main`), read from the
+     * `origin/HEAD` symbolic ref that `git clone` sets. This is the local convenience base ref: a
+     * plain `check` with no CI env and no configured ref still diffs against the default branch,
+     * the same common heuristic other "changed since main" tools use. null when there is no
+     * origin, no `origin/HEAD`, or git is unavailable — the caller then skips the gate.
+     */
+    fun defaultBranch(): String? =
+        capture("git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD")?.trim()?.takeIf { it.isNotEmpty() }
+
     private fun diff(ref: String): ChangedLines {
         val process = try {
             ProcessBuilder("git", "diff", "--unified=0", "--no-color", "--find-renames", "$ref...HEAD")
@@ -41,6 +51,22 @@ class GitDiff(private val root: File) {
             return ChangedLines.Unavailable("git diff $ref...HEAD failed: ${firstLine.trim()}")
         }
         return ChangedLines.Diff(ref, parseUnifiedDiff(output))
+    }
+
+    // Run a read-only git command, returning stdout on success or null on any failure (no git,
+    // non-zero exit, timeout). Like diff(), nothing here can fail a build on its own.
+    private fun capture(vararg command: String): String? {
+        val process = try {
+            ProcessBuilder(*command).directory(root).start()
+        } catch (e: IOException) {
+            return null
+        }
+        val output = process.inputStream.bufferedReader().readText()
+        if (!process.waitFor(30, TimeUnit.SECONDS)) {
+            process.destroyForcibly()
+            return null
+        }
+        return if (process.exitValue() == 0) output else null
     }
 }
 

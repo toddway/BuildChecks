@@ -111,7 +111,7 @@ off by default unless a threshold or baseline gives them something to check.
 
 | Gate | What it checks |
 |---|---|
-| **changed-line coverage** | Lines changed vs a git base ref must be covered at ≥ the minimum. The base ref is auto-detected from the common CI providers (GitHub Actions, Bitrise, Bitbucket, GitLab, Jenkins, Azure) on PR/MR builds, so no per-CI wiring is needed; `--base-ref`/`base_ref` override. Skips with a notice when git or a base ref isn't available. |
+| **changed-line coverage** | Lines changed vs a git base ref must be covered at ≥ the minimum. The base ref is auto-detected from the common CI providers (GitHub Actions, Bitrise, Bitbucket, GitLab, Jenkins, Azure) on PR/MR builds, and falls back to the remote default branch (`origin/HEAD`) locally — both noted in the output; `--base-ref`/`base_ref` override. Skips with a notice when git or a base ref isn't available. |
 | **findings** | No finding absent from the committed baseline, and the total must not rise above the baseline's total. Content-fingerprinted, so line shifts and renames don't churn. |
 | **coverage** | Overall line coverage stays at or above the higher of (baseline − tolerance) and a configured floor. |
 | **caps** | Optional absolute maxima for errors, warnings, and test failures (test failures default to 0 when JUnit reports are present). |
