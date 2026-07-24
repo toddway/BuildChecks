@@ -15,6 +15,9 @@ data class CheckSummary(
     // Coverage of the lines this diff changed, when a base ref resolved; drives the
     // "changed lines not covered" report section. null when the gate is off.
     val changedLineCoverage: ChangedLineCoverage? = null,
+    // How much the verdict is worth — the trust axis (§11 item 7), orthogonal to `passed` and never
+    // affecting the exit code. Defaults to full confidence so it stays additive for callers/tests.
+    val confidence: Confidence = Confidence(emptyList()),
 ) {
     val passed: Boolean get() = gates.none { it.status == GateStatus.FAILED }
 }

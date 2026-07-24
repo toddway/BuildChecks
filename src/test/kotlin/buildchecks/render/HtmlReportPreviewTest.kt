@@ -3,6 +3,7 @@ package buildchecks.render
 import buildchecks.model.ChangedFileCoverage
 import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
+import buildchecks.model.confidence
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
@@ -24,8 +25,8 @@ import java.nio.file.Path
 /**
  * Not an assertion suite — a styling loop. Renders a hand-built summary that shows every
  * visual state the real dogfood run (a healthy repo) never does: failed and skipped gates,
- * the FAILED badge, NEW findings, all three severities, test failures, the stale-reports
- * banner, and the not-understood list.
+ * the FAILED badge, the LOW confidence badge + its reasons, NEW findings, all three severities,
+ * test failures, the stale-reports banner, and the not-understood list.
  *
  * Loop while tweaking HtmlReport / report.css / report.js:
  *   ./gradlew -t test --tests buildchecks.render.HtmlReportPreviewTest
@@ -65,13 +66,27 @@ class HtmlReportPreviewTest {
                 "Found 24 duplicated tokens: x < y && \"quoted\" <tag>", // markup must render escaped
                 Location("src/main/kotlin/Copy.kt", 30), duplicatedTokens = 24),
         )
-        return CheckSummary(
-            gates = listOf(
-                GateResult("findings", GateStatus.FAILED, "1 new (max 0), 4 total (baseline max 3)"),
-                GateResult("coverage", GateStatus.PASSED, "81.25% (baseline min 80.0%)"),
-                GateResult("test failures", GateStatus.FAILED, "1 failed of 3 tests (max 0)"),
-                GateResult("changed-line coverage", GateStatus.SKIPPED, "no git base ref available"),
+        val gates = listOf(
+            GateResult("findings", GateStatus.FAILED, "1 new (max 0), 4 total (baseline max 3)"),
+            GateResult("coverage", GateStatus.PASSED, "81.25% (baseline min 80.0%)"),
+            GateResult("test failures", GateStatus.FAILED, "1 failed of 3 tests (max 0)"),
+            GateResult("changed-line coverage", GateStatus.SKIPPED, "no git base ref available"),
+        )
+        val notUnderstood = listOf("build/reports/detekt/detekt.txt")
+        // A report source ingested this run but absent from the baseline manifest (new-report notice).
+        val newReportLabels = listOf("lcov in web")
+        val freshness = Freshness(
+            mapOf(
+                "build/reports/detekt/detekt.xml" to 0,
+                "web/build/eslint.sarif" to 90, // old outlier -> its finding gets the stale? flag
+                "build/reports/jacoco/test/jacocoTestReport.xml" to 52, // outlier -> coverage flags
+                "build/test-results/test/TEST-com.example.ShelfTest.xml" to 70, // outlier -> tests flag
             ),
+            toleranceMinutes = 15,
+        )
+        // Skipped gate (MAJOR) + stale/not-understood/new-report (MINOR) -> LOW confidence.
+        return CheckSummary(
+            gates = gates,
             findings = findings.mapIndexed { index, finding ->
                 // detekt emits an HTML report (Location links into it); eslint/cpd here don't (plain text).
                 // reportPath drives the stale-outlier flag below — eslint's source is the old report.
@@ -107,7 +122,7 @@ class HtmlReportPreviewTest {
                     toolReport = "tools/jacoco/index.html"),
                 IngestedFile("build/test-results/test/TEST-com.example.ShelfTest.xml", "junit", 0, ParsedReport()),
             ),
-            notUnderstood = listOf("build/reports/detekt/detekt.txt"),
+            notUnderstood = notUnderstood,
             hasBaseline = true,
             // changed-line coverage: one file links into its copied JaCoCo report, one has none.
             changedLineCoverage = ChangedLineCoverage.Measured(
@@ -121,15 +136,8 @@ class HtmlReportPreviewTest {
                 ),
                 filesWithoutData = 1,
             ),
-            freshness = Freshness(
-                mapOf(
-                    "build/reports/detekt/detekt.xml" to 0,
-                    "web/build/eslint.sarif" to 90, // old outlier -> its finding gets the stale? flag
-                    "build/reports/jacoco/test/jacocoTestReport.xml" to 52, // outlier -> coverage flags
-                    "build/test-results/test/TEST-com.example.ShelfTest.xml" to 70, // outlier -> tests flag
-                ),
-                toleranceMinutes = 15,
-            ),
+            freshness = freshness,
+            confidence = confidence(gates, freshness, notUnderstood, newReportLabels),
         )
     }
 }

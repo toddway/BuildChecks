@@ -37,6 +37,8 @@ class VerbsTest {
         assertTrue(text.contains("PASS  findings: 0 new (max 0), 8 total (baseline max 8)"), text)
         assertTrue(text.contains("PASS  coverage:"), text)
         assertTrue(text.contains("PASS  test failures: 0 failed of 16"), text)
+        // a clean run with fresh reports and no skipped gates is full confidence
+        assertTrue(text.contains("confidence: HIGH"), text)
     }
 
     @Test
@@ -179,6 +181,37 @@ class VerbsTest {
 
         assertEquals(0, runCheck(root, loadConfig(null, root), env = { null }) { out += it })
         assertTrue(text.contains("SKIP  changed-line coverage: no base ref"), text)
+        // the skip lowers confidence to LOW (a MAJOR signal) but does not change the exit code
+        assertTrue(text.contains("confidence: LOW"), text)
+    }
+
+    @Test
+    fun `failOnSkippedGates promotes a skip to a failure`() {
+        copyPassingReports()
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            min_changed_line_coverage = 80
+            fail_on_skipped_gates = true
+        """.trimIndent())
+        runBaseline(root) { }
+
+        // same run as the skip test above, but the knob turns the skip into a hard failure
+        assertEquals(1, runCheck(root, loadConfig(null, root), env = { null }) { out += it })
+        assertTrue(text.contains("SKIP  changed-line coverage: no base ref"), text)
+        assertTrue(text.contains("FAIL  no skipped gates:"), text)
+    }
+
+    @Test
+    fun `requireBaseRef promotes a missing base ref to a failure`() {
+        copyPassingReports()
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            require_base_ref = true
+        """.trimIndent())
+        runBaseline(root) { }
+
+        assertEquals(1, runCheck(root, loadConfig(null, root), env = { null }) { out += it })
+        assertTrue(text.contains("FAIL  base ref required:"), text)
     }
 
     @Test

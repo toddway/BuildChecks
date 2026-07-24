@@ -11,8 +11,16 @@ class MarkdownSummary : Renderer {
     override val fileName = "summary.md"
 
     override fun render(summary: CheckSummary): String = buildString {
-        appendLine("## BuildChecks: ${if (summary.passed) "✅ passed" else "❌ failed"}")
+        appendLine("## BuildChecks: ${if (summary.passed) "✅ passed" else "❌ failed"} " +
+            "· confidence: ${summary.confidence.level}")
         appendLine()
+
+        // The trust axis, spelled out: what makes this verdict worth less than a clean run.
+        if (summary.confidence.reasons.isNotEmpty()) {
+            appendLine("_Confidence — how completely the checks ran (informational, not a gate):_")
+            summary.confidence.reasons.forEach { appendLine("- ${cell(it.summary)}") }
+            appendLine()
+        }
 
         summary.freshness?.takeIf { it.stale }?.let {
             appendLine("> ⚠️ Ingested reports differ in age by ${it.spreadMinutes} minutes " +

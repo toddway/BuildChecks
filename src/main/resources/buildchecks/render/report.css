@@ -16,6 +16,11 @@ summary { cursor: pointer; font-weight: 600; margin-bottom: .4rem; }
 .badge.pass, td.pass { background: #1a7f37; color: #fff; }
 .badge.fail, td.fail { background: #cf222e; color: #fff; }
 .badge.stale { background: #fff8c5; border: 1px solid #d4a72c; color: #4d3800; cursor: help; }
+.badge.conf-high { background: #1a7f37; color: #fff; }
+.badge.conf-medium { background: #fff8c5; border: 1px solid #d4a72c; color: #4d3800; }
+.badge.conf-low { background: #cf222e; color: #fff; }
+.confidence ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+.confidence li { opacity: .8; }
 td.skip { background: #9a6700; color: #fff; }
 td.pass, td.fail, td.skip { font-weight: 700; text-align: center; width: 4rem; }
 .sev-error { color: #cf222e; font-weight: 700; }

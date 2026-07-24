@@ -3,15 +3,16 @@ package buildchecks.cli
 import buildchecks.gate.FingerprintBaseline
 import buildchecks.gate.Fingerprinter
 import buildchecks.gate.GateContext
+import buildchecks.gate.promotedGates
 import buildchecks.git.GitDiff
 import buildchecks.model.ChangedLineCoverage
-import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
 import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
 import buildchecks.model.IngestedFile
 import buildchecks.model.ReportedFinding
 import buildchecks.model.changedLineCoverage
+import buildchecks.model.confidence
 import buildchecks.model.freshness
 import buildchecks.model.matching
 import buildchecks.model.merged
@@ -37,14 +38,29 @@ fun runCheck(
         Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
     }
     val baseline = FingerprintBaseline(File(root, config.git.baselineFile)).read()
+    val git = GitDiff(root)
+    // Resolve the base ref once: shared by changed-line coverage and the requireBaseRef promotion,
+    // so git.defaultBranch() (a git call) runs at most once. Attempted whenever either feature wants it.
+    val wantsBaseRef = config.gates.minChangedLineCoverage != null || config.gates.requireBaseRef
+    val baseRef = if (wantsBaseRef) resolveBaseRef(git, config, baseRefFlag, verbose, env, echo) else null
     val changedLines = timed("diff", verbose, echo) {
-        changedLines(root, config, baseRefFlag, verbose, env, echo)
+        if (config.gates.minChangedLineCoverage != null) baseRef?.let { git.changedLines(it) } else null
     }
     val changedCoverage = changedLineCoverage(changedLines, merged.coverage)
     val presentOrigins = presentManifest(ingestion.files)
     val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedCoverage, presentOrigins)
-    val results = timed("gates", verbose, echo) { gates(config.gates).flatMap { it.evaluate(context) } }
+    val results = timed("gates", verbose, echo) {
+        val evaluated = gates(config.gates).flatMap { it.evaluate(context) }
+        evaluated + promotedGates(config.gates, evaluated, baseRefResolved = baseRef != null)
+    }
     logOriginCounts(ingestion.files, echo)
+
+    // Report sources ingested this run but not in the baseline manifest — the inverse of
+    // MissingReportGate. A notice, not a failure (adding coverage is legitimate); feeds confidence.
+    val newReportLabels = baseline?.manifest
+        ?.let { manifest -> (presentOrigins - manifest).sorted().map { "${it.kind} in ${it.origin}" } }
+        ?: emptyList()
+    val reportFreshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes)
 
     val copiedFiles = timed("copy-reports", verbose, echo) { copyToolReports(root, ingestion.files, outputDir) }
     // Each finding links to the copied HTML report of the file that produced it. copyToolReports
@@ -92,9 +108,10 @@ fun runCheck(
         },
         files = copiedFiles,
         notUnderstood = ingestion.notUnderstood,
-        freshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes),
+        freshness = reportFreshness,
         hasBaseline = baseline != null,
         changedLineCoverage = linkedChangedCoverage,
+        confidence = confidence(results, reportFreshness, ingestion.notUnderstood, newReportLabels),
     )
 
     outputDir.mkdirs()
@@ -160,18 +177,18 @@ private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (S
 }
 
 // Base ref resolution order per V4-PLAN.md §4: flag -> config -> CI env -> remote default branch
-// -> gate skips. The default-branch fallback is a guessed-but-named default (like zero-config
-// report discovery): it's noted in the output so a reader always knows what the diff was against.
-private fun changedLines(
-    root: File,
+// -> null (features that need it skip). The default-branch fallback is a guessed-but-named default
+// (like zero-config report discovery): it's noted in the output so a reader always knows what the
+// diff was against. Returns the resolved ref (or null), so the caller knows whether one was found —
+// which requireBaseRef promotes to a gate and changed-line coverage uses to run vs skip.
+private fun resolveBaseRef(
+    git: GitDiff,
     config: Config,
     baseRefFlag: String?,
     verbose: Boolean,
     env: (String) -> String?,
     echo: (String) -> Unit,
-): ChangedLines? {
-    if (config.gates.minChangedLineCoverage == null) return null
-    val git = GitDiff(root)
+): String? {
     val baseRef = baseRefFlag
         ?: config.git.baseRef
         ?: ciBaseRef(env)
@@ -181,7 +198,7 @@ private fun changedLines(
         }
         ?: return null
     if (verbose) echo("base ref: $baseRef")
-    return git.changedLines(baseRef)
+    return baseRef
 }
 
 // The PR/MR target branch, as each common CI provider exposes it. Every one of these is set

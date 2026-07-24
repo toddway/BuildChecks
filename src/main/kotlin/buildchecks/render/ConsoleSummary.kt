@@ -27,6 +27,12 @@ class ConsoleSummary {
             appendLine("$mark  ${result.gate}: ${result.detail}")
         }
 
+        // The trust axis: how completely the checks ran, separate from pass/fail. Always shown so a
+        // full-confidence run reads as deliberate, not silent.
+        appendLine()
+        appendLine("confidence: ${summary.confidence.level}")
+        summary.confidence.reasons.forEach { appendLine("  - ${it.summary}") }
+
         summary.freshness?.takeIf { it.stale }?.let {
             appendLine()
             appendLine("WARNING: ingested reports differ in age by ${it.spreadMinutes} minutes " +

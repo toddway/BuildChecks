@@ -122,6 +122,24 @@ The **baseline** (`buildchecks-baseline.txt`, committed) is a single human-reada
 that replaces per-tool suppression files. Accept the current state — or an intentional removal —
 with `buildchecks baseline`, reviewable as a one-file diff in the same PR.
 
+## Confidence
+
+Passing tells you the tracked metrics held; **confidence** tells you how completely they were
+actually checked. It's a second axis — `HIGH` / `MEDIUM` / `LOW` — shown next to the verdict in
+every output, and it's **informational: it never changes the exit code.** It drops when a pass is
+worth less than it looks:
+
+| Signal | Effect |
+|---|---|
+| a gate **skipped** (e.g. no base ref for changed-line coverage) | → `LOW` |
+| ingested reports **span a wide age** (a report may predate the latest build) | → `MEDIUM` |
+| a report file was **found but not understood** (its signal is missing) | → `MEDIUM` |
+| a report source is **not yet in the baseline** (`buildchecks baseline` to vouch for it) | → `MEDIUM` |
+
+If you'd rather have a signal *block* rather than just inform, promote it to a hard gate with an
+off-by-default knob: `fail_on_skipped_gates` turns any skipped gate into a failure, and
+`require_base_ref` fails when no git base ref could be resolved.
+
 ## Outputs
 
 Written to `build/reports/buildchecks/` every run:
@@ -154,6 +172,8 @@ coverage_tolerance = 0.1
 min_coverage_percent = 52.0
 max_errors = 0
 max_warnings = 1000
+fail_on_skipped_gates = false           # promote any skipped gate to a failure (default off)
+require_base_ref = false                # fail if no git base ref resolves (default off)
 
 [git]
 base_ref = "origin/main"                # optional; CI PR/MR builds auto-detect this

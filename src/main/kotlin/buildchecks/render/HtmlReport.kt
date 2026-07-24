@@ -98,11 +98,34 @@ class HtmlReport : Renderer {
                 +"BuildChecks "
                 if (summary.passed) span("badge pass") { +"PASSED" }
                 else span("badge fail") { +"FAILED" }
+                +" "
+                val level = summary.confidence.level
+                span("badge conf-${level.name.lowercase()}") {
+                    title = CONFIDENCE_EXPLANATION
+                    +"confidence: $level"
+                }
             }
             p("muted") {
                 +("One gated summary of this build's analysis findings, test results, and coverage, " +
                     "aggregated from ${summary.files.size} report files your tools wrote.")
             }
+            confidenceReasons(summary)
+        }
+    }
+
+    // The trust axis spelled out: PASSED says the metrics held; confidence says how completely they
+    // were checked. Informational — never affects the exit code (a signal that should block is
+    // promoted to a gate via config). Only rendered when something lowered it below full.
+    private fun FlowContent.confidenceReasons(summary: CheckSummary) {
+        val reasons = summary.confidence.reasons
+        if (reasons.isEmpty()) return
+        div("confidence") {
+            p("muted") {
+                +"Why confidence is "
+                em { +summary.confidence.level.name.lowercase() }
+                +" — each reduces how much this verdict is worth, but none changes pass/fail:"
+            }
+            ul { reasons.forEach { li { +it.summary } } }
         }
     }
 
@@ -467,6 +490,11 @@ class HtmlReport : Renderer {
         const val NEW_EXPLANATION = "Not present in the baseline snapshot (buildchecks-baseline.txt) — " +
             "introduced since the last `buildchecks baseline` run."
 
+        const val CONFIDENCE_EXPLANATION = "How completely the checks actually ran, separate from " +
+            "pass/fail. PASSED says the tracked metrics held; confidence says how much that's worth — " +
+            "a skipped gate, an unreadable or stale report, or a not-yet-baselined source each lower " +
+            "it. Informational: it never changes the exit code."
+
         val GATE_EXPLANATIONS = mapOf(
             "findings" to "Checked two ways against the baseline: no new findings beyond the allowed " +
                 "max (each finding is fingerprinted, so pre-existing ones don't count), and the total " +
@@ -484,6 +512,10 @@ class HtmlReport : Renderer {
                 "ingested this run, grouped by origin (module/source). Catches a check silently disabled " +
                 "or a source that stopped emitting its report. Run `buildchecks baseline` to accept an " +
                 "intentional removal. Skipped against a baseline taken before this was recorded.",
+            "no skipped gates" to "Turns any skipped gate into a failure (config fail_on_skipped_gates). " +
+                "Off by default — a skipped gate normally only lowers confidence, not the exit code.",
+            "base ref required" to "Fails when no git base ref could be resolved for delta analysis " +
+                "(config require_base_ref). Off by default. Set --base-ref/git.base_ref or run on a PR build.",
         )
 
         val CSS = resource("report.css")

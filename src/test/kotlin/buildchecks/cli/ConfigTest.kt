@@ -47,6 +47,8 @@ class ConfigTest {
             min_coverage_percent = 52.0
             max_errors = 0
             max_warnings = 1000
+            fail_on_skipped_gates = true
+            require_base_ref = true
 
             [git]
             base_ref = "origin/dev"
@@ -62,6 +64,8 @@ class ConfigTest {
         assertEquals(52.0, config.gates.minCoveragePercent)
         assertEquals(0, config.gates.maxErrors)
         assertEquals(1000, config.gates.maxWarnings)
+        assertEquals(true, config.gates.failOnSkippedGates)
+        assertEquals(true, config.gates.requireBaseRef)
         assertEquals("origin/dev", config.git.baseRef)
         assertEquals("quality-baseline.txt", config.git.baselineFile)
     }

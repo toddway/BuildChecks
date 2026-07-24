@@ -1,6 +1,6 @@
 # BuildChecks v4 — Implementation Plan
 
-**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Remaining items are the deferred post-v1 roadmap in §11 (targeted for 4.1+).
+**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Post-v1: the **4.1 run-confidence axis** (§11 item 7) has landed in code (unreleased) — a `Confidence` axis on `CheckSummary`, the new-report notice, and the `fail_on_skipped_gates`/`require_base_ref` promotions. Remaining items are the rest of the deferred post-v1 roadmap in §11 (4.2 next: the base-ref delta signals).
 **Repo:** `toddway/BuildChecks` (v4 developed in place; `3.3.2` tagged as the final Gradle-plugin release)
 **License:** Apache 2.0 (unchanged)
 
@@ -375,6 +375,12 @@ Marketplace listing is optional and not required for distribution; the pipeline 
 
 ### Post-v1 roadmap (explicitly deferred)
 
+> **Immediate next focus (agreed 2026-07-24): item 7, the run-confidence axis.** Chosen over
+> the other deferred items because it is the least-explored and highest-leverage direction: it
+> reframes the green/red verdict around *how much a pass is worth*, and it unifies a scatter of
+> would-be one-off gates (skipped gates, stale/unparsed reports, loosened baselines, moved
+> thresholds) under one orthogonal property. Start with the 4.1 (no-base-ref) slice below.
+
 1. **Mutation-testing signal (PIT), targeted for 4.1.** New parser for PIT `mutations.xml`
    (flat, stable XML; JDK SAX/DOM, no new dependency; sniff `<mutations>` root) plus a
    `MutationResult` model type wired through `ParsedReport`/`CheckSummary`, a severable mutation
@@ -430,14 +436,25 @@ Marketplace listing is optional and not required for distribution; the pipeline 
    point-in-time signals don't), and each release makes exactly one pass through the ~4 human-facing
    renderers + their golden fixtures — the actual cost here:
 
-   - **4.1 (local-friendly, no base ref):** the confidence axis itself; a **new-report notice**
-     (`presentOrigins − manifest`, the inverse of `MissingReportGate` — a report source ingested
-     this run but not baselined, surfaced as a notice not a failure, since adding coverage is
-     legitimate); and rolling the signals that *already exist* — skipped gates, freshness
+   - **4.1 (local-friendly, no base ref) — LANDED (2026-07-24):** the confidence axis itself; a
+     **new-report notice** (`presentOrigins − manifest`, the inverse of `MissingReportGate` — a report
+     source ingested this run but not baselined, surfaced as a notice not a failure, since adding
+     coverage is legitimate); and rolling the signals that *already exist* — skipped gates, freshness
      (`Freshness.stale`), `notUnderstood` — into the axis. Add `failOnSkippedGates` and
      `requireBaseRef` here (off by default): their signals are already present, so promotion is
      ~1h each and there's no reason to hold them. All of this works on a bare
      `./gradlew run --args="check"` with no PR context.
+     - **As built:** `model.Confidence` = a list of `ConfidenceReason(signal, summary, weight)` with a
+       derived `ConfidenceLevel` (HIGH none / MEDIUM any MINOR / LOW any MAJOR); on `CheckSummary` as a
+       defaulted, additive field, orthogonal to `passed` and never touching the exit code. The
+       `confidence(gates, freshness, notUnderstood, newReportLabels)` builder owns wording+weights; the
+       type is delta-signal-ready so 4.2 only widens the builder's inputs, not the type. **Weights:**
+       skipped gates MAJOR; stale-reports, not-understood, new-report all MINOR — absolute-age
+       staleness is legitimate on an unchanged module in an incremental build, so LOW is reserved for a
+       gate that genuinely did not run (4.2's change-scoped freshness is the MAJOR staleness signal).
+       Promotions (`fail_on_skipped_gates`, `require_base_ref`) are a post-evaluation `promotedGates()`
+       step appending ordinary FAILED `GateResult`s. Rendered in all five human-facing renderers +
+       `summary.json` (additive, `schemaVersion` unchanged).
    - **4.2 (needs a base ref → CI PR dogfooding):** a **baseline diff** (`git show <ref>:baseline`
      vs the on-disk baseline we gated with — the git-backed companion to changed-line coverage,
      reusing the same base-ref resolution) surfacing findings added/removed, coverage-threshold
@@ -445,6 +462,14 @@ Marketplace listing is optional and not required for distribution; the pipeline 
      threshold lowered or a gate disabled in the same PR; both feeding the same axis, plus
      `failOnBaselineLoosened`. Compare against the on-disk file we *used* (HEAD-vs-working-tree
      decided deliberately). The base ref is auto-detected across CI providers as of 4.0.5.
+     - **change-scoped freshness** (the strongest confidence signal, added 2026-07-24): today
+       freshness is absolute age; the higher-value question is whether the *change* was actually
+       measured. Map each changed file (already computed for changed-line coverage) to its origin,
+       then check whether that origin produced a *fresh* report this run. "This PR touched 5
+       origins; 3 produced fresh reports" is far more actionable than a per-file age chip — a pass
+       on a PR whose touched modules didn't re-run is exactly the low-confidence case the axis
+       exists to surface. Reuses the changed-file set (phase 5), origin derivation (§5.5), and
+       `Freshness` (§3) — no new inputs. Optional promotion knob `requireChangedOriginsFresh`.
 
    Out of scope (holds §1): no in-report re-implementation of the git diff of the committed baseline
    file — a reviewer already sees that in the PR; confidence surfaces the *summary* of the change,

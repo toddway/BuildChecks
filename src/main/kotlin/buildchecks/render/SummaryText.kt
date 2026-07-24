@@ -1,6 +1,7 @@
 package buildchecks.render
 
 import buildchecks.model.CheckSummary
+import buildchecks.model.ConfidenceLevel
 import buildchecks.model.GateStatus
 import buildchecks.model.TestStatus
 
@@ -28,6 +29,10 @@ class SummaryText : Renderer {
         }
         val newFindings = summary.findings.count { it.isNew }
         parts += "$newFindings new ${plural(newFindings, "finding")}"
+        // Trust axis: called out only when it's below full, so a clean run's headline stays terse.
+        if (summary.confidence.level != ConfidenceLevel.HIGH) {
+            parts += "confidence ${summary.confidence.level.name.lowercase()}"
+        }
 
         return clip(parts.joinToString(" · "))
     }

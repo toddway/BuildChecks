@@ -4,6 +4,7 @@ import buildchecks.Fixtures
 import buildchecks.model.ChangedFileCoverage
 import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
+import buildchecks.model.confidence
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
@@ -43,11 +44,16 @@ class RenderersTest {
             JacocoParser().parse(Fixtures.text("shelf/jvmTestCoverage.xml")),
             JunitParser().parse(Fixtures.text("shelf/TEST-com.toddway.shelf.JvmTests.xml")),
         ).merged()
+        val gates = listOf(
+            GateResult("findings", GateStatus.PASSED, "0 new (max 0), 8 total (baseline max 8)"),
+            GateResult("test failures", GateStatus.FAILED, "1 failed of 4 tests (max 0)"),
+        )
+        // eslint.sarif is 45 min old vs detekt.xml at 0 (tolerance 15), so the set is stale; plus one
+        // not-understood report. Two MINOR signals, no skipped gate -> MEDIUM confidence.
+        val notUnderstood = listOf("build/reports/detekt/detekt.txt")
+        val freshness = Freshness(mapOf("build/reports/detekt.xml" to 0, "build/reports/eslint.sarif" to 45), 15)
         return CheckSummary(
-            gates = listOf(
-                GateResult("findings", GateStatus.PASSED, "0 new (max 0), 8 total (baseline max 8)"),
-                GateResult("test failures", GateStatus.FAILED, "1 failed of 4 tests (max 0)"),
-            ),
+            gates = gates,
             findings = reports.findings.mapIndexed { index, finding ->
                 ReportedFinding(finding, "fp%04d".format(index), isNew = index == 0, toolReport = "tools/detekt/detekt.html")
             },
@@ -57,8 +63,9 @@ class RenderersTest {
                 IngestedFile("build/reports/detekt.xml", "checkstyle", 0, reports, toolReport = "tools/detekt/detekt.html"),
                 IngestedFile("build/reports/eslint.sarif", "sarif", 0, reports, content = Fixtures.text("eslint.sarif")),
             ),
-            notUnderstood = listOf("build/reports/detekt/detekt.txt"),
-            freshness = Freshness(mapOf("build/reports/detekt.xml" to 0, "build/reports/eslint.sarif" to 45), 15),
+            notUnderstood = notUnderstood,
+            freshness = freshness,
+            confidence = confidence(gates, freshness, notUnderstood, emptyList()),
         )
     }
 
@@ -75,6 +82,11 @@ class RenderersTest {
         assertEquals(4, tests["total"]!!.jsonPrimitive.content.toInt())
         assertEquals(1, tests["failed"]!!.jsonPrimitive.content.toInt())
         assertEquals(93.24, json["coveragePercent"]!!.jsonPrimitive.content.toDouble(), 0.01)
+        // the confidence axis rides alongside `passed` in the same stable contract
+        val confidence = json["confidence"]!!.jsonObject
+        assertEquals("MEDIUM", confidence["level"]!!.jsonPrimitive.content)
+        val signals = confidence["reasons"]!!.jsonArray.map { it.jsonObject["signal"]!!.jsonPrimitive.content }
+        assertEquals(listOf("stale-reports", "not-understood"), signals)
     }
 
     @Test
@@ -114,7 +126,7 @@ class RenderersTest {
     fun `summary text is a one-line gate headline for commit statuses`() {
         val line = SummaryText().render(summary)
         assertEquals(
-            "gates failed: test failures · coverage 93.24% · 4 tests, 1 failed · 1 new finding",
+            "gates failed: test failures · coverage 93.24% · 4 tests, 1 failed · 1 new finding · confidence medium",
             line,
         )
         assertFalse(line.contains("\n"), "must be a single line")
@@ -129,6 +141,9 @@ class RenderersTest {
         assertTrue(markdown.contains("differ in age by 45 minutes"))
         assertTrue(markdown.contains("**Findings:** 8 (6 errors, 0 warnings, 2 info, 1 new)"))
         assertTrue(markdown.contains("**Coverage:** 93.24%"))
+        // the trust axis is in the header and its reasons are spelled out
+        assertTrue(markdown.startsWith("## BuildChecks: ❌ failed · confidence: MEDIUM"))
+        assertTrue(markdown.contains("found but not understood"))
     }
 
     @Test
@@ -139,6 +154,8 @@ class RenderersTest {
         assertTrue(console.contains("PASS  findings: 0 new (max 0), 8 total (baseline max 8)"))
         assertTrue(console.contains("FAIL  test failures: 1 failed of 4 tests (max 0)"))
         assertTrue(console.contains("WARNING: ingested reports differ in age by 45 minutes"))
+        assertTrue(console.contains("confidence: MEDIUM"))
+        assertTrue(console.contains("- 1 report file found but not understood"))
     }
 
     @Test
@@ -147,6 +164,10 @@ class RenderersTest {
         assertTrue(html.contains("<style>") && html.contains("<script>"))
         assertFalse(html.contains("http://") || html.contains("https://"), "no external requests")
         assertTrue(html.contains("BuildChecks <span class=\"badge fail\">FAILED</span>"))
+        // the confidence badge rides next to the pass/fail badge, with its reasons below
+        assertTrue(html.contains("<span class=\"badge conf-medium\""))
+        assertTrue(html.contains("confidence: MEDIUM"))
+        assertTrue(html.contains("<div class=\"confidence\">"))
         assertTrue(html.contains("Findings (8)"))
         assertTrue(html.contains("data-severity=\"ERROR\""))
         assertTrue(html.contains(">NEW</span>"))

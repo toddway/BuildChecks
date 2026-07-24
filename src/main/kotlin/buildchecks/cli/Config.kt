@@ -72,6 +72,8 @@ private data class TomlSchema(
             maxWarnings = gates.maxWarnings,
             maxTestFailures = gates.maxTestFailures,
             minChangedLineCoverage = gates.minChangedLineCoverage,
+            failOnSkippedGates = gates.failOnSkippedGates,
+            requireBaseRef = gates.requireBaseRef,
         ),
         git = GitConfig(
             baseRef = git.baseRef,
@@ -97,6 +99,8 @@ private data class GatesToml(
     @SerialName("max_warnings") val maxWarnings: Int? = null,
     @SerialName("max_test_failures") val maxTestFailures: Int? = null,
     @SerialName("min_changed_line_coverage") val minChangedLineCoverage: Int? = null,
+    @SerialName("fail_on_skipped_gates") val failOnSkippedGates: Boolean = false,
+    @SerialName("require_base_ref") val requireBaseRef: Boolean = false,
 )
 
 @Serializable
