@@ -77,6 +77,62 @@ class ConfidenceTest {
     }
 
     @Test
+    fun `a touched origin with no fresh report is MAJOR and drops to LOW`() {
+        val c = confidence(
+            gates = emptyList(), freshness = null, notUnderstood = emptyList(), newReportLabels = emptyList(),
+            delta = ChangeDelta(touchedOrigins = setOf("services/auth", "services/web"), freshOrigins = setOf("services/auth")),
+        )
+        assertEquals(ConfidenceLevel.LOW, c.level)
+        val reason = c.reasons.single()
+        assertEquals("changed-origins-stale", reason.signal)
+        assertEquals(ConfidenceWeight.MAJOR, reason.weight)
+        assertTrue(reason.summary.contains("services/web"))
+    }
+
+    @Test
+    fun `every touched origin fresh contributes no reason`() {
+        val c = confidence(
+            emptyList(), null, emptyList(), emptyList(),
+            delta = ChangeDelta(touchedOrigins = setOf("a"), freshOrigins = setOf("a")),
+        )
+        assertEquals(ConfidenceLevel.HIGH, c.level)
+    }
+
+    @Test
+    fun `a loosened baseline is MAJOR and folds every specific into one reason`() {
+        val c = confidence(
+            emptyList(), null, emptyList(), emptyList(),
+            delta = ChangeDelta(
+                baselineFindingsAccepted = 3,
+                baselineCoverageLowered = 2.5,
+                baselineReportsDropped = listOf("junit in services/web"),
+            ),
+        )
+        assertEquals(ConfidenceLevel.LOW, c.level)
+        val reason = c.reasons.single()
+        assertEquals("baseline-loosened", reason.signal)
+        assertTrue(reason.summary.contains("3 findings newly accepted"))
+        assertTrue(reason.summary.contains("junit in services/web"))
+    }
+
+    @Test
+    fun `a loosened config is MAJOR`() {
+        val c = confidence(
+            emptyList(), null, emptyList(), emptyList(),
+            delta = ChangeDelta(configLoosened = listOf("min_coverage_percent 80.0 → 70.0")),
+        )
+        assertEquals(ConfidenceLevel.LOW, c.level)
+        assertEquals("config-loosened", c.reasons.single().signal)
+        assertTrue(c.reasons.single().summary.contains("min_coverage_percent"))
+    }
+
+    @Test
+    fun `a null delta contributes no signal`() {
+        val c = confidence(emptyList(), null, emptyList(), emptyList(), delta = null)
+        assertEquals(ConfidenceLevel.HIGH, c.level)
+    }
+
+    @Test
     fun `any MAJOR reason forces LOW regardless of MINOR reasons`() {
         val c = confidence(
             gates = listOf(gate("expected reports", GateStatus.SKIPPED)),

@@ -493,7 +493,9 @@ class HtmlReport : Renderer {
         const val CONFIDENCE_EXPLANATION = "How completely the checks actually ran, separate from " +
             "pass/fail. PASSED says the tracked metrics held; confidence says how much that's worth — " +
             "a skipped gate, an unreadable or stale report, or a not-yet-baselined source each lower " +
-            "it. Informational: it never changes the exit code."
+            "it, as does — vs the git base ref — a touched module that didn't re-run, a loosened " +
+            "baseline, or a loosened gate setting in this same change. Informational: it never " +
+            "changes the exit code."
 
         val GATE_EXPLANATIONS = mapOf(
             "findings" to "Checked two ways against the baseline: no new findings beyond the allowed " +
@@ -516,6 +518,12 @@ class HtmlReport : Renderer {
                 "Off by default — a skipped gate normally only lowers confidence, not the exit code.",
             "base ref required" to "Fails when no git base ref could be resolved for delta analysis " +
                 "(config require_base_ref). Off by default. Set --base-ref/git.base_ref or run on a PR build.",
+            "baseline not loosened" to "Fails when the baseline was loosened vs the git base ref — " +
+                "findings accepted, the coverage floor lowered, or an expected report dropped in this " +
+                "same change (config fail_on_baseline_loosened). Off by default; normally only lowers confidence.",
+            "changed origins measured" to "Fails when a module this change touched produced no fresh " +
+                "report this run (config require_changed_origins_fresh) — the change may not have been " +
+                "re-measured. Off by default; normally only lowers confidence.",
         )
 
         val CSS = resource("report.css")

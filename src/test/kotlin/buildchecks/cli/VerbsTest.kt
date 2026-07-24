@@ -291,6 +291,37 @@ class VerbsTest {
         assertTrue(text.contains("FAIL  changed-line coverage: 50.00% of 2 changed lines vs origin/base (min 80%)"), text)
     }
 
+    @Test
+    fun `base-ref delta signals lower confidence when the ruler moved in this same change`() {
+        copyPassingReports()
+        git("init", "-q")
+        // the base ref: a strict coverage floor and a baseline of exactly the findings present
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            min_coverage_percent = 90.0
+        """.trimIndent())
+        runBaseline(root, loadConfig(null, root)) { }
+        git("add", "buildchecks.toml", "buildchecks-baseline.txt")
+        git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "base")
+        git("branch", "base")
+
+        // this change loosens the coverage floor and grows the accepted baseline (working tree only —
+        // the delta compares committed base against the on-disk files this run gated with)
+        File(root, "buildchecks.toml").writeText("""
+            [gates]
+            min_coverage_percent = 50.0
+        """.trimIndent())
+        File(root, "buildchecks-baseline.txt").appendText("deadbeef  detekt  Extra  A.kt:1  fabricated finding\n")
+
+        val vars = mapOf("GITHUB_BASE_REF" to "base")
+        // still green (every tracked metric holds) but confidence drops: the run says so out loud
+        assertEquals(0, runCheck(root, loadConfig(null, root), env = { vars[it] }) { out += it })
+        assertTrue(text.contains("confidence: LOW"), text)
+        assertTrue(text.contains("baseline loosened vs the base ref"), text)
+        assertTrue(text.contains("1 finding newly accepted"), text)
+        assertTrue(text.contains("min_coverage_percent 90.0 → 50.0"), text)
+    }
+
     private fun git(vararg args: String) {
         val process = ProcessBuilder("git", *args).directory(root).redirectErrorStream(true).start()
         assertEquals(0, process.waitFor(), "git failed: ${process.inputStream.bufferedReader().readText()}")

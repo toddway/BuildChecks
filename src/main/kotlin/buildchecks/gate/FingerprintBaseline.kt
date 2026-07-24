@@ -17,28 +17,7 @@ data class Baseline(
  */
 class FingerprintBaseline(private val file: File) {
 
-    fun read(): Baseline? {
-        if (!file.isFile) return null
-        var version = 1
-        var findingCount: Int? = null
-        var coveragePercent: Double? = null
-        val fingerprints = mutableSetOf<String>()
-        val manifest = mutableSetOf<OriginKind>()
-        file.readLines().forEach { raw ->
-            val line = raw.trim()
-            when {
-                line.startsWith(VERSION_PREFIX) ->
-                    version = line.removePrefix(VERSION_PREFIX).trim().toIntOrNull() ?: 1
-                line.startsWith("# findings:") -> findingCount = line.substringAfter(':').trim().toIntOrNull()
-                line.startsWith("# coverage:") -> coveragePercent = line.substringAfter(':').trim().toDoubleOrNull()
-                line.startsWith(ORIGIN_PREFIX) -> originKind(line)?.let { manifest += it }
-                line.startsWith("#") || line.isEmpty() -> Unit
-                else -> fingerprints += line.substringBefore(' ')
-            }
-        }
-        // Manifest is authoritative only from v2; a v1 baseline predates it, so the gate skips.
-        return Baseline(fingerprints, findingCount ?: fingerprints.size, coveragePercent, manifest.takeIf { version >= 2 })
-    }
+    fun read(): Baseline? = if (file.isFile) parseBaseline(file.readLines()) else null
 
     fun write(findings: List<FingerprintedFinding>, coveragePercent: Double?, manifest: Set<OriginKind> = emptySet()) {
         val header = buildString {
@@ -52,23 +31,47 @@ class FingerprintBaseline(private val file: File) {
         file.writeText(header + lines.joinToString("\n") + if (lines.isEmpty()) "" else "\n")
     }
 
-    private fun originKind(line: String): OriginKind? {
-        // Origin and kind are joined by two spaces (see write); the kind may itself contain
-        // spaces (e.g. "Android Lint"), so split on that separator, not on any whitespace.
-        val rest = line.removePrefix(ORIGIN_PREFIX).trim()
-        val sep = rest.indexOf("  ")
-        return if (sep > 0) OriginKind(rest.take(sep), rest.substring(sep + 2).trim()) else null
-    }
-
     private fun entry(fingerprinted: FingerprintedFinding): String {
         val finding = fingerprinted.finding
         val place = finding.location?.let { "${it.path}:${it.line ?: 0}" } ?: "-"
         val words = finding.message.split(Regex("\\s+")).filter { it.isNotEmpty() }.take(8).joinToString(" ")
         return "${fingerprinted.fingerprint}  ${finding.tool}  ${finding.ruleId}  $place  $words"
     }
-
-    private companion object {
-        const val VERSION_PREFIX = "# buildchecks baseline v"
-        const val ORIGIN_PREFIX = "# origin  "
-    }
 }
+
+/**
+ * Parses baseline content from its lines — shared by [FingerprintBaseline.read] (on-disk) and the
+ * 4.2 baseline-diff signal, which parses a `git show <ref>:baseline` blob without touching disk.
+ */
+fun parseBaseline(lines: List<String>): Baseline {
+    var version = 1
+    var findingCount: Int? = null
+    var coveragePercent: Double? = null
+    val fingerprints = mutableSetOf<String>()
+    val manifest = mutableSetOf<OriginKind>()
+    lines.forEach { raw ->
+        val line = raw.trim()
+        when {
+            line.startsWith(VERSION_PREFIX) ->
+                version = line.removePrefix(VERSION_PREFIX).trim().toIntOrNull() ?: 1
+            line.startsWith("# findings:") -> findingCount = line.substringAfter(':').trim().toIntOrNull()
+            line.startsWith("# coverage:") -> coveragePercent = line.substringAfter(':').trim().toDoubleOrNull()
+            line.startsWith(ORIGIN_PREFIX) -> originKind(line)?.let { manifest += it }
+            line.startsWith("#") || line.isEmpty() -> Unit
+            else -> fingerprints += line.substringBefore(' ')
+        }
+    }
+    // Manifest is authoritative only from v2; a v1 baseline predates it, so the gate skips.
+    return Baseline(fingerprints, findingCount ?: fingerprints.size, coveragePercent, manifest.takeIf { version >= 2 })
+}
+
+private fun originKind(line: String): OriginKind? {
+    // Origin and kind are joined by two spaces (see write); the kind may itself contain spaces
+    // (e.g. "Android Lint"), so split on that separator, not on any whitespace.
+    val rest = line.removePrefix(ORIGIN_PREFIX).trim()
+    val sep = rest.indexOf("  ")
+    return if (sep > 0) OriginKind(rest.take(sep), rest.substring(sep + 2).trim()) else null
+}
+
+private const val VERSION_PREFIX = "# buildchecks baseline v"
+private const val ORIGIN_PREFIX = "# origin  "

@@ -13,4 +13,7 @@ data class GateConfig(
     // signal into an ordinary FAILED gate, so it blocks — the exit code stays a function of gates.
     val failOnSkippedGates: Boolean = false, // any SKIPPED gate becomes a failure
     val requireBaseRef: Boolean = false, // no resolvable git base ref becomes a failure
+    // Base-ref delta promotions (V4-PLAN §11 item 7, 4.2): off by default.
+    val failOnBaselineLoosened: Boolean = false, // a baseline loosened vs the base ref becomes a failure
+    val requireChangedOriginsFresh: Boolean = false, // a touched origin with no fresh report becomes a failure
 )

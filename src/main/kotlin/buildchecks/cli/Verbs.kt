@@ -1,11 +1,16 @@
 package buildchecks.cli
 
+import buildchecks.gate.Baseline
 import buildchecks.gate.FingerprintBaseline
 import buildchecks.gate.Fingerprinter
 import buildchecks.gate.GateContext
+import buildchecks.gate.baselineDelta
+import buildchecks.gate.parseBaseline
 import buildchecks.gate.promotedGates
 import buildchecks.git.GitDiff
+import buildchecks.model.ChangeDelta
 import buildchecks.model.ChangedLineCoverage
+import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
 import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
@@ -39,19 +44,26 @@ fun runCheck(
     }
     val baseline = FingerprintBaseline(File(root, config.git.baselineFile)).read()
     val git = GitDiff(root)
-    // Resolve the base ref once: shared by changed-line coverage and the requireBaseRef promotion,
-    // so git.defaultBranch() (a git call) runs at most once. Attempted whenever either feature wants it.
-    val wantsBaseRef = config.gates.minChangedLineCoverage != null || config.gates.requireBaseRef
-    val baseRef = if (wantsBaseRef) resolveBaseRef(git, config, baseRefFlag, verbose, env, echo) else null
-    val changedLines = timed("diff", verbose, echo) {
-        if (config.gates.minChangedLineCoverage != null) baseRef?.let { git.changedLines(it) } else null
-    }
-    val changedCoverage = changedLineCoverage(changedLines, merged.coverage)
+    // Resolve the base ref once (git.defaultBranch() runs at most once): shared by changed-line
+    // coverage, the requireBaseRef promotion, and the 4.2 delta signals. Attempted always, since the
+    // delta signals feed the always-shown confidence axis — it returns null (no signal) off a PR.
+    val baseRef = resolveBaseRef(git, config, baseRefFlag, verbose, env, echo)
+    // The raw changed-file set is available whenever a base ref resolved (for change-scoped
+    // freshness); the changed-line *coverage* section stays gated on its own knob, unchanged.
+    val changedLines = timed("diff", verbose, echo) { baseRef?.let { git.changedLines(it) } }
+    val changedCoverage = changedLineCoverage(
+        if (config.gates.minChangedLineCoverage != null) changedLines else null,
+        merged.coverage,
+    )
     val presentOrigins = presentManifest(ingestion.files)
+    val reportFreshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes)
+    val delta = timed("delta", verbose, echo) {
+        changeDelta(git, baseRef, changedLines, ingestion.files, baseline, reportFreshness, config, env)
+    }
     val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedCoverage, presentOrigins)
     val results = timed("gates", verbose, echo) {
         val evaluated = gates(config.gates).flatMap { it.evaluate(context) }
-        evaluated + promotedGates(config.gates, evaluated, baseRefResolved = baseRef != null)
+        evaluated + promotedGates(config.gates, evaluated, baseRefResolved = baseRef != null, delta = delta)
     }
     logOriginCounts(ingestion.files, echo)
 
@@ -60,7 +72,6 @@ fun runCheck(
     val newReportLabels = baseline?.manifest
         ?.let { manifest -> (presentOrigins - manifest).sorted().map { "${it.kind} in ${it.origin}" } }
         ?: emptyList()
-    val reportFreshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes)
 
     val copiedFiles = timed("copy-reports", verbose, echo) { copyToolReports(root, ingestion.files, outputDir) }
     // Each finding links to the copied HTML report of the file that produced it. copyToolReports
@@ -111,7 +122,7 @@ fun runCheck(
         freshness = reportFreshness,
         hasBaseline = baseline != null,
         changedLineCoverage = linkedChangedCoverage,
-        confidence = confidence(results, reportFreshness, ingestion.notUnderstood, newReportLabels),
+        confidence = confidence(results, reportFreshness, ingestion.notUnderstood, newReportLabels, delta),
     )
 
     outputDir.mkdirs()
@@ -193,12 +204,53 @@ private fun resolveBaseRef(
         ?: config.git.baseRef
         ?: ciBaseRef(env)
         ?: git.defaultBranch()?.also {
-            echo("changed-line coverage: no base ref set; diffing against $it (default branch) — " +
+            echo("no base ref set; diffing against $it (default branch) for change analysis — " +
                 "override with --base-ref or git.base_ref")
         }
         ?: return null
     if (verbose) echo("base ref: $baseRef")
     return baseRef
+}
+
+// The base-ref delta facts (V4-PLAN.md §11 item 7, 4.2): change-scoped freshness (which touched
+// origins produced a fresh report), plus the baseline and config diffs read via `git show`. null
+// when no base ref resolved. Best-effort throughout — a blob that isn't at the base ref, or a repo
+// that isn't rooted at the git root, simply yields no signal, never an error. The config diff uses
+// the conventional buildchecks.toml path; a --config-supplied path elsewhere isn't diffed.
+private fun changeDelta(
+    git: GitDiff,
+    baseRef: String?,
+    changedLines: ChangedLines?,
+    files: List<IngestedFile>,
+    baseline: Baseline?,
+    freshness: buildchecks.model.Freshness?,
+    config: Config,
+    env: (String) -> String?,
+): ChangeDelta? {
+    if (baseRef == null) return null
+    // Use the ref the diff actually resolved to (it may have retried origin/<ref>), so `git show`
+    // reads the same "before" the changed-line set came from.
+    val ref = (changedLines as? ChangedLines.Diff)?.baseRef ?: baseRef
+    val manifestOrigins = baseline?.manifest?.map { it.origin }?.toSet() ?: emptySet()
+    val touched = (changedLines as? ChangedLines.Diff)
+        ?.let { changedOrigins(it.files.keys, files, manifestOrigins) }
+        ?: emptySet()
+    val fresh = freshChangedOrigins(touched, files, freshness)
+
+    val baseBaseline = git.show(ref, config.git.baselineFile)?.let { parseBaseline(it.lines()) }
+    val baselineDiff = if (baseBaseline != null && baseline != null) baselineDelta(baseBaseline, baseline) else null
+
+    val baseConfig = git.show(ref, "buildchecks.toml")?.let { parseConfigText(it, env) }
+    val configLoosened = if (baseConfig != null) configLoosened(baseConfig, config) else emptyList()
+
+    return ChangeDelta(
+        touchedOrigins = touched,
+        freshOrigins = fresh,
+        baselineFindingsAccepted = baselineDiff?.findingsAccepted ?: 0,
+        baselineCoverageLowered = baselineDiff?.coverageLowered,
+        baselineReportsDropped = baselineDiff?.reportsDropped ?: emptyList(),
+        configLoosened = configLoosened,
+    )
 }
 
 // The PR/MR target branch, as each common CI provider exposes it. Every one of these is set

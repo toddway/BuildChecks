@@ -1,5 +1,6 @@
 package buildchecks.gate
 
+import buildchecks.model.ChangeDelta
 import buildchecks.model.GateResult
 import buildchecks.model.GateStatus
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -51,5 +52,41 @@ class PromotionTest {
         )
         assertEquals(2, promoted.size)
         assertTrue(promoted.all { it.status == GateStatus.FAILED })
+    }
+
+    @Test
+    fun `failOnBaselineLoosened fails on a loosened baseline and passes otherwise`() {
+        val loose = ChangeDelta(baselineFindingsAccepted = 2)
+        val failed = promotedGates(GateConfig(failOnBaselineLoosened = true), emptyList(), true, delta = loose).single()
+        assertEquals("baseline not loosened", failed.gate)
+        assertEquals(GateStatus.FAILED, failed.status)
+        assertTrue(failed.detail.contains("2 finding(s) accepted"))
+
+        val tight = ChangeDelta()
+        val passed = promotedGates(GateConfig(failOnBaselineLoosened = true), emptyList(), true, delta = tight).single()
+        assertEquals(GateStatus.PASSED, passed.status)
+    }
+
+    @Test
+    fun `failOnBaselineLoosened passes when there is no base ref to compare`() {
+        val passed = promotedGates(GateConfig(failOnBaselineLoosened = true), emptyList(), false, delta = null).single()
+        assertEquals(GateStatus.PASSED, passed.status)
+        assertTrue(passed.detail.contains("no base ref"))
+    }
+
+    @Test
+    fun `requireChangedOriginsFresh fails when a touched origin produced no fresh report`() {
+        val delta = ChangeDelta(touchedOrigins = setOf("a", "b"), freshOrigins = setOf("a"))
+        val failed = promotedGates(GateConfig(requireChangedOriginsFresh = true), emptyList(), true, delta = delta).single()
+        assertEquals("changed origins measured", failed.gate)
+        assertEquals(GateStatus.FAILED, failed.status)
+        assertTrue(failed.detail.contains("b"))
+    }
+
+    @Test
+    fun `requireChangedOriginsFresh passes when every touched origin is fresh`() {
+        val delta = ChangeDelta(touchedOrigins = setOf("a"), freshOrigins = setOf("a"))
+        val passed = promotedGates(GateConfig(requireChangedOriginsFresh = true), emptyList(), true, delta = delta).single()
+        assertEquals(GateStatus.PASSED, passed.status)
     }
 }

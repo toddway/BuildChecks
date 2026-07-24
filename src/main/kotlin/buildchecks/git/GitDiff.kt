@@ -32,6 +32,16 @@ class GitDiff(private val root: File) {
     fun defaultBranch(): String? =
         capture("git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD")?.trim()?.takeIf { it.isNotEmpty() }
 
+    /**
+     * The contents of [path] at [ref] (`git show <ref>:<path>`), or null when the file didn't exist
+     * at that ref, the ref doesn't resolve, or git is unavailable. Retries `origin/<ref>` for a bare
+     * branch name, mirroring [changedLines], so a base ref like `main` still reads on a CI checkout
+     * that only has the remote-tracking ref. Feeds the 4.2 baseline- and config-diff signals.
+     */
+    fun show(ref: String, path: String): String? =
+        capture("git", "show", "$ref:$path")
+            ?: if ("/" in ref) null else capture("git", "show", "origin/$ref:$path")
+
     private fun diff(ref: String): ChangedLines {
         val process = try {
             ProcessBuilder("git", "diff", "--unified=0", "--no-color", "--find-renames", "$ref...HEAD")

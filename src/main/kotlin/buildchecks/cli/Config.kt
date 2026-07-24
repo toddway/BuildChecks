@@ -45,6 +45,19 @@ fun loadConfig(
     return toml.toConfig()
 }
 
+/**
+ * Parses config from raw TOML text — a `git show <ref>:buildchecks.toml` blob, for the 4.2
+ * config-diff signal. Best-effort: returns null if interpolation or decoding fails, since a
+ * confidence signal must never break the run (and a base-ref config may reference env vars that
+ * aren't set now).
+ */
+fun parseConfigText(text: String, env: (String) -> String? = System::getenv): Config? =
+    try {
+        Toml.decodeFromString(TomlSchema.serializer(), interpolate(text, env)).toConfig()
+    } catch (e: Exception) {
+        null
+    }
+
 private fun interpolate(text: String, env: (String) -> String?): String =
     Regex("\\$\\{([A-Za-z_][A-Za-z0-9_]*)}").replace(text) { match ->
         val name = match.groupValues[1]
@@ -74,6 +87,8 @@ private data class TomlSchema(
             minChangedLineCoverage = gates.minChangedLineCoverage,
             failOnSkippedGates = gates.failOnSkippedGates,
             requireBaseRef = gates.requireBaseRef,
+            failOnBaselineLoosened = gates.failOnBaselineLoosened,
+            requireChangedOriginsFresh = gates.requireChangedOriginsFresh,
         ),
         git = GitConfig(
             baseRef = git.baseRef,
@@ -101,6 +116,8 @@ private data class GatesToml(
     @SerialName("min_changed_line_coverage") val minChangedLineCoverage: Int? = null,
     @SerialName("fail_on_skipped_gates") val failOnSkippedGates: Boolean = false,
     @SerialName("require_base_ref") val requireBaseRef: Boolean = false,
+    @SerialName("fail_on_baseline_loosened") val failOnBaselineLoosened: Boolean = false,
+    @SerialName("require_changed_origins_fresh") val requireChangedOriginsFresh: Boolean = false,
 )
 
 @Serializable

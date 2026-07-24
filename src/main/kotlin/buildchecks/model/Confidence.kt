@@ -13,8 +13,8 @@ package buildchecks.model
  * FAILED [GateResult] — the exit code stays entirely a function of the gates.
  *
  * Delta signals that need a git base ref (baseline diff, config diff, change-scoped freshness;
- * V4-PLAN §11 4.2) are additional [ConfidenceReason]s on this same axis — they widen the builder's
- * inputs, not this type.
+ * V4-PLAN §11 4.2) are additional [ConfidenceReason]s on this same axis, fed by a [ChangeDelta] —
+ * they widened the builder's inputs, not this type.
  */
 data class Confidence(val reasons: List<ConfidenceReason>) {
     /** Derived, single-sourced: no reasons is full confidence; any MAJOR reason is the low tier. */
@@ -52,12 +52,16 @@ data class ConfidenceReason(
  * [newReportLabels] are the (origin, kind) sources ingested this run but absent from the baseline
  * manifest — computed by the caller (which owns the gate-package OriginKind type) and passed in as
  * plain labels, keeping this model function free of any outward dependency.
+ *
+ * [delta] carries the base-ref delta facts (V4-PLAN §11 4.2), likewise pre-computed at the cli/git
+ * boundary; null when no base ref resolved, in which case no delta signal contributes.
  */
 fun confidence(
     gates: List<GateResult>,
     freshness: Freshness?,
     notUnderstood: List<String>,
     newReportLabels: List<String>,
+    delta: ChangeDelta? = null,
 ): Confidence {
     val reasons = mutableListOf<ConfidenceReason>()
 
@@ -98,7 +102,51 @@ fun confidence(
         )
     }
 
+    // Base-ref delta signals (4.2). Each is MAJOR: it means either the change wasn't re-measured, or
+    // the ruler moved in this same change — both drop a green verdict to LOW until a reviewer looks.
+    if (delta != null) deltaReasons(delta, reasons)
+
     return Confidence(reasons)
+}
+
+private fun deltaReasons(delta: ChangeDelta, reasons: MutableList<ConfidenceReason>) {
+    val stale = delta.staleChangedOrigins
+    if (delta.touchedOrigins.isNotEmpty() && stale.isNotEmpty()) {
+        reasons += ConfidenceReason(
+            "changed-origins-stale",
+            "this change touched ${delta.touchedOrigins.size} ${plural(delta.touchedOrigins.size, "origin")}, " +
+                "${stale.size} with no fresh report this run (${stale.sorted().joinToString(", ")}) — " +
+                "the change may not have been re-measured",
+            ConfidenceWeight.MAJOR,
+        )
+    }
+
+    if (delta.baselineLoosened) {
+        val parts = buildList {
+            if (delta.baselineFindingsAccepted > 0)
+                add("${delta.baselineFindingsAccepted} ${plural(delta.baselineFindingsAccepted, "finding")} newly accepted")
+            delta.baselineCoverageLowered?.let { add("coverage floor down %.2f%%".format(it)) }
+            if (delta.baselineReportsDropped.isNotEmpty())
+                add("${delta.baselineReportsDropped.size} expected " +
+                    "${plural(delta.baselineReportsDropped.size, "report")} dropped " +
+                    "(${delta.baselineReportsDropped.joinToString(", ")})")
+        }
+        reasons += ConfidenceReason(
+            "baseline-loosened",
+            "baseline loosened vs the base ref: ${parts.joinToString(", ")} — " +
+                "checks that would have failed at the base ref now pass",
+            ConfidenceWeight.MAJOR,
+        )
+    }
+
+    if (delta.configLoosened.isNotEmpty()) {
+        reasons += ConfidenceReason(
+            "config-loosened",
+            "${delta.configLoosened.size} gate ${plural(delta.configLoosened.size, "setting")} loosened vs the " +
+                "base ref (${delta.configLoosened.joinToString(", ")}) — the ruler moved in this same change",
+            ConfidenceWeight.MAJOR,
+        )
+    }
 }
 
 private fun plural(n: Int, word: String) = if (n == 1) word else "${word}s"

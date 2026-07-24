@@ -1,6 +1,6 @@
 # BuildChecks v4 — Implementation Plan
 
-**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Post-v1: the **4.1 run-confidence axis** (§11 item 7) has landed in code (unreleased) — a `Confidence` axis on `CheckSummary`, the new-report notice, and the `fail_on_skipped_gates`/`require_base_ref` promotions. Remaining items are the rest of the deferred post-v1 roadmap in §11 (4.2 next: the base-ref delta signals).
+**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Post-v1: the **run-confidence axis** (§11 item 7) has landed in code (unreleased) — 4.1 (the `Confidence` axis on `CheckSummary`, the new-report notice, `fail_on_skipped_gates`/`require_base_ref`) and 4.2 (base-ref delta signals: baseline diff, config diff, change-scoped freshness, plus `fail_on_baseline_loosened`/`require_changed_origins_fresh`). Remaining items are the rest of the deferred post-v1 roadmap in §11 (PIT #1, advisory gates #6, etc.).
 **Repo:** `toddway/BuildChecks` (v4 developed in place; `3.3.2` tagged as the final Gradle-plugin release)
 **License:** Apache 2.0 (unchanged)
 
@@ -455,13 +455,14 @@ Marketplace listing is optional and not required for distribution; the pipeline 
        Promotions (`fail_on_skipped_gates`, `require_base_ref`) are a post-evaluation `promotedGates()`
        step appending ordinary FAILED `GateResult`s. Rendered in all five human-facing renderers +
        `summary.json` (additive, `schemaVersion` unchanged).
-   - **4.2 (needs a base ref → CI PR dogfooding):** a **baseline diff** (`git show <ref>:baseline`
-     vs the on-disk baseline we gated with — the git-backed companion to changed-line coverage,
-     reusing the same base-ref resolution) surfacing findings added/removed, coverage-threshold
-     delta, and manifest changes; a **config diff** (`git show <ref>:buildchecks.toml`) catching a
-     threshold lowered or a gate disabled in the same PR; both feeding the same axis, plus
-     `failOnBaselineLoosened`. Compare against the on-disk file we *used* (HEAD-vs-working-tree
-     decided deliberately). The base ref is auto-detected across CI providers as of 4.0.5.
+   - **4.2 (needs a base ref → CI PR dogfooding) — LANDED (2026-07-24):** a **baseline diff**
+     (`git show <ref>:baseline` vs the on-disk baseline we gated with — the git-backed companion to
+     changed-line coverage, reusing the same base-ref resolution) surfacing loosening only (findings
+     newly accepted, a lowered coverage floor, dropped manifest entries); a **config diff**
+     (`git show <ref>:buildchecks.toml`) catching a threshold lowered or a gate/promotion disabled in
+     the same change; both feeding the same axis, plus `failOnBaselineLoosened`. Compares against the
+     on-disk files we *used* (HEAD-vs-working-tree decided deliberately). The base ref is auto-detected
+     across CI providers as of 4.0.5.
      - **change-scoped freshness** (the strongest confidence signal, added 2026-07-24): today
        freshness is absolute age; the higher-value question is whether the *change* was actually
        measured. Map each changed file (already computed for changed-line coverage) to its origin,
@@ -470,6 +471,22 @@ Marketplace listing is optional and not required for distribution; the pipeline 
        on a PR whose touched modules didn't re-run is exactly the low-confidence case the axis
        exists to surface. Reuses the changed-file set (phase 5), origin derivation (§5.5), and
        `Freshness` (§3) — no new inputs. Optional promotion knob `requireChangedOriginsFresh`.
+     - **As built:** one model type `ChangeDelta` (plain facts, no gate/cli dependency) computed at
+       the cli/git boundary and fed to both `confidence()` (phrasing + weights) and `promotedGates()`
+       (enforcement). New `GitDiff.show(ref, path)` (with the same `origin/<ref>` retry as the diff)
+       reads the base-ref blobs; `parseBaseline(lines)` was extracted so a blob parses without disk;
+       `baselineDelta()` (gate) and `configLoosened()` (cli) compute the loosening; `changedOrigins()`
+       / `freshChangedOrigins()` (cli) do the change-scoped freshness, matching changed paths against
+       present + manifest origins so a touched-but-silent module still registers. All three delta
+       signals are **MAJOR** (drop to LOW): they mean the change wasn't re-measured, or the ruler
+       moved in the same change. Base-ref resolution is now attempted on every run (confidence is
+       always-shown) and returns null off a PR; the changed-line *coverage* section stays gated on its
+       own knob. Two promotions added: `fail_on_baseline_loosened`, `require_changed_origins_fresh`
+       (off by default). Rendered by the existing generic reason loop in all five human renderers +
+       `summary.json` (no per-renderer change; `schemaVersion` unchanged). Tests: `BaselineDeltaTest`,
+       `ConfigDeltaTest`, extended `ConfidenceTest`/`PromotionTest`/`OriginsTest`, and a `VerbsTest`
+       end-to-end (loosened config + grown baseline → green but LOW). Dogfood green, confidence HIGH
+       (single-origin repo, nothing loosened vs origin/main); no re-baseline needed.
 
    Out of scope (holds §1): no in-report re-implementation of the git diff of the committed baseline
    file — a reviewer already sees that in the PR; confidence surfaces the *summary* of the change,
