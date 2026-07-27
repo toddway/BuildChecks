@@ -75,17 +75,27 @@ class PromotionTest {
     }
 
     @Test
-    fun `requireChangedOriginsFresh fails when a touched origin produced no fresh report`() {
-        val delta = ChangeDelta(touchedOrigins = setOf("a", "b"), freshOrigins = setOf("a"))
+    fun `requireChangedOriginsFresh fails when a measured touched origin has only a stale report`() {
+        // b was measured (reported) but its report is stale (not fresh); a is fresh.
+        val delta = ChangeDelta(touchedOrigins = setOf("a", "b"), reportedOrigins = setOf("a", "b"), freshOrigins = setOf("a"))
         val failed = promotedGates(GateConfig(requireChangedOriginsFresh = true), emptyList(), true, delta = delta).single()
         assertEquals("changed origins measured", failed.gate)
         assertEquals(GateStatus.FAILED, failed.status)
         assertTrue(failed.detail.contains("b"))
+        assertTrue(failed.detail.contains("stale"))
     }
 
     @Test
-    fun `requireChangedOriginsFresh passes when every touched origin is fresh`() {
-        val delta = ChangeDelta(touchedOrigins = setOf("a"), freshOrigins = setOf("a"))
+    fun `requireChangedOriginsFresh passes when every measured touched origin is fresh`() {
+        val delta = ChangeDelta(touchedOrigins = setOf("a"), reportedOrigins = setOf("a"), freshOrigins = setOf("a"))
+        val passed = promotedGates(GateConfig(requireChangedOriginsFresh = true), emptyList(), true, delta = delta).single()
+        assertEquals(GateStatus.PASSED, passed.status)
+    }
+
+    @Test
+    fun `requireChangedOriginsFresh passes when a touched origin produced no report at all`() {
+        // Absence isn't evidence of a missed check — that's the expected-reports gate's job, not this one.
+        val delta = ChangeDelta(touchedOrigins = setOf("b"), reportedOrigins = emptySet(), freshOrigins = emptySet())
         val passed = promotedGates(GateConfig(requireChangedOriginsFresh = true), emptyList(), true, delta = delta).single()
         assertEquals(GateStatus.PASSED, passed.status)
     }

@@ -3,6 +3,7 @@ package buildchecks.render
 import buildchecks.model.ChangedFileCoverage
 import buildchecks.model.ChangedLineCoverage
 import buildchecks.model.CheckSummary
+import buildchecks.model.ConfidenceWeight
 import buildchecks.model.Freshness
 import buildchecks.model.GateStatus
 import buildchecks.model.Severity
@@ -123,9 +124,35 @@ class HtmlReport : Renderer {
             p("muted") {
                 +"Why confidence is "
                 em { +summary.confidence.level.name.lowercase() }
-                +" — each reduces how much this verdict is worth, but none changes pass/fail:"
+                +" — each reason lowers it; none change pass/fail:"
             }
-            ul { reasons.forEach { li { +it.summary } } }
+            // MAJOR-first so the reason actually driving the verdict leads, not a benign MINOR below it.
+            val ordered = reasons.sortedByDescending { it.weight == ConfidenceWeight.MAJOR }
+            ul {
+                ordered.forEach { reason ->
+                    li {
+                        weightBadge(reason.weight)
+                        +" "
+                        val help = CONFIDENCE_REASON_HELP[reason.signal]
+                        if (help != null) span("help") { title = help; +reason.summary }
+                        else +reason.summary
+                    }
+                }
+            }
+        }
+    }
+
+    // Per-reason severity chip: MAJOR (drops the whole verdict to LOW) vs MINOR (caps it at MEDIUM).
+    private fun FlowOrPhrasingContent.weightBadge(weight: ConfidenceWeight) {
+        val major = weight == ConfidenceWeight.MAJOR
+        span("badge ${if (major) "weight-major" else "weight-minor"}") {
+            title = if (major)
+                "MAJOR — an intended check did not run at all this run, so on its own it drops the " +
+                    "overall confidence to LOW."
+            else
+                "MINOR — the check ran but something makes it worth a little less; on its own it caps " +
+                    "confidence at MEDIUM and never forces LOW."
+            +weight.name
         }
     }
 
@@ -163,19 +190,9 @@ class HtmlReport : Renderer {
     private fun BODY.gates(summary: CheckSummary) {
         section {
             h2 { +"Gates" }
-            p("muted") {
-                +("The pass/fail rules this run was checked against — any FAIL fails the build " +
-                    "(non-zero exit). Each detail reads ")
-                em { +"measured value (limit)" }
-                +". Limits marked "
-                em { +"baseline" }
-                +" come from the committed snapshot of the last accepted state ("
-                code { +"buildchecks baseline" }
-                +("), so those numbers can only hold steady or improve; the rest are from this " +
-                    "project's configuration. Hover a gate name for what it checks.")
-            }
+            p("muted") { +"The pass/fail rules this build was checked against — any FAIL fails the build." }
             table {
-                thead { tr { th { +"Gate" }; th { +"Status" }; th { +"Detail" } } }
+                thead { tr { th { +"Gate" }; th { +"Status" }; th { help("Detail", DETAIL_EXPLANATION) } } }
                 tbody {
                     summary.gates.forEach { result ->
                         tr {
@@ -207,6 +224,9 @@ class HtmlReport : Renderer {
             links.forEachIndexed { index, file ->
                 if (index > 0) +" · "
                 a(href = file.toolReport!!) { +linkLabel(file.path) }
+                // Flag the individual report here, not only on the section total, so a reader sees
+                // exactly which of these inputs is the age-outlier.
+                staleChip(file.path, summary.freshness)
             }
         }
     }
@@ -228,9 +248,9 @@ class HtmlReport : Renderer {
             p("muted") {
                 +"Every issue the ingested analysis tools reported. "
                 help("NEW", NEW_EXPLANATION)
-                +" marks findings introduced since the baseline snapshot"
+                +" marks findings added since the baseline"
                 if (summary.hasBaseline) {
-                    +" — shown on their own by default (the rest are already in the baseline); clear "
+                    +"; only these show by default — clear "
                     em { +"new only" }
                     +" to see all."
                 } else +"."
@@ -318,10 +338,7 @@ class HtmlReport : Renderer {
                 +"Tests (${summary.tests.size} total, ${failed.size} failed, $skipped skipped)"
                 staleAggregateChip(summary, setOf("junit"))
             }
-            p("muted") {
-                +("From the JUnit XML the test runs wrote. Failures are listed here; " +
-                    "full output is in the tool reports.")
-            }
+            p("muted") { +"From the ingested JUnit results — only failures are listed below." }
             toolLinks(summary, setOf("junit"))
             if (failed.isEmpty()) {
                 p { +"All tests passed." }
@@ -352,8 +369,7 @@ class HtmlReport : Renderer {
             }
             p("muted") {
                 +("${"%,d".format(coverage.linesCovered)} of ${"%,d".format(coverage.linesTotal)} " +
-                    "executable lines covered, totaled across every ingested coverage report. This is the " +
-                    "number the coverage gates check. For line-by-line annotated source, open the tool reports.")
+                    "executable lines covered, across every ingested coverage report — the figure the coverage gate checks.")
             }
             toolLinks(summary, setOf("jacoco", "cobertura", "lcov"))
             details {
@@ -389,11 +405,10 @@ class HtmlReport : Renderer {
         section {
             h2 { +"Changed lines not covered (${measured.executableCount - measured.coveredCount})" }
             p("muted") {
-                +"Executable lines this diff added or changed relative to "
+                +"Lines this diff added or changed relative to "
                 code { +measured.baseRef }
-                +(" that no test exercised — the gaps behind the changed-line coverage gate " +
-                    "(${"%.2f".format(measured.percent)}% of ${measured.executableCount} covered). " +
-                    "Where a coverage tool wrote an HTML report, the file links into it.")
+                +(" that no test covered — ${"%.2f".format(measured.percent)}% of " +
+                    "${measured.executableCount} changed lines are covered.")
             }
             table(classes = "sortable") {
                 thead {
@@ -490,12 +505,23 @@ class HtmlReport : Renderer {
         const val NEW_EXPLANATION = "Not present in the baseline snapshot (buildchecks-baseline.txt) — " +
             "introduced since the last `buildchecks baseline` run."
 
+        const val DETAIL_EXPLANATION = "Reads \"measured value (limit)\". A limit marked \"baseline\" comes " +
+            "from the committed snapshot of the last accepted state (buildchecks baseline), so it can only " +
+            "hold steady or improve; the rest come from this project's configuration."
+
         const val CONFIDENCE_EXPLANATION = "How completely the checks actually ran, separate from " +
             "pass/fail. PASSED says the tracked metrics held; confidence says how much that's worth — " +
             "a skipped gate, an unreadable or stale report, or a not-yet-baselined source each lower " +
             "it, as does — vs the git base ref — a touched module that didn't re-run, a loosened " +
             "baseline, or a loosened gate setting in this same change. Informational: it never " +
             "changes the exit code."
+
+        // Per-reason tooltips for confidence signals whose wording needs unpacking. Keyed by the
+        // ConfidenceReason.signal id so the model stays free of presentation text.
+        val CONFIDENCE_REASON_HELP = mapOf(
+            "changed-origins-stale" to "An origin is a module or source group BuildChecks measures, " +
+                "grouped by where its reports are written.",
+        )
 
         val GATE_EXPLANATIONS = mapOf(
             "findings" to "Checked two ways against the baseline: no new findings beyond the allowed " +
@@ -521,9 +547,11 @@ class HtmlReport : Renderer {
             "baseline not loosened" to "Fails when the baseline was loosened vs the git base ref — " +
                 "findings accepted, the coverage floor lowered, or an expected report dropped in this " +
                 "same change (config fail_on_baseline_loosened). Off by default; normally only lowers confidence.",
-            "changed origins measured" to "Fails when a module this change touched produced no fresh " +
-                "report this run (config require_changed_origins_fresh) — the change may not have been " +
-                "re-measured. Off by default; normally only lowers confidence.",
+            "changed origins measured" to "Fails when a module this change touched produced only a stale " +
+                "report this run — one older than the freshest, so the change may not have been re-measured " +
+                "(config require_changed_origins_fresh). A module that emitted no report at all is not " +
+                "counted here; use the expected-reports gate to require a report's presence. Off by " +
+                "default; normally only lowers confidence.",
         )
 
         val CSS = resource("report.css")

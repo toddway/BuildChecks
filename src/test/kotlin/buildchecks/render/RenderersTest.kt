@@ -292,6 +292,51 @@ class RenderersTest {
     }
 
     @Test
+    fun `confidence reasons carry weight badges, lead with MAJOR, and explain the root origin`() {
+        val conf = confidence(
+            gates = emptyList(),
+            freshness = null,
+            notUnderstood = emptyList(),
+            newReportLabels = listOf("junit in web"), // MINOR: new-report
+            // MAJOR: a touched origin measured only by a stale report — here the root bucket "."
+            delta = buildchecks.model.ChangeDelta(
+                touchedOrigins = setOf("."), reportedOrigins = setOf("."), freshOrigins = emptySet()),
+        )
+        val html = HtmlReport().render(summary.copy(confidence = conf))
+        // both severities render as chips
+        assertTrue(html.contains("class=\"badge weight-major\""))
+        assertTrue(html.contains("class=\"badge weight-minor\""))
+        // MAJOR reason leads its MINOR sibling regardless of assembly order
+        assertTrue(html.indexOf("weight-major") < html.indexOf("weight-minor"), "MAJOR should lead")
+        // the bare "." is spelled out for the reader, and the reason carries a short term tooltip
+        assertTrue(html.contains("(repository root)"))
+        assertTrue(html.contains("An origin is a module or source group"))
+    }
+
+    @Test
+    fun `a stale tool report is flagged in the section's report list, not only the total`() {
+        val s = CheckSummary(
+            gates = emptyList(), findings = emptyList(), tests = emptyList(),
+            coverage = CoverageData(listOf(FileCoverage("Cov.kt", listOf(LineCoverage(1, 0))))),
+            files = listOf(
+                IngestedFile("build/reports/jacoco/fresh.xml", "jacoco", 0, ParsedReport(),
+                    toolReport = "tools/jacoco-fresh/index.html"),
+                IngestedFile("build/reports/jacoco/old.xml", "jacoco", 0, ParsedReport(),
+                    toolReport = "tools/jacoco-old/index.html"),
+            ),
+            notUnderstood = emptyList(),
+            freshness = Freshness(
+                mapOf("build/reports/jacoco/fresh.xml" to 0, "build/reports/jacoco/old.xml" to 90),
+                toleranceMinutes = 15,
+            ),
+        )
+        val html = HtmlReport().render(s)
+        // the Tool reports: line links both, with a stale? chip only on the outlier's link
+        assertTrue(html.contains("tools/jacoco-old/index.html"))
+        assertTrue(html.contains("From build/reports/jacoco/old.xml, 90 min old"))
+    }
+
+    @Test
     fun `changed-line coverage renders above tests and whole-project coverage`() {
         val measured = ChangedLineCoverage.Measured(
             "origin/main",

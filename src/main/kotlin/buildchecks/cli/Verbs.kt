@@ -235,6 +235,7 @@ private fun changeDelta(
     val touched = (changedLines as? ChangedLines.Diff)
         ?.let { changedOrigins(it.files.keys, files, manifestOrigins) }
         ?: emptySet()
+    val reported = reportedChangedOrigins(touched, files)
     val fresh = freshChangedOrigins(touched, files, freshness)
 
     val baseBaseline = git.show(ref, config.git.baselineFile)?.let { parseBaseline(it.lines()) }
@@ -245,6 +246,7 @@ private fun changeDelta(
 
     return ChangeDelta(
         touchedOrigins = touched,
+        reportedOrigins = reported,
         freshOrigins = fresh,
         baselineFindingsAccepted = baselineDiff?.findingsAccepted ?: 0,
         baselineCoverageLowered = baselineDiff?.coverageLowered,

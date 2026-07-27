@@ -137,7 +137,13 @@ class HtmlReportPreviewTest {
                 filesWithoutData = 1,
             ),
             freshness = freshness,
-            confidence = confidence(gates, freshness, notUnderstood, newReportLabels),
+            // Also exercise a base-ref delta MAJOR: the change touched module "web", which produced a
+            // report this run but a stale one (older than the freshest), so it may not have been
+            // re-measured. A touched origin with *no* report is deliberately not flagged, so it isn't
+            // shown here.
+            confidence = confidence(gates, freshness, notUnderstood, newReportLabels,
+                delta = buildchecks.model.ChangeDelta(
+                    touchedOrigins = setOf("web"), reportedOrigins = setOf("web"), freshOrigins = emptySet())),
         )
     }
 }

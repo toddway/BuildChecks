@@ -79,7 +79,8 @@ fun confidence(
         reasons += ConfidenceReason(
             "stale-reports",
             "ingested reports span ${freshness.spreadMinutes} min in age " +
-                "(tolerance ${freshness.toleranceMinutes}) — some numbers may predate the latest build",
+                "(tolerance ${freshness.toleranceMinutes}) — some numbers may predate the latest build " +
+                "(expected on an incremental build where unchanged modules weren't rebuilt)",
             ConfidenceWeight.MINOR,
         )
     }
@@ -111,12 +112,11 @@ fun confidence(
 
 private fun deltaReasons(delta: ChangeDelta, reasons: MutableList<ConfidenceReason>) {
     val stale = delta.staleChangedOrigins
-    if (delta.touchedOrigins.isNotEmpty() && stale.isNotEmpty()) {
+    if (stale.isNotEmpty()) {
         reasons += ConfidenceReason(
             "changed-origins-stale",
-            "this change touched ${delta.touchedOrigins.size} ${plural(delta.touchedOrigins.size, "origin")}, " +
-                "${stale.size} with no fresh report this run (${stale.sorted().joinToString(", ")}) — " +
-                "the change may not have been re-measured",
+            "${stale.size} changed ${plural(stale.size, "origin")} produced only a stale report this run " +
+                "(${stale.sorted().joinToString(", ") { displayOrigin(it) }}) — may not reflect this change",
             ConfidenceWeight.MAJOR,
         )
     }
@@ -150,3 +150,10 @@ private fun deltaReasons(delta: ChangeDelta, reasons: MutableList<ConfidenceReas
 }
 
 private fun plural(n: Int, word: String) = if (n == 1) word else "${word}s"
+
+/**
+ * A bare "." (the root origin, cli.ROOT_ORIGIN — the catch-all for changed files that map to no
+ * measured module: build scripts, docs, other non-source) is meaningless to a reader, so name it.
+ * The literal is the documented root marker; this is display-only and adds no dependency on `cli`.
+ */
+private fun displayOrigin(origin: String) = if (origin == ".") "repository root" else origin

@@ -10,7 +10,9 @@ package buildchecks.model
 data class ChangeDelta(
     /** Origins (module/source groups) this change touched, from the diffed file set. */
     val touchedOrigins: Set<String> = emptySet(),
-    /** Of [touchedOrigins], those that produced a fresh (non age-outlier) report this run. */
+    /** Of [touchedOrigins], those that produced *any* ingested report this run (fresh or stale). */
+    val reportedOrigins: Set<String> = emptySet(),
+    /** Of [reportedOrigins], those whose report is fresh (non age-outlier). */
     val freshOrigins: Set<String> = emptySet(),
     /** Findings newly accepted into the on-disk baseline vs the base ref (would have failed before). */
     val baselineFindingsAccepted: Int = 0,
@@ -21,8 +23,15 @@ data class ChangeDelta(
     /** Gate settings loosened in buildchecks.toml vs the base ref (display labels). */
     val configLoosened: List<String> = emptyList(),
 ) {
-    /** Touched origins with no fresh report this run — the change may not have been re-measured. */
-    val staleChangedOrigins: Set<String> get() = touchedOrigins - freshOrigins
+    /**
+     * Touched origins whose only report this run is a stale age-outlier — BuildChecks *did* ingest a
+     * report for them, but it predates the freshest this run, so the change may not have been
+     * re-measured. Deliberately excludes touched origins that produced *no* report at all: BuildChecks
+     * has no notion of which origins ought to emit a report, so absence is not evidence a check fell —
+     * that (baseline-recorded) expectation is the [buildchecks.gate.MissingReportGate]'s job, not this
+     * inference's. So this is `reported − fresh`, never `touched − fresh`.
+     */
+    val staleChangedOrigins: Set<String> get() = reportedOrigins - freshOrigins
 
     val baselineLoosened: Boolean
         get() = baselineFindingsAccepted > 0 || baselineCoverageLowered != null || baselineReportsDropped.isNotEmpty()

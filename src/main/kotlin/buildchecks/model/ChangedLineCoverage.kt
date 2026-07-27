@@ -70,8 +70,17 @@ private fun measure(diff: ChangedLines.Diff, coverage: CoverageData?): ChangedLi
         val (covered, uncovered) = executable.partition { hits.getValue(it) > 0 }
         files += ChangedFileCoverage(path, covered, uncovered)
     }
-    if (files.isEmpty())
-        return ChangedLineCoverage.Unavailable("no executable changed lines vs ${diff.baseRef}")
+    if (files.isEmpty()) {
+        // The bare fact is confusing when a diff plainly exists, so name the usual cause: the changed
+        // files carry no coverage data at all (build logic, non-source, or an uninstrumented module),
+        // which is exactly filesWithoutData. Zero of those means the changed lines matched a report but
+        // none were executable (blanks/comments/generated) — the original terse message still fits.
+        val suffix = if (filesWithoutData > 0)
+            " ($filesWithoutData changed ${if (filesWithoutData == 1) "file" else "files"} had no matching " +
+                "coverage data — e.g. build logic, non-source, or a module no ingested report covers)"
+        else ""
+        return ChangedLineCoverage.Unavailable("no executable changed lines vs ${diff.baseRef}$suffix")
+    }
     return ChangedLineCoverage.Measured(diff.baseRef, files, filesWithoutData)
 }
 

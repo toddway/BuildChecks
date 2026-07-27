@@ -64,10 +64,10 @@ fun promotedGates(
             delta == null ->
                 GateResult("changed origins measured", GateStatus.PASSED, "no base ref to identify changed origins")
             stale.isEmpty() ->
-                GateResult("changed origins measured", GateStatus.PASSED, "every changed origin produced a fresh report")
+                GateResult("changed origins measured", GateStatus.PASSED, "every measured changed origin produced a fresh report")
             else -> GateResult(
                 "changed origins measured", GateStatus.FAILED,
-                "${stale.size} changed origin(s) produced no fresh report: ${stale.sorted().joinToString(", ")}",
+                "${stale.size} changed origin(s) produced only a stale report: ${stale.sorted().joinToString(", ")}",
             )
         }
     }

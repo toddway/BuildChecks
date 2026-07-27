@@ -77,23 +77,42 @@ class ConfidenceTest {
     }
 
     @Test
-    fun `a touched origin with no fresh report is MAJOR and drops to LOW`() {
+    fun `a touched origin with only a stale report is MAJOR and drops to LOW`() {
+        // services/web was measured (it has a report) but that report is a stale age-outlier.
         val c = confidence(
             gates = emptyList(), freshness = null, notUnderstood = emptyList(), newReportLabels = emptyList(),
-            delta = ChangeDelta(touchedOrigins = setOf("services/auth", "services/web"), freshOrigins = setOf("services/auth")),
+            delta = ChangeDelta(
+                touchedOrigins = setOf("services/auth", "services/web"),
+                reportedOrigins = setOf("services/auth", "services/web"),
+                freshOrigins = setOf("services/auth"),
+            ),
         )
         assertEquals(ConfidenceLevel.LOW, c.level)
         val reason = c.reasons.single()
         assertEquals("changed-origins-stale", reason.signal)
         assertEquals(ConfidenceWeight.MAJOR, reason.weight)
         assertTrue(reason.summary.contains("services/web"))
+        assertTrue(reason.summary.contains("stale report"))
     }
 
     @Test
-    fun `every touched origin fresh contributes no reason`() {
+    fun `a touched origin that produced no report at all is not flagged`() {
+        // The core narrowing: absence of a report is not evidence a check fell (BuildChecks has no
+        // notion of which origins should emit one), so a touched-but-unreported origin contributes
+        // nothing here — the expected-reports gate owns the "a report went missing" concern.
+        val c = confidence(
+            gates = emptyList(), freshness = null, notUnderstood = emptyList(), newReportLabels = emptyList(),
+            delta = ChangeDelta(touchedOrigins = setOf("."), reportedOrigins = emptySet(), freshOrigins = emptySet()),
+        )
+        assertEquals(ConfidenceLevel.HIGH, c.level)
+        assertTrue(c.reasons.isEmpty())
+    }
+
+    @Test
+    fun `every touched-and-measured origin fresh contributes no reason`() {
         val c = confidence(
             emptyList(), null, emptyList(), emptyList(),
-            delta = ChangeDelta(touchedOrigins = setOf("a"), freshOrigins = setOf("a")),
+            delta = ChangeDelta(touchedOrigins = setOf("a"), reportedOrigins = setOf("a"), freshOrigins = setOf("a")),
         )
         assertEquals(ConfidenceLevel.HIGH, c.level)
     }

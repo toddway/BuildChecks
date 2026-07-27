@@ -46,9 +46,18 @@ fun changedOrigins(changedFiles: Set<String>, files: List<IngestedFile>, manifes
 }
 
 /**
- * Of [origins], those that produced a fresh (non age-outlier) report this run. An origin with no
- * ingested report, or only stale-outlier reports, is absent — the signature of a touched module that
- * did not re-run. Reuses [Freshness.outlier] (§3), so a uniformly-aged build flags nothing.
+ * Of [origins], those that produced *any* ingested report this run, regardless of age. The dividing
+ * line for change-scoped freshness: only an origin BuildChecks actually measured can be judged stale.
+ * An origin with no report is simply not evidence of a missed check (BuildChecks doesn't know which
+ * origins should emit reports), so it is excluded here rather than flagged — see [ChangeDelta].
+ */
+fun reportedChangedOrigins(origins: Set<String>, files: List<IngestedFile>): Set<String> =
+    origins.filter { o -> files.any { origin(it.path) == o } }.toSet()
+
+/**
+ * Of [origins], those that produced a fresh (non age-outlier) report this run. An origin with only
+ * stale-outlier reports is absent — the signature of a touched module that did not re-run. Reuses
+ * [Freshness.outlier] (§3), so a uniformly-aged build flags nothing.
  */
 fun freshChangedOrigins(origins: Set<String>, files: List<IngestedFile>, freshness: Freshness?): Set<String> =
     origins.filter { o -> files.any { origin(it.path) == o && freshness?.outlier(it.path) != true } }.toSet()
