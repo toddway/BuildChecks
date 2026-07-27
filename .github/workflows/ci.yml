@@ -13,12 +13,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
 
       - run: ./gradlew build                       # compile + tests → JUnit XML + JaCoCo XML
       - name: BuildChecks gate
@@ -29,7 +29,7 @@ jobs:
       - name: Upload BuildChecks report
         if: always()
         id: report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buildchecks-report                 # zip includes index.html + copied sub-reports
           path: build/reports/buildchecks
