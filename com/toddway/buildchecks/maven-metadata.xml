@@ -3,11 +3,11 @@
   <groupId>com.toddway</groupId>
   <artifactId>buildchecks</artifactId>
   <versioning>
-    <latest>4.0.7</latest>
-    <release>4.0.7</release>
+    <latest>4.0.8</latest>
+    <release>4.0.8</release>
     <versions>
-      <version>4.0.7</version>
+      <version>4.0.8</version>
     </versions>
-    <lastUpdated>20260724201223</lastUpdated>
+    <lastUpdated>20260727145259</lastUpdated>
   </versioning>
 </metadata>
