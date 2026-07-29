@@ -126,11 +126,42 @@ class RenderersTest {
     fun `summary text is a one-line gate headline for commit statuses`() {
         val line = SummaryText().render(summary)
         assertEquals(
-            "gates failed: test failures · coverage 93.24% · 4 tests, 1 failed · 1 new finding · confidence medium",
+            // One compact segment per gate that ran, failed gates first, each with its own status.
+            "1/4 test failures (FAIL), 1 new finding (PASS), confidence medium",
             line,
         )
         assertFalse(line.contains("\n"), "must be a single line")
         assertTrue(line.length <= 140, "must fit a commit-status description")
+    }
+
+    @Test
+    fun `summary text packs per-gate status, failures first, skipping skipped gates`() {
+        val gates = listOf(
+            GateResult("changed-line coverage", GateStatus.SKIPPED, "no changed lines vs dev"),
+            GateResult("findings", GateStatus.FAILED, "2 new (max 0), 3248 total (baseline max 3247)"),
+            GateResult("coverage", GateStatus.FAILED, "61.16% (min 62.08%, from baseline)"),
+            GateResult("test failures", GateStatus.PASSED, "0 failed of 4990 tests (max 0)"),
+            GateResult("expected reports", GateStatus.FAILED, "4 expected report(s) missing: junit in registration"),
+        )
+        val tests = List(4990) { TestResult("suite", "t$it", TestStatus.PASSED) }
+        val findings = List(2) {
+            ReportedFinding(
+                Finding("lint", "OldTargetApi", Severity.ERROR, "x", Location("app/build.gradle.kts", 34)),
+                "fp$it", isNew = true,
+            )
+        }
+        val summary = this.summary.copy( // reuse the fixture's 93.24% coverage
+            gates = gates,
+            findings = findings,
+            tests = tests,
+            changedLineCoverage = ChangedLineCoverage.Unavailable("no changed lines vs dev"),
+            confidence = confidence(gates, null, emptyList(), emptyList()),
+        )
+        assertEquals(
+            "2 new findings (FAIL), 93.24% coverage (FAIL), 4 missing reports (FAIL), " +
+                "0/4990 test failures (PASS), confidence low",
+            SummaryText().render(summary),
+        )
     }
 
     @Test
