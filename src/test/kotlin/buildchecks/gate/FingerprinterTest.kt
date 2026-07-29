@@ -3,6 +3,7 @@ package buildchecks.gate
 import buildchecks.model.Finding
 import buildchecks.model.Location
 import buildchecks.model.Severity
+import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -73,6 +74,24 @@ class FingerprinterTest {
         val none = emptyMap<String, List<String>>()
         assertEquals(fingerprint(finding(), none), fingerprint(finding(line = 99), none))
         assertNotEquals(fingerprint(finding(), none), fingerprint(finding(message = "Other message."), none))
+    }
+
+    @Test
+    fun `message fingerprint ignores the checkout root so a local baseline gates CI`() {
+        // detekt EmptyKtFile embeds the absolute path in its message; an empty file has no source
+        // line, so the message is what gets hashed. The fingerprint must be identical whether the
+        // repo is at /Users/dev/proj (local) or /bitrise/src (CI).
+        val none = emptyMap<String, List<String>>()
+        fun emptyFileFinding(root: String) = Finding(
+            "detekt", "EmptyKtFile", Severity.WARNING,
+            "The empty Kotlin file $root/common/base-ui/src/main/Foo.kt can be removed.",
+            Location("common/base-ui/src/main/Foo.kt", 1),
+        )
+        val local = Fingerprinter(File("/Users/dev/proj")) { none[it] }
+            .fingerprint(listOf(emptyFileFinding("/Users/dev/proj"))).single().fingerprint
+        val ci = Fingerprinter(File("/bitrise/src")) { none[it] }
+            .fingerprint(listOf(emptyFileFinding("/bitrise/src"))).single().fingerprint
+        assertEquals(local, ci)
     }
 
     @Test

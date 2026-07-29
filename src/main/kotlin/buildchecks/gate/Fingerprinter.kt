@@ -1,6 +1,7 @@
 package buildchecks.gate
 
 import buildchecks.model.Finding
+import java.io.File
 import java.security.MessageDigest
 
 data class FingerprintedFinding(val finding: Finding, val fingerprint: String)
@@ -14,7 +15,21 @@ data class FingerprintedFinding(val finding: Finding, val fingerprint: String)
  * occurrence index. Clone findings (CPD) hash their duplicated fragment plus token count
  * instead, so a new clone of old code still fingerprints as new.
  */
-class Fingerprinter(private val sourceLines: (String) -> List<String>?) {
+class Fingerprinter(
+    root: File? = null,
+    private val sourceLines: (String) -> List<String>?,
+) {
+
+    // Some tools embed the absolute checkout path in a finding's message (e.g. detekt's EmptyKtFile:
+    // "The empty Kotlin file /bitrise/src/…/Foo.kt can be removed."). When such a message is what
+    // gets hashed (empty/sourceless findings), the fingerprint would otherwise differ between a
+    // local checkout and CI's /bitrise/src, so a locally-captured baseline can't gate CI. Strip the
+    // root prefix first so the fingerprint is identical wherever the repo is checked out.
+    private val rootPrefixes: List<String> = root
+        ?.let { listOfNotNull(it.absolutePath, runCatching { it.canonicalPath }.getOrNull()) }
+        ?.distinct()
+        ?.map { it.removeSuffix("/") + "/" }
+        ?: emptyList()
 
     fun fingerprint(findings: List<Finding>): List<FingerprintedFinding> {
         val base = findings.map { it to baseFingerprint(it) }
@@ -58,8 +73,13 @@ class Fingerprinter(private val sourceLines: (String) -> List<String>?) {
         return sha256(text).take(8)
     }
 
-    // Collapse (not strip) whitespace: keeps token boundaries so "val x" != "valx".
-    private fun normalize(text: String) = text.trim().replace(whitespace, " ")
+    // Collapse (not strip) whitespace: keeps token boundaries so "val x" != "valx". Also strip any
+    // checkout-root prefix so embedded absolute paths don't make the fingerprint machine-specific.
+    private fun normalize(text: String): String {
+        var t = text
+        for (prefix in rootPrefixes) t = t.replace(prefix, "")
+        return t.trim().replace(whitespace, " ")
+    }
 
     private fun sha256(text: String): String =
         MessageDigest.getInstance("SHA-256").digest(text.toByteArray())

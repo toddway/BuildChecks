@@ -40,7 +40,7 @@ fun runCheck(
     val ingestion = ingestReports(root, config, verbose, echo)
     val merged = ingestion.files.map { it.report }.merged()
     val fingerprinted = timed("fingerprint", verbose, echo) {
-        Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
+        Fingerprinter(root, sourceLines(root)).fingerprint(merged.findings)
     }
     val baseline = FingerprintBaseline(File(root, config.git.baselineFile)).read()
     val git = GitDiff(root)
@@ -149,7 +149,7 @@ fun runBaseline(
 ): Int {
     val ingestion = ingestReports(root, config, verbose, echo)
     val merged = ingestion.files.map { it.report }.merged()
-    val fingerprinted = Fingerprinter(sourceLines(root)).fingerprint(merged.findings)
+    val fingerprinted = Fingerprinter(root, sourceLines(root)).fingerprint(merged.findings)
     val coveragePercent = merged.coverage?.linePercent
     val manifest = presentManifest(ingestion.files)
     val file = File(root, config.git.baselineFile)
