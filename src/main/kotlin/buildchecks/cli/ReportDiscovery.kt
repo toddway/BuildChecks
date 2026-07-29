@@ -18,10 +18,14 @@ class ReportDiscovery(
 
     fun discover(root: File): List<File> = root.walkTopDown()
         .onEnter { dir ->
-            dir.name !in excludedDirs &&
-                relative(root, dir) != outputDir &&
-                // Gradle's processed-resources copies of source files are not reports
-                !(dir.name == "resources" && dir.parentFile?.name == "build")
+            // The exclusions apply to descendants only — the root is always entered. Otherwise a
+            // checkout whose own directory is named like an excluded dir (e.g. Bitrise's /bitrise/src)
+            // would abort the whole walk, finding zero reports.
+            dir == root ||
+                (dir.name !in excludedDirs &&
+                    relative(root, dir) != outputDir &&
+                    // Gradle's processed-resources copies of source files are not reports
+                    !(dir.name == "resources" && dir.parentFile?.name == "build"))
         }
         .filter { it.isFile && matches(relative(root, it)) }
         .sortedBy { relative(root, it) }

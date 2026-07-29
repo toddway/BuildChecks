@@ -42,6 +42,20 @@ class ReportDiscoveryTest {
     }
 
     @Test
+    fun `root directory named like an excluded dir is still scanned`() {
+        // Bitrise checks out at /bitrise/src; the root's own name ("src") must not abort the walk.
+        val srcRoot = File(root, "src").also { it.mkdirs() }
+        File(srcRoot, "app/build/reports/detekt.xml").also { it.parentFile.mkdirs() }.writeText("x")
+        File(srcRoot, "app/src/main/Foo.kt").also { it.parentFile.mkdirs() }.writeText("x")
+
+        assertEquals(
+            listOf("app/build/reports/detekt.xml"),
+            ReportDiscovery().discover(srcRoot)
+                .map { it.relativeTo(srcRoot).path.replace(File.separatorChar, '/') },
+        )
+    }
+
+    @Test
     fun `configured globs replace the default locations`() {
         touch("out/lint.xml")
         touch("out/deep/tests.xml")
