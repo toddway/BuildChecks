@@ -7,7 +7,8 @@ on:
 
 permissions:
   contents: read
-  statuses: write   # post the `buildchecks` commit status
+  statuses: write        # post the `buildchecks` commit status
+  pull-requests: write   # post/update the `buildchecks` summary comment on PRs
 
 jobs:
   build:
@@ -54,3 +55,19 @@ jobs:
             -f context="buildchecks" \
             -f description="$(cat build/reports/buildchecks/summary.txt)" \
             -f target_url="${{ steps.report.outputs.artifact-url }}"
+
+      - name: Post BuildChecks PR comment
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # summary.md is the detailed gate table + new findings. --edit-last upserts the bot's own
+          # comment (posted as github-actions[bot]), so repeated builds update one comment instead of
+          # piling up; --create-if-none makes the first build create it. (needs gh >= 2.54)
+          cp build/reports/buildchecks/summary.md comment.md
+          {
+            echo ""
+            echo "📦 **[Download full HTML report](${{ steps.report.outputs.artifact-url }})** (zip — open \`index.html\`)"
+          } >> comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --body-file comment.md --edit-last --create-if-none
