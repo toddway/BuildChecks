@@ -9,16 +9,16 @@ class Buildchecks < Formula
   desc "Toolchain-agnostic CLI that aggregates code-analysis and test/coverage reports into one gated summary"
   homepage "https://github.com/toddway/BuildChecks"
   # `using: :nounzip` keeps Homebrew from unpacking the jar (a jar is a zip file).
-  url "https://github.com/toddway/BuildChecks/releases/download/v4.0.8/buildchecks-4.0.8-all.jar", using: :nounzip
-  sha256 "051575e72f4a3b86e8f34206a695724dfddf69e7f2233a4d1044173d0590c68d"
+  url "https://github.com/toddway/BuildChecks/releases/download/v4.0.9/buildchecks-4.0.9-all.jar", using: :nounzip
+  sha256 "69ba2b341e39b8d1046afec3801e87f28acb7bbce941c361c3756541682669d7"
   license "Apache-2.0"
 
   depends_on "openjdk"
 
   def install
-    libexec.install "buildchecks-4.0.8-all.jar"
+    libexec.install "buildchecks-4.0.9-all.jar"
     # write_jar_script writes a bin/ wrapper that runs `java -jar <jar>` with the right JDK.
-    bin.write_jar_script libexec/"buildchecks-4.0.8-all.jar", "buildchecks"
+    bin.write_jar_script libexec/"buildchecks-4.0.9-all.jar", "buildchecks"
   end
 
   test do
