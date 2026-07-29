@@ -81,6 +81,101 @@ curl -sf -X POST \
         '{state:$s, context:"buildchecks", description:$d}')"
 ```
 
+## Post from Gradle (JVM) — commit status + PR comment, no CI shell
+
+If you'd rather not add `curl`/`jq` steps to your CI, a JVM project can post from a Gradle task
+itself, reading the same files. This posts a **commit status** (pass/fail + the `summary.txt`
+headline) and, on a **pull request**, a single review **comment** carrying the full `summary.md` so
+reviewers can triage inline. The comment is *upserted* via a hidden marker — repeated builds update
+the one comment instead of spamming the PR. `GITHUB_TOKEN` only; every step self-skips when a
+prerequisite is missing, and a failure only warns (the `buildchecks` gate decides pass/fail).
+
+Nothing extra on the classpath — it uses `java.net.http` (JDK 11+, and unlike `HttpURLConnection`
+it supports `PATCH`) and Groovy's `JsonSlurper`/`JsonOutput`, which ship with Gradle.
+
+```kotlin
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.io.File
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import org.gradle.api.logging.Logger
+
+/** Reads summary.json/.txt/.md from [outputDir] and publishes them to GitHub. */
+class GitHubPublisher(private val outputDir: File, private val logger: Logger) {
+    private val token = System.getenv("GITHUB_TOKEN").orEmpty()
+    private val repo = System.getenv("GITHUB_REPOSITORY") ?: "OWNER/REPO"   // e.g. "acme/app"
+
+    fun publish() {
+        if (token.isBlank()) return logger.lifecycle("BuildChecks: no GITHUB_TOKEN; skipping.")
+        commitStatus(); prComment()
+    }
+
+    private fun commitStatus() {
+        val summary = File(outputDir, "summary.json").takeIf { it.isFile } ?: return
+        val sha = env("BITRISE_GIT_COMMIT", "GITHUB_SHA") ?: gitHead() ?: return
+        val passed = (JsonSlurper().parse(summary) as Map<*, *>)["passed"] == true
+        report("commit status", send("POST", "statuses/$sha", mapOf(
+            "state" to if (passed) "success" else "failure",
+            "context" to "buildchecks",
+            "description" to File(outputDir, "summary.txt").readText().trim().take(140),
+        )))
+    }
+
+    private fun prComment() {
+        val pr = env("BITRISE_PULL_REQUEST")                                 // add your CI's PR var
+            ?: System.getenv("GITHUB_REF")?.let { Regex("refs/pull/(\\d+)/").find(it)?.groupValues?.get(1) }
+        if (pr?.toIntOrNull() == null) return
+        val body = "<!-- buildchecks -->\n" + File(outputDir, "summary.md").readText().trim()
+        val id = findOurComment(pr)                                          // upsert: one comment, always current
+        report("PR #$pr comment",
+            if (id != null) send("PATCH", "issues/comments/$id", mapOf("body" to body))
+            else            send("POST",  "issues/$pr/comments",  mapOf("body" to body)))
+    }
+
+    private fun findOurComment(pr: String): String? {
+        val (code, body) = send("GET", "issues/$pr/comments?per_page=100", null)
+        if (code !in 200..299) return null
+        @Suppress("UNCHECKED_CAST")
+        val comments = runCatching { JsonSlurper().parseText(body) as? List<Map<String, Any?>> }.getOrNull() ?: return null
+        return comments.firstOrNull { (it["body"] as? String)?.contains("<!-- buildchecks -->") == true }?.get("id")?.toString()
+    }
+
+    private fun send(method: String, path: String, json: Map<String, Any?>?): Pair<Int, String> {
+        val builder = HttpRequest.newBuilder(URI("https://api.github.com/repos/$repo/$path"))
+            .header("Authorization", "Bearer $token").header("Accept", "application/vnd.github+json")
+        val publisher = json?.let {
+            builder.header("Content-Type", "application/json")
+            HttpRequest.BodyPublishers.ofString(JsonOutput.toJson(it))
+        } ?: HttpRequest.BodyPublishers.noBody()
+        return runCatching { HttpClient.newHttpClient().send(builder.method(method, publisher).build(), HttpResponse.BodyHandlers.ofString()) }
+            .fold({ it.statusCode() to it.body() }, { -1 to (it.message ?: "error") })
+    }
+
+    private fun report(what: String, r: Pair<Int, String>) =
+        if (r.first in 200..299) logger.lifecycle("BuildChecks: posted $what.")
+        else logger.warn("BuildChecks: $what failed (${r.first}). ${r.second.take(200)}")
+
+    private fun env(vararg names: String) = names.firstNotNullOfOrNull { System.getenv(it)?.ifBlank { null } }
+    private fun gitHead() = runCatching { ProcessBuilder("git", "rev-parse", "HEAD").start()
+        .inputStream.bufferedReader().readText().trim().ifBlank { null } }.getOrNull()
+}
+```
+
+Wire it as a finalizer that runs after the gate, so a failed gate still posts a red status. Capture
+the output dir as a `File` at configuration time — don't reference `Project` from the task action,
+or the configuration cache can't serialize it:
+
+```kotlin
+tasks.register("postChecks") {
+    mustRunAfter("buildchecks")
+    val outputDir = File(rootProject.buildDir, "reports/buildchecks")
+    doLast { GitHubPublisher(outputDir, logger).publish() }
+}
+```
+
 ## GitLab
 
 Declare `codeclimate.json` as a Code Quality report; GitLab renders the findings natively in the
