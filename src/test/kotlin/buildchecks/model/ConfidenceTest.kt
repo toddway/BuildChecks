@@ -21,9 +21,9 @@ class ConfidenceTest {
     }
 
     @Test
-    fun `a skipped gate is MAJOR and drops to LOW on its own`() {
+    fun `an enforcing gate that skipped is MAJOR and drops to LOW on its own`() {
         val c = confidence(
-            gates = listOf(gate("findings", GateStatus.PASSED), gate("changed-line coverage", GateStatus.SKIPPED)),
+            gates = listOf(gate("findings", GateStatus.PASSED), gate("coverage", GateStatus.SKIPPED)),
             freshness = null,
             notUnderstood = emptyList(),
             newReportLabels = emptyList(),
@@ -32,7 +32,21 @@ class ConfidenceTest {
         val reason = c.reasons.single()
         assertEquals("skipped-gates", reason.signal)
         assertEquals(ConfidenceWeight.MAJOR, reason.weight)
-        assertTrue(reason.summary.contains("changed-line coverage"))
+        assertTrue(reason.summary.contains("coverage"))
+    }
+
+    @Test
+    fun `a skipped changed-line coverage gate does not lower confidence`() {
+        // Severable/informational by design: it skips when there's simply nothing to measure
+        // (no covered source changed, no base ref), which is not an intended check failing to run.
+        val c = confidence(
+            gates = listOf(gate("findings", GateStatus.PASSED), gate("changed-line coverage", GateStatus.SKIPPED)),
+            freshness = null,
+            notUnderstood = emptyList(),
+            newReportLabels = emptyList(),
+        )
+        assertEquals(ConfidenceLevel.HIGH, c.level)
+        assertTrue(c.reasons.isEmpty())
     }
 
     @Test

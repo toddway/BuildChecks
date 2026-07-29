@@ -53,7 +53,34 @@ class MarkdownSummary : Renderer {
         }
         summary.coverage?.linePercent?.let { append(" · **Coverage:** ${"%.2f%%".format(it)}") }
         appendLine()
+
+        // The new/unbaselined findings themselves, so a reviewer can triage from the comment without
+        // opening the full report. Capped so a large regression can't produce an unbounded comment.
+        val newFindings = summary.findings.filter { it.isNew }
+        if (newFindings.isNotEmpty()) {
+            appendLine()
+            appendLine("### 🆕 New findings (${newFindings.size})")
+            appendLine("| Severity | Check | Location | Message |")
+            appendLine("|---|---|---|---|")
+            newFindings.take(NEW_FINDINGS_SHOWN).forEach { reported ->
+                val f = reported.finding
+                val severity = when (f.severity) {
+                    Severity.ERROR -> "🛑 error"
+                    Severity.WARNING -> "⚠️ warning"
+                    Severity.INFO -> "ℹ️ info"
+                }
+                val location = f.location?.let { it.path + (it.line?.let { line -> ":$line" } ?: "") } ?: "—"
+                val check = listOf(f.tool, f.ruleId).filter { it.isNotBlank() }.joinToString(" · ")
+                appendLine("| $severity | ${cell(check)} | ${cell(location)} | ${cell(f.message.take(160))} |")
+            }
+            if (newFindings.size > NEW_FINDINGS_SHOWN)
+                appendLine("| … | | | _${newFindings.size - NEW_FINDINGS_SHOWN} more — see the full report_ |")
+        }
     }
 
     private fun cell(text: String) = text.replace("|", "\\|").replace("\n", " ")
+
+    private companion object {
+        const val NEW_FINDINGS_SHOWN = 20
+    }
 }

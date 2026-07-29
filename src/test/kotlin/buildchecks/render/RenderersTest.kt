@@ -155,11 +155,13 @@ class RenderersTest {
             findings = findings,
             tests = tests,
             changedLineCoverage = ChangedLineCoverage.Unavailable("no changed lines vs dev"),
-            confidence = confidence(gates, null, emptyList(), emptyList()),
+            // A not-understood report (MINOR) keeps confidence at MEDIUM; the skipped changed-line
+            // coverage gate deliberately no longer contributes.
+            confidence = confidence(gates, null, listOf("build/reports/mystery.json"), emptyList()),
         )
         assertEquals(
             "2 new findings (FAIL), 93.24% coverage (FAIL), 4 missing reports (FAIL), " +
-                "0/4990 test failures (PASS), confidence low",
+                "0/4990 test failures (PASS), confidence medium",
             SummaryText().render(summary),
         )
     }
@@ -175,6 +177,9 @@ class RenderersTest {
         // the trust axis is in the header and its reasons are spelled out
         assertTrue(markdown.startsWith("## BuildChecks: ❌ failed · confidence: MEDIUM"))
         assertTrue(markdown.contains("found but not understood"))
+        // the new/unbaselined findings are listed so a reviewer can triage from the comment
+        assertTrue(markdown.contains("### 🆕 New findings (1)"))
+        assertTrue(markdown.contains("| Severity | Check | Location | Message |"))
     }
 
     @Test

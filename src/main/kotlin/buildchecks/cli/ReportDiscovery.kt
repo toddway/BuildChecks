@@ -12,9 +12,13 @@ import java.nio.file.Path
 class ReportDiscovery(
     globs: List<String>? = null,
     private val outputDir: String = DEFAULT_OUTPUT_DIR,
+    excludeGlobs: List<String>? = null,
 ) {
 
     private val matchers = globs?.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
+    // Subtractive: a candidate matching any of these is dropped, so a project can silence a
+    // false-positive report (e.g. an included build's own tooling output) without narrowing `paths`.
+    private val excludeMatchers = excludeGlobs?.map { FileSystems.getDefault().getPathMatcher("glob:$it") }
 
     fun discover(root: File): List<File> = root.walkTopDown()
         .onEnter { dir ->
@@ -36,6 +40,7 @@ class ReportDiscovery(
         // files that could be a supported report format become candidates — a glob
         // ending in ** must not drag a tool's html pages into "not understood".
         if (File(path).extension !in candidateExtensions) return false
+        if (excludeMatchers?.any { it.matches(Path.of(path)) } == true) return false
         val matchers = matchers ?: return isInDefaultLocation(path)
         return matchers.any { it.matches(Path.of(path)) }
     }

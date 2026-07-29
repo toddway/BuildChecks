@@ -181,8 +181,9 @@ class VerbsTest {
 
         assertEquals(0, runCheck(root, loadConfig(null, root), env = { null }) { out += it })
         assertTrue(text.contains("SKIP  changed-line coverage: no base ref"), text)
-        // the skip lowers confidence to LOW (a MAJOR signal) but does not change the exit code
-        assertTrue(text.contains("confidence: LOW"), text)
+        // the changed-line coverage gate is severable by design, so its skip is shown but does NOT
+        // lower confidence — there was nothing to measure, not an intended check that failed to run
+        assertTrue(text.contains("confidence: HIGH"), text)
     }
 
     @Test

@@ -56,6 +56,17 @@ class ReportDiscoveryTest {
     }
 
     @Test
+    fun `exclude globs drop matching candidates from the default scan`() {
+        touch("build/reports/detekt.xml")
+        touch("gradle-plugins/build/reports/plugin-development/validation-report.json") // included build's own report
+
+        assertEquals(
+            listOf("build/reports/detekt.xml"),
+            discovered(ReportDiscovery(excludeGlobs = listOf("gradle-plugins/**"))),
+        )
+    }
+
+    @Test
     fun `configured globs replace the default locations`() {
         touch("out/lint.xml")
         touch("out/deep/tests.xml")

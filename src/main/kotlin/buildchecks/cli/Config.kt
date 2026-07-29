@@ -15,6 +15,7 @@ data class Config(
 
 data class ReportsConfig(
     val paths: List<String>? = null, // globs; null = the zero-config discovery set
+    val exclude: List<String>? = null, // globs dropped from discovery (e.g. an included build's reports)
     val outputDir: String = ReportDiscovery.DEFAULT_OUTPUT_DIR,
     val freshnessToleranceMinutes: Long = 15,
 )
@@ -73,6 +74,7 @@ private data class TomlSchema(
     fun toConfig() = Config(
         reports = ReportsConfig(
             paths = reports.paths,
+            exclude = reports.exclude,
             outputDir = reports.outputDir,
             freshnessToleranceMinutes = reports.freshnessToleranceMinutes,
         ),
@@ -100,6 +102,7 @@ private data class TomlSchema(
 @Serializable
 private data class ReportsToml(
     val paths: List<String>? = null,
+    val exclude: List<String>? = null,
     @SerialName("output_dir") val outputDir: String = ReportDiscovery.DEFAULT_OUTPUT_DIR,
     @SerialName("freshness_tolerance_minutes") val freshnessToleranceMinutes: Long = 15,
 )

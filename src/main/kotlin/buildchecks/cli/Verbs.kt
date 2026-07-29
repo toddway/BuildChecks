@@ -172,7 +172,7 @@ private fun logOriginCounts(files: List<IngestedFile>, echo: (String) -> Unit) {
 
 private fun ingestReports(root: File, config: Config, verbose: Boolean, echo: (String) -> Unit): Ingestion {
     val candidates = timed("discover", verbose, echo) {
-        ReportDiscovery(config.reports.paths, config.reports.outputDir).discover(root)
+        ReportDiscovery(config.reports.paths, config.reports.outputDir, config.reports.exclude).discover(root)
     }
     if (verbose) {
         echo("root: ${root.absolutePath}")
