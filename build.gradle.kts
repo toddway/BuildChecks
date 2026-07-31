@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.toddway"
-version = "4.0.12"
+version = "4.0.13"
 
 java {
     toolchain { languageVersion = JavaLanguageVersion.of(17) }
