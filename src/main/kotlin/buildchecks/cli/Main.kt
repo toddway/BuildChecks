@@ -12,7 +12,7 @@ import java.io.File
 
 // Bare `buildchecks` runs the default command, check (V4-PLAN.md §6).
 fun main(args: Array<String>) = BuildChecks()
-    .subcommands(Check(), Baseline())
+    .subcommands(Check(), Baseline(), ChangedFiles())
     .main(if (args.isEmpty()) arrayOf("check") else args)
 
 class BuildChecks : CliktCommand(name = "buildchecks") {
@@ -53,6 +53,26 @@ class Baseline : CliktCommand(name = "baseline") {
     override fun run() {
         val root = File(".").canonicalFile
         exit(runCatchingIo { runBaseline(root, configure(configPath, null, root), verbose) { echo(it) } })
+    }
+}
+
+class ChangedFiles : CliktCommand(name = "changed-files") {
+    override fun help(context: Context) =
+        "Print the repo-relative paths changed since the base ref, one per line — feed into a diff-scoped tool run (e.g. PIT targetClasses)."
+    private val configPath by option("--config", help = "config file (default: buildchecks.toml at the root)")
+        .file()
+    private val baseRef by option("--base-ref", help = "git ref to diff against")
+    private val verbose by option("--verbose", help = "print base-ref resolution detail").flag()
+
+    override fun run() {
+        val root = File(".").canonicalFile
+        // Paths go to stdout; every diagnostic (base-ref notice, errors) to stderr, so the output pipes cleanly.
+        exit(runCatchingIo {
+            runChangedFiles(
+                root, configure(configPath, null, root), baseRef, verbose,
+                emit = { echo(it) }, echo = { echo(it, err = true) },
+            )
+        })
     }
 }
 

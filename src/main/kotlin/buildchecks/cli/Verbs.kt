@@ -188,6 +188,46 @@ fun runBaseline(
     return 0
 }
 
+/**
+ * Print the repo-relative new-side paths changed since the resolved base ref, one per line to
+ * [emit] (stdout); everything else — base-ref resolution notices, verbose detail, error reasons —
+ * goes to [echo] (stderr) so the path list pipes cleanly into another tool (e.g. PIT's
+ * targetClasses on a diff-scoped mutation run). It exists because changed-line *mutation*, unlike
+ * coverage, has to target the changed classes *before* the expensive run: BuildChecks can't do that
+ * for a consumer, but it can hand back the exact diff it gates against so both see the same set
+ * against the same base ref. Read-only; resolves the base ref through the same order as `check`.
+ *
+ * Exit codes: 0 when a diff resolved (an empty diff prints nothing and still exits 0, so a build
+ * step no-ops cleanly when nothing changed); 2 when no base ref could be resolved or git couldn't
+ * produce a diff — a targeting failure the consumer should see, not silently mutate the wrong set.
+ */
+fun runChangedFiles(
+    root: File,
+    config: Config = Config(),
+    baseRefFlag: String? = null,
+    verbose: Boolean = false,
+    env: (String) -> String? = System::getenv,
+    emit: (String) -> Unit,
+    echo: (String) -> Unit,
+): Int {
+    val git = GitDiff(root)
+    val baseRef = resolveBaseRef(git, config, baseRefFlag, verbose, env, echo)
+        ?: run {
+            echo("no base ref resolved; set --base-ref, git.base_ref, or run in CI")
+            return 2
+        }
+    return when (val changed = git.changedLines(baseRef)) {
+        is ChangedLines.Unavailable -> {
+            echo("changed files unavailable: ${changed.reason}")
+            2
+        }
+        is ChangedLines.Diff -> {
+            changed.files.keys.sorted().forEach(emit)
+            0
+        }
+    }
+}
+
 // Per-origin source counts (V4-PLAN.md §5.5): so a dropped report (e.g. 2→1 under one origin)
 // stays visible even where the presence gate can't individually distinguish same-kind reports.
 private fun logOriginCounts(files: List<IngestedFile>, echo: (String) -> Unit) {

@@ -46,6 +46,37 @@ pitest {
 }
 ```
 
+### Let BuildChecks hand you the changed set
+
+The diff above works, but it resolves its *own* base ref — so if your `git diff` and BuildChecks
+disagree about the base (a stale `origin/main`, a different CI variable), PIT mutates one set while
+BuildChecks gates another. `buildchecks changed-files` prints the exact paths BuildChecks will gate,
+resolved through the same order (`--base-ref` → `git.base_ref` → CI env → remote default branch), so
+the two always match:
+
+```bash
+# repo-relative paths, one per line, on stdout; notices/errors on stderr
+buildchecks changed-files                 # base ref auto-resolved (GITHUB_BASE_REF, etc.)
+buildchecks changed-files --base-ref main # or pin it explicitly
+```
+
+An empty diff prints nothing and exits 0 (nothing changed → skip the run); an unresolvable base ref
+or a git failure exits 2 with the reason on stderr, so a targeting step fails loudly instead of
+silently mutating the wrong set. Feed it straight into `targetClasses`:
+
+```kotlin
+// build.gradle.kts — same as above, but the changed set comes from BuildChecks, not a second git diff
+val changed = providers.exec {
+    commandLine("buildchecks", "changed-files")   // the jar/Homebrew binary; inherits GITHUB_BASE_REF
+}.standardOutput.asText.get().lineSequence()
+    .filter { it.endsWith(".kt") && it.startsWith("src/main/") }
+    .map { it.removePrefix("src/main/kotlin/").removeSuffix(".kt").replace('/', '.') }
+    .toSet()
+```
+
+You still map files → classes yourself (the verb is tool-agnostic — it emits paths and leaves each
+tool's targeting syntax to you). What you no longer own is base-ref resolution.
+
 Two more levers, both optional:
 
 - **Incremental history** — `withHistory = true` (or `historyInputLocation`/`historyOutputLocation`

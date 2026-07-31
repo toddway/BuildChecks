@@ -186,8 +186,9 @@ config — nothing in BuildChecks needs one.
 ## CLI
 
 ```
-buildchecks check      # ingest → gate → render → exit code   (default command)
-buildchecks baseline   # ingest → snapshot the baseline file
+buildchecks check          # ingest → gate → render → exit code   (default command)
+buildchecks baseline       # ingest → snapshot the baseline file
+buildchecks changed-files  # print paths changed since the base ref (stdout), for a diff-scoped tool run
   --config <path>  --base-ref <ref>  --output-dir <path>  --open  --verbose
 ```
 

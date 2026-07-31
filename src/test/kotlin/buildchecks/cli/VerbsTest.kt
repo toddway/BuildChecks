@@ -323,6 +323,50 @@ class VerbsTest {
         assertTrue(text.contains("min_coverage_percent 90.0 → 50.0"), text)
     }
 
+    private val err = mutableListOf<String>()
+
+    @Test
+    fun `changed-files prints the changed paths to stdout against a resolved base ref`() {
+        setUpChangedLineRepo() // one file changed vs the `base` branch: src/calculator.js
+        val env = mapOf("GITHUB_BASE_REF" to "base")
+
+        assertEquals(0, runChangedFiles(root, loadConfig(null, root), env = { env[it] },
+            emit = { out += it }, echo = { err += it }))
+        assertEquals(listOf("src/calculator.js"), out) // only the diff, nothing else, on stdout
+    }
+
+    @Test
+    fun `changed-files keeps the base-ref fallback notice off stdout`() {
+        setUpChangedLineRepo()
+        // Stand in for a clone so the default-branch fallback resolves (no flag/config/CI env).
+        git("update-ref", "refs/remotes/origin/base", "base")
+        git("symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/base")
+
+        assertEquals(0, runChangedFiles(root, loadConfig(null, root), env = { null },
+            emit = { out += it }, echo = { err += it }))
+        assertEquals(listOf("src/calculator.js"), out) // stdout is only paths — pipe-clean
+        assertTrue(err.joinToString("\n").contains("diffing against origin/base (default branch)"), err.toString())
+    }
+
+    @Test
+    fun `changed-files exits two with no base ref, printing nothing to stdout`() {
+        setUpChangedLineRepo() // a git repo, but nothing resolves a base ref
+
+        assertEquals(2, runChangedFiles(root, loadConfig(null, root), env = { null },
+            emit = { out += it }, echo = { err += it }))
+        assertTrue(out.isEmpty(), out.toString())
+        assertTrue(err.joinToString("\n").contains("no base ref resolved"), err.toString())
+    }
+
+    @Test
+    fun `changed-files exits two when git cannot diff, e g outside a repo`() {
+        // No `git init` under root -> git diff fails; the reason surfaces on stderr, stdout stays empty.
+        assertEquals(2, runChangedFiles(root, Config(), baseRefFlag = "base",
+            emit = { out += it }, echo = { err += it }))
+        assertTrue(out.isEmpty(), out.toString())
+        assertTrue(err.joinToString("\n").contains("changed files unavailable"), err.toString())
+    }
+
     private fun git(vararg args: String) {
         val process = ProcessBuilder("git", *args).directory(root).redirectErrorStream(true).start()
         assertEquals(0, process.waitFor(), "git failed: ${process.inputStream.bufferedReader().readText()}")

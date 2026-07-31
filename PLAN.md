@@ -64,19 +64,19 @@ have been a gate no one could keep green. What shipped:
 Done alongside the code: `docs/recipes/mutation.md` — the practical PR-scoped PIT wiring (git diff →
 `targetClasses`, incremental history) plus a "what a surviving mutant does/doesn't tell you" note.
 
+**`buildchecks changed-files` helper verb — LANDED (unreleased).** The read-only verb that hands a
+consumer the exact diff BuildChecks gates, so a diff-scoped PIT run mutates the same set BuildChecks
+measures (same base-ref resolution order — otherwise a consumer's own `git diff` could resolve a
+different base and mutate one set while gating another). `runChangedFiles` in `cli/Verbs.kt` reuses
+the existing private `resolveBaseRef`; the `changed-files` clikt subcommand in `Main.kt` prints
+repo-relative new-side paths (sorted) to **stdout** and every diagnostic to **stderr**, so the list
+pipes cleanly. Exit 0 on a diff (empty diff → nothing printed, still 0, so a build step no-ops when
+nothing changed); exit 2 when no base ref resolves or git can't diff (a loud targeting failure, not
+a silent wrong-set mutation). Tool-agnostic — emits files, leaves files→classes→targeting to the
+consumer. Wiring documented in `docs/recipes/mutation.md`. Inherits the committed-only diff
+limitation from `GitDiff`.
+
 **Still open / deferred out of this scope:**
-- **`buildchecks changed-files` helper verb — lowers the mutation adoption barrier.** Changed-line
-  *coverage* is free for consumers because the full scan happens anyway and BuildChecks owns the diff;
-  changed-line *mutation* is the opposite — the tool must be targeted at the changed classes *before*
-  the expensive run, which BuildChecks (a post-hoc reader) can't do for them. The one piece it *can*
-  hand back is the diff it already computes: a small read-only verb printing the changed paths
-  (`--base-ref` resolved via the existing per-CI logic) that a build feeds into PIT's `targetClasses`.
-  Two wins: consumers stop reinventing base-ref resolution, and the set PIT targets matches the set
-  BuildChecks gates (same diff — otherwise a consumer's own `git diff` could resolve a different base
-  and mutate one set while gating another). In scope (git info, not running a tool; `git`+`cli` only),
-  tool-agnostic if it emits files and leaves tool-specific targeting to the consumer. Not the mutation
-  gate's blocker — mutation always asks more of the consumer build than coverage — but the highest-value
-  assist.
 - Whole-project mutation ratchet gate + a baseline `# mutation:` score, *if* a consumer wants to gate
   full/nightly runs. Requires the baseline-loosened delta to learn about mutation too.
 - **Recommended next mutation parser — the `mutation-testing-elements` JSON schema** (Stryker's
