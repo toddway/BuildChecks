@@ -1,6 +1,6 @@
 # Beyond 4.0 — where BuildChecks could evolve
 
-> Speculative. Not a commitment and not part of the release plan. `V4-PLAN.md` remains the
+> Speculative. Not a commitment and not part of the release plan. `PLAN.md` remains the
 > source of truth for scope and sequencing. This file captures the reasoning behind a possible
 > direction so future decisions have the argument, not just the conclusion.
 

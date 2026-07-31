@@ -1,6 +1,16 @@
-# BuildChecks v4 — Implementation Plan
+# BuildChecks v4 — Implementation Plan (archived)
 
-**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Post-v1: the **run-confidence axis** (§11 item 7) has landed in code (unreleased) — 4.1 (the `Confidence` axis on `CheckSummary`, the new-report notice, `fail_on_skipped_gates`/`require_base_ref`) and 4.2 (base-ref delta signals: baseline diff, config diff, change-scoped freshness, plus `fail_on_baseline_loosened`/`require_changed_origins_fresh`). Remaining items are the rest of the deferred post-v1 roadmap in §11 (PIT #1, advisory gates #6, etc.).
+> **ARCHIVED 2026-07-30 — historical record, not maintained.**
+> This was the implementation plan for v4.0 through the 4.1/4.2 confidence axis. Every phase
+> below is shipped. It is preserved for the *reasoning* — why the architecture is shaped this
+> way, why v3 patterns were dropped, how each gate was designed and validated — which stays
+> useful even though the plan itself is spent.
+>
+> **The active plan is [PLAN.md](../../PLAN.md).** Standing design rules that still bind are
+> summarised in [CLAUDE.md](../../CLAUDE.md); §1, §2, and §2.5 below remain the long-form
+> source for them.
+
+**Status:** shipped — all v1 phases (0–7) landed and released (latest v4.0.2); owner-only infra complete. Post-v1: the **run-confidence axis** (§11 item 7) has landed in code (unreleased) — 4.1 (the `Confidence` axis on `CheckSummary`, the new-report notice, `fail_on_skipped_gates`/`require_base_ref`) and 4.2 (base-ref delta signals: baseline diff, config diff, change-scoped freshness, plus `fail_on_baseline_loosened`/`require_changed_origins_fresh`). Remaining work is scoped by the **v4 completion bar** in §11 — mutation signal (PIT #1), a second toolchain consumer, and outside confirmation of legibility. Everything else in the post-v1 roadmap is deferred behind it.
 **Repo:** `toddway/BuildChecks` (v4 developed in place; `3.3.2` tagged as the final Gradle-plugin release)
 **License:** Apache 2.0 (unchanged)
 
@@ -373,21 +383,52 @@ done: GitHub Pages serves the `gh-pages` branch and release tags have been cut. 
 Marketplace listing is optional and not required for distribution; the pipeline is
 `GITHUB_TOKEN`-only — no Sonatype/PGP.)
 
+### v4 completion bar (what "done" means)
+
+> Added 2026-07-30. The roadmap below is open-ended by design; this is the closed part. It
+> states the finish line for v4 so that continuing past it is a deliberate choice rather than a
+> default. Rationale and framing live in [docs/mission.md](../mission.md).
+
+BuildChecks exists to demonstrate one claim: *a deterministic, locally-owned, human-legible gate
+can produce trustworthy confidence about a change regardless of whether a human or an agent wrote
+it.* A claim like that is only demonstrated by a tool that runs, installs, and is understood by
+someone who is not its author — an existence proof, not an essay and not a product. Three things
+are therefore load-bearing; everything else is past the bar.
+
+| # | Bar | Why it is *required*, not merely desirable | State |
+|---|---|---|---|
+| 1 | **Mutation signal in the gate** (roadmap #1) | Without it the claim fails against its own headline case. Point today's gate at a change whose tests cover the lines but assert nothing: every tracked signal is green and `Confidence` reports HIGH. The tool would be manufacturing confidence it has not earned, against exactly the author it is built for. Mutation is the one available signal whose proxy-vs-reality daylight is near zero (`docs/beyond-4.0.md`), so it is what closes the hole — and the coverage-up/mutation-down contradiction is the first real exercise of the signal *hierarchy*, which is currently asserted and untested. | not started |
+| 2 | **A second toolchain running it in anger** (mission #5) | "Toolchain- and CI-agnostic" cannot be shown by a single-origin JVM repo gating itself. Generalization *is* the claim; one substrate is not evidence for it. iOS or KMP counts double — different language, different CI, report shapes this repo never produces. | validation-project side-by-side (§10) done; second consumer outstanding |
+| 3 | **Steerable and legible by a non-author** (mission #2) | One `buildchecks.toml`, gates named by their metric, each limit's source marked, self-contained HTML, one-command install. Already the strongest part; the bar is *not eroding it*, plus one confirmation from someone who did not write the tool. | met; outside confirmation outstanding |
+
+Explicitly past the bar — worth doing someday, not required for v4 to be complete: additional
+parsers beyond the seven, additional renderers, history or longitudinal views, dashboards,
+advisory gates (#6), GraalVM (#3), architecture tagging (#2), agent-facing output formats.
+
+**Working rule while the bar is open.** Release count is a flattering proxy — cheap to move,
+weakly correlated with the thesis being demonstrated. Prefer work that moves bar items 1 and 2
+over refinement of what already works. When the bar is met, stop and decide deliberately;
+"complete" is an allowed outcome.
+
 ### Post-v1 roadmap (explicitly deferred)
 
-> **Immediate next focus (agreed 2026-07-24): item 7, the run-confidence axis.** Chosen over
-> the other deferred items because it is the least-explored and highest-leverage direction: it
-> reframes the green/red verdict around *how much a pass is worth*, and it unifies a scatter of
-> would-be one-off gates (skipped gates, stale/unparsed reports, loosened baselines, moved
-> thresholds) under one orthogonal property. Start with the 4.1 (no-base-ref) slice below.
+> **Immediate next focus (revised 2026-07-30): item 1, the mutation signal — it is completion-bar
+> item 1 above, not a discretionary roadmap pick.** Item 7 (the run-confidence axis) was the prior
+> focus and has landed in full (4.1 + 4.2); it reframed the verdict around *how much a pass is
+> worth* and unified a scatter of would-be one-off gates under one orthogonal property. What it
+> did not do is give the axis an ungameable signal to stand on, which is what mutation supplies.
+> Everything else in this list is deferred behind the completion bar.
 
-1. **Mutation-testing signal (PIT), targeted for 4.1.** New parser for PIT `mutations.xml`
+1. **Mutation-testing signal (PIT) — completion-bar item 1, next up.** New parser for PIT `mutations.xml`
    (flat, stable XML; JDK SAX/DOM, no new dependency; sniff `<mutations>` root) plus a
    `MutationResult` model type wired through `ParsedReport`/`CheckSummary`, a severable mutation
    gate (`CoverageGate` as template), and render — including surfacing the coverage-up /
    mutation-down contradiction. Golden fixture by dogfooding PIT on this repo. ~3–5 days.
-   Deferred from 4.0 on purpose: it is net-new feature work, additive/non-breaking, and demand
-   is better proven by real adoption (agents gaming coverage) than built speculatively.
+   It was deferred from 4.0 on the reasoning that demand is better proven by adoption than built
+   speculatively — **that reasoning is superseded** (2026-07-30): the gaming case is no longer
+   speculative, and without this signal the confidence axis reports HIGH on a change whose tests
+   cover everything and assert nothing, which is the exact failure the tool claims to catch. It is
+   now a precondition for calling v4 complete, not a demand-driven addition.
    Follow-up within the item: scope mutation to changed files (builds on phase 5) for runtime
    sanity on large multi-module projects. Swift mutation (`muter`, JSON) is a separate parser —
    defer until an iOS team asks.

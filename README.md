@@ -198,7 +198,8 @@ buildchecks baseline   # ingest → snapshot the baseline file
 - [docs/ci-recipes.md](docs/ci-recipes.md) — posting status from any CI; GitLab/Bitbucket
 - [docs/migrating-from-v3.md](docs/migrating-from-v3.md) — upgrading from the Gradle plugin
 - [MAINTAINING.md](MAINTAINING.md) — build, test, dogfood, release
-- [V4-PLAN.md](V4-PLAN.md) — scope, architecture, and design rules (source of truth)
+- [PLAN.md](PLAN.md) — open scope, the completion bar, and standing design rules
+- [docs/archive/v4-plan.md](docs/archive/v4-plan.md) — the shipped v4 plan, kept for its architecture and design reasoning
 
 ## License
 

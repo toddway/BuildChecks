@@ -2,7 +2,8 @@
 
 Everything below uses the standard Kotlin/Gradle toolchain (JDK 17+) and the tool's own
 command line — nothing else is required. Architecture, scope rules, and the phase plan live
-in [V4-PLAN.md](V4-PLAN.md); read it before changing anything structural.
+in [PLAN.md](PLAN.md); read it before changing anything structural. Long-form design reasoning is
+in [docs/archive/v4-plan.md](docs/archive/v4-plan.md).
 
 ## Build
 
@@ -39,7 +40,7 @@ JaCoCo, Cobertura, LCOV, Checkstyle XML, CPD XML):
 `--open` launches `build/reports/buildchecks/index.html`; the same directory holds
 `summary.md`, `summary.txt`, `summary.json`, `findings.json`, `codeclimate.json`, and `merged.sarif`.
 An optional `buildchecks.toml` at the project root tunes paths, gates, and the baseline
-file (documented in V4-PLAN.md §6). The repo's own `./gradlew run --args="check"` writes a
+file (documented in docs/archive/v4-plan.md §6). The repo's own `./gradlew run --args="check"` writes a
 (findings-free) report for this codebase.
 
 ## Release
