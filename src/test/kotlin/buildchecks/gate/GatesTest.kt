@@ -1,5 +1,7 @@
 package buildchecks.gate
 
+import buildchecks.model.ChangedFileMutation
+import buildchecks.model.ChangedLineMutation
 import buildchecks.model.ChangedLines
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
@@ -33,9 +35,10 @@ class GatesTest {
         baseline: Baseline? = null,
         changedLines: ChangedLines? = null,
         presentOrigins: Set<OriginKind> = emptySet(),
+        changedLineMutation: ChangedLineMutation? = null,
     ) = GateContext(
         findings, tests, coverage, baseline,
-        changedLineCoverage(changedLines, coverage), presentOrigins,
+        changedLineCoverage(changedLines, coverage), presentOrigins, changedLineMutation,
     )
 
     // -- changed-line coverage --
@@ -126,6 +129,53 @@ class GatesTest {
         // changed lines exist but none map to line data (e.g. only generated code changed)
         val noData = changedLineGate.evaluate(context(coverage = perLineCoverage(1 to 1), changedLines = diff(99))).single()
         assertEquals(GateStatus.SKIPPED, noData.status)
+    }
+
+    // -- changed-line mutation --
+
+    private val mutationGate = ChangedLineMutationGate(GateConfig(minChangedLineMutation = 80))
+
+    private fun measuredMutation(mutants: Int, killed: Int) = ChangedLineMutation.Measured(
+        "origin/dev",
+        listOf(ChangedFileMutation("com/example/Greeter.kt", mutants, killed, survivedLines = listOf(7))),
+        filesWithoutData = 0,
+    )
+
+    @Test
+    fun `changed-line mutation gate is off without a configured minimum`() {
+        assertTrue(ChangedLineMutationGate(GateConfig())
+            .evaluate(context(changedLineMutation = measuredMutation(4, 4))).isEmpty())
+    }
+
+    @Test
+    fun `changed-line mutation gate skips with the reason when unavailable`() {
+        val result = mutationGate.evaluate(context(
+            changedLineMutation = ChangedLineMutation.Unavailable("no mutation data"))).single()
+        assertEquals(GateStatus.SKIPPED, result.status)
+        assertEquals("no mutation data", result.detail)
+    }
+
+    @Test
+    fun `changed-line mutation gate holds the kill rate against the minimum`() {
+        // 3 of 4 mutants on changed lines killed = 75% < 80
+        val fail = mutationGate.evaluate(context(changedLineMutation = measuredMutation(4, 3))).single()
+        assertEquals(GateStatus.FAILED, fail.status)
+        assertEquals("75.00% of 4 changed-line mutants killed vs origin/dev (min 80%)", fail.detail)
+
+        val pass = mutationGate.evaluate(context(changedLineMutation = measuredMutation(4, 4))).single()
+        assertEquals(GateStatus.PASSED, pass.status)
+    }
+
+    @Test
+    fun `changed-line mutation gate notes changed files without mutation data`() {
+        val measured = ChangedLineMutation.Measured(
+            "main",
+            listOf(ChangedFileMutation("com/example/Greeter.kt", mutants = 2, killed = 2, survivedLines = emptyList())),
+            filesWithoutData = 1,
+        )
+        val result = mutationGate.evaluate(context(changedLineMutation = measured)).single()
+        assertEquals(GateStatus.PASSED, result.status)
+        assertTrue(result.detail.endsWith("; 1 changed file(s) without mutation data"), result.detail)
     }
 
     // -- findings --

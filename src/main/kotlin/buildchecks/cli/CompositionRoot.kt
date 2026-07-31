@@ -2,6 +2,7 @@ package buildchecks.cli
 
 import buildchecks.gate.CapsGate
 import buildchecks.gate.ChangedLineCoverageGate
+import buildchecks.gate.ChangedLineMutationGate
 import buildchecks.gate.CoverageGate
 import buildchecks.gate.FindingsGate
 import buildchecks.gate.Gate
@@ -13,6 +14,7 @@ import buildchecks.parse.CpdParser
 import buildchecks.parse.JacocoParser
 import buildchecks.parse.JunitParser
 import buildchecks.parse.LcovParser
+import buildchecks.parse.PitParser
 import buildchecks.parse.ReportParser
 import buildchecks.parse.SarifParser
 import buildchecks.render.CodeClimateReport
@@ -33,13 +35,18 @@ fun reportParsers(): List<ReportParser> = listOf(
     LcovParser(),
     CheckstyleParser(),
     CpdParser(),
+    PitParser(),
 )
 
-// Evaluation order per V4-PLAN.md §4.
+// Order gates are evaluated and, since renderers iterate this list, displayed in: findings, then the
+// coverage family (whole-project, then the diff-scoped coverage and mutation views), then caps
+// (errors/warnings/test failures), then expected reports. Gates are independent, so the order is for
+// legibility only (V4-PLAN.md §4).
 fun gates(config: GateConfig): List<Gate> = listOf(
-    ChangedLineCoverageGate(config),
     FindingsGate(config),
     CoverageGate(config),
+    ChangedLineCoverageGate(config),
+    ChangedLineMutationGate(config),
     CapsGate(config),
     MissingReportGate(),
 )

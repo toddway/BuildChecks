@@ -1,6 +1,7 @@
 package buildchecks.render
 
 import buildchecks.model.ChangedLineCoverage
+import buildchecks.model.ChangedLineMutation
 import buildchecks.model.CheckSummary
 import buildchecks.model.ConfidenceLevel
 import buildchecks.model.GateStatus
@@ -54,6 +55,10 @@ class SummaryText : Renderer {
             "changed-line coverage" -> when (val c = summary.changedLineCoverage) {
                 is ChangedLineCoverage.Measured -> "${"%.2f%%".format(c.percent)} changed-line coverage"
                 else -> "changed-line coverage"
+            }
+            "changed-line mutation" -> when (val m = summary.changedLineMutation) {
+                is ChangedLineMutation.Measured -> "${"%.2f%%".format(m.percent)} changed-line mutation"
+                else -> "changed-line mutation"
             }
             "errors" -> summary.findings.count { it.finding.severity == Severity.ERROR }
                 .let { "$it ${plural(it, "error")}" }

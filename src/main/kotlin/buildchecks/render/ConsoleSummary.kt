@@ -27,6 +27,16 @@ class ConsoleSummary {
             appendLine("$mark  ${result.gate}: ${result.detail}")
         }
 
+        // The named finding (4.1): covered-but-not-verified. Called out on its own because two
+        // adjacent percentages don't read as the contradiction they are.
+        summary.contradiction?.let {
+            appendLine()
+            appendLine("CONTRADICTION: changed lines are %.0f%% covered but only %.0f%% mutation-killed"
+                .format(it.coveragePercent, it.mutationPercent))
+            appendLine("  tests execute this change without verifying it — coverage counts the line, " +
+                "mutation checks the assertion")
+        }
+
         // The trust axis: how completely the checks ran, separate from pass/fail. Always shown so a
         // full-confidence run reads as deliberate, not silent.
         appendLine()

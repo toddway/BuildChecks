@@ -15,6 +15,12 @@ data class CheckSummary(
     // Coverage of the lines this diff changed, when a base ref resolved; drives the
     // "changed lines not covered" report section. null when the gate is off.
     val changedLineCoverage: ChangedLineCoverage? = null,
+    // Mutation results for the lines this diff changed; drives the "surviving mutants on changed
+    // lines" report section and the contradiction. null when the changed-line mutation gate is off.
+    val changedLineMutation: ChangedLineMutation? = null,
+    // The covered-but-not-verified finding (4.1): high changed-line coverage, low changed-line
+    // mutation. null unless both were measured and the gap is unambiguous. Informational.
+    val contradiction: Contradiction? = null,
     // How much the verdict is worth — the trust axis (§11 item 7), orthogonal to `passed` and never
     // affecting the exit code. Defaults to full confidence so it stays additive for callers/tests.
     val confidence: Confidence = Confidence(emptyList()),

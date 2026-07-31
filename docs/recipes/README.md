@@ -13,6 +13,9 @@ that produces reports does.
 | [.NET + coverlet](dotnet-coverlet.md) | analyzers → SARIF | Cobertura XML | JUnit XML |
 | [Swift + SwiftLint (iOS)](swift-swiftlint.md) | SwiftLint → SARIF | slather → Cobertura/LCOV | xcbeautify → JUnit XML |
 
+Cross-cutting: [Mutation testing on changed lines (PIT)](mutation.md) — the fast, diff-scoped way to
+gate whether your tests actually verify a change, not just execute it.
+
 The golden rule in every recipe: **tools must not fail the build themselves** (`ignoreFailures`,
 `|| true`, `-`, `continue-on-error`). BuildChecks reads what they wrote and makes the one
 pass/fail decision, so a lint warning and a coverage drop are gated by the same policy.

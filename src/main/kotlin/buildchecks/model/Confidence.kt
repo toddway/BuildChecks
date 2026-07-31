@@ -66,11 +66,12 @@ fun confidence(
     val reasons = mutableListOf<ConfidenceReason>()
 
     // A skipped gate normally means an intended check didn't run — except the changed-line coverage
-    // gate, which is severable/informational by design and skips whenever there is simply nothing to
-    // measure (no covered source changed, no base ref). That's not a check failing to run, so it must
-    // not drop confidence; enforce it instead via min_changed_line_coverage / requireBaseRef. Genuine
-    // gaps in the enforcing gates (coverage with no data, findings with no baseline) still count.
-    val skipped = gates.filter { it.status == GateStatus.SKIPPED && it.gate != CHANGED_LINE_COVERAGE_GATE }
+    // and mutation gates, which are severable/informational by design and skip whenever there is
+    // simply nothing to measure (no changed source, no base ref). That's not a check failing to run,
+    // so it must not drop confidence; enforce those via min_changed_line_* / requireBaseRef instead.
+    // Genuine gaps in the enforcing gates (coverage with no data, findings with no baseline) still count.
+    val severable = setOf(CHANGED_LINE_COVERAGE_GATE, CHANGED_LINE_MUTATION_GATE)
+    val skipped = gates.filter { it.status == GateStatus.SKIPPED && it.gate !in severable }
     if (skipped.isNotEmpty()) {
         reasons += ConfidenceReason(
             "skipped-gates",
@@ -154,8 +155,9 @@ private fun deltaReasons(delta: ChangeDelta, reasons: MutableList<ConfidenceReas
     }
 }
 
-// Mirrors ChangedLineCoverageGate.NAME (kept as a literal so `model` stays off the `gate` package).
+// Mirror the *Gate.NAME constants (kept as literals so `model` stays off the `gate` package).
 private const val CHANGED_LINE_COVERAGE_GATE = "changed-line coverage"
+private const val CHANGED_LINE_MUTATION_GATE = "changed-line mutation"
 
 private fun plural(n: Int, word: String) = if (n == 1) word else "${word}s"
 

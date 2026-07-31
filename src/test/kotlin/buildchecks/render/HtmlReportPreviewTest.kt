@@ -1,9 +1,12 @@
 package buildchecks.render
 
 import buildchecks.model.ChangedFileCoverage
+import buildchecks.model.ChangedFileMutation
 import buildchecks.model.ChangedLineCoverage
+import buildchecks.model.ChangedLineMutation
 import buildchecks.model.CheckSummary
 import buildchecks.model.confidence
+import buildchecks.model.contradiction
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
 import buildchecks.model.Finding
@@ -43,6 +46,7 @@ class HtmlReportPreviewTest {
         // summary by hand, so write matching stubs to make the drill-down links resolve here.
         stubToolReport(out.parent, "tools/detekt/detekt.html", "detekt")
         stubToolReport(out.parent, "tools/jacoco/index.html", "JaCoCo coverage")
+        stubToolReport(out.parent, "tools/pit/index.html", "PIT mutations")
         println("preview: ${out.toAbsolutePath()}")
     }
 
@@ -69,8 +73,11 @@ class HtmlReportPreviewTest {
         val gates = listOf(
             GateResult("findings", GateStatus.FAILED, "1 new (max 0), 4 total (baseline max 3)"),
             GateResult("coverage", GateStatus.PASSED, "81.25% (baseline min 80.0%)"),
+            GateResult("changed-line coverage", GateStatus.PASSED,
+                "85.71% of 21 changed lines vs origin/main (min 70%); 1 changed file(s) without coverage data"),
+            GateResult("changed-line mutation", GateStatus.FAILED,
+                "35.00% of 20 changed-line mutants killed vs origin/main (min 60%); 1 changed file(s) without mutation data"),
             GateResult("test failures", GateStatus.FAILED, "1 failed of 3 tests (max 0)"),
-            GateResult("changed-line coverage", GateStatus.SKIPPED, "no git base ref available"),
         )
         val notUnderstood = listOf("build/reports/detekt/detekt.txt")
         // A report source ingested this run but absent from the baseline manifest (new-report notice).
@@ -83,6 +90,29 @@ class HtmlReportPreviewTest {
                 "build/test-results/test/TEST-com.example.ShelfTest.xml" to 70, // outlier -> tests flag
             ),
             toleranceMinutes = 15,
+        )
+        // Changed-line coverage: well-covered (a couple of gaps), one file links into its JaCoCo report.
+        val changedCoverage = ChangedLineCoverage.Measured(
+            baseRef = "origin/main",
+            files = listOf(
+                ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = (10..25).toList(),
+                    uncovered = listOf(26, 27), toolReport = "tools/jacoco/index.html",
+                    reportPath = "build/reports/jacoco/test/jacocoTestReport.xml"),
+                ChangedFileCoverage("web/app.js", covered = listOf(100, 102), uncovered = listOf(101), toolReport = null),
+            ),
+            filesWithoutData = 1,
+        )
+        // …but the mutation kill rate on those same changed lines is low: tests run the change without
+        // asserting on it. High coverage + low mutation -> the covered-but-not-verified contradiction.
+        val changedMutation = ChangedLineMutation.Measured(
+            baseRef = "origin/main",
+            files = listOf(
+                ChangedFileMutation("src/main/kotlin/Shelf.kt", mutants = 16, killed = 6,
+                    survivedLines = listOf(14, 18, 22, 25), toolReport = "tools/pit/index.html",
+                    reportPath = "build/reports/pitest/mutations.xml"),
+                ChangedFileMutation("web/app.js", mutants = 4, killed = 1, survivedLines = listOf(101), toolReport = null),
+            ),
+            filesWithoutData = 1,
         )
         // Skipped gate (MAJOR) + stale/not-understood/new-report (MINOR) -> LOW confidence.
         return CheckSummary(
@@ -121,21 +151,15 @@ class HtmlReportPreviewTest {
                 IngestedFile("build/reports/jacoco/test/jacocoTestReport.xml", "jacoco", 0, ParsedReport(),
                     toolReport = "tools/jacoco/index.html"),
                 IngestedFile("build/test-results/test/TEST-com.example.ShelfTest.xml", "junit", 0, ParsedReport()),
+                IngestedFile("build/reports/pitest/mutations.xml", "pit", 0, ParsedReport(),
+                    toolReport = "tools/pit/index.html"),
             ),
             notUnderstood = notUnderstood,
             hasBaseline = true,
-            // changed-line coverage: one file links into its copied JaCoCo report, one has none.
-            changedLineCoverage = ChangedLineCoverage.Measured(
-                baseRef = "origin/main",
-                files = listOf(
-                    ChangedFileCoverage("src/main/kotlin/Shelf.kt", covered = listOf(10, 11),
-                        uncovered = listOf(12, 15, 16), toolReport = "tools/jacoco/index.html",
-                        reportPath = "build/reports/jacoco/test/jacocoTestReport.xml"),
-                    ChangedFileCoverage("web/app.js", covered = emptyList(),
-                        uncovered = listOf(101), toolReport = null),
-                ),
-                filesWithoutData = 1,
-            ),
+            changedLineCoverage = changedCoverage,
+            changedLineMutation = changedMutation,
+            // The named finding, derived from the two diff-scoped signals above so the numbers agree.
+            contradiction = contradiction(changedCoverage, changedMutation),
             freshness = freshness,
             // Also exercise a base-ref delta MAJOR: the change touched module "web", which produced a
             // report this run but a stale one (older than the freshest), so it may not have been

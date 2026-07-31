@@ -1,7 +1,9 @@
 package buildchecks.render
 
 import buildchecks.model.ChangedFileCoverage
+import buildchecks.model.ChangedFileMutation
 import buildchecks.model.ChangedLineCoverage
+import buildchecks.model.ChangedLineMutation
 import buildchecks.model.CheckSummary
 import buildchecks.model.ConfidenceWeight
 import buildchecks.model.Freshness
@@ -80,13 +82,16 @@ class HtmlReport : Renderer {
             }
             body {
                 pageHeader(summary)
+                // The named finding leads everything: it's the one thing a reader must not miss.
+                contradiction(summary)
                 gates(summary)
                 findings(summary)
-                // Changed-line coverage answers "is the work in this diff tested?" — more actionable
-                // than the whole-project Tests/Coverage rollups, so it leads them.
-                changedCoverage(summary)
-                tests(summary)
                 coverage(summary)
+                // The diff-scoped coverage and mutation views sit just after the whole-project coverage
+                // rollup they refine, and before tests — mirroring the gate order above.
+                changedCoverage(summary)
+                changedMutation(summary)
+                tests(summary)
                 ingested(summary)
                 script { unsafe { raw(JS) } }
             }
@@ -438,6 +443,64 @@ class HtmlReport : Renderer {
         }
     }
 
+    // The named finding (4.1): covered-but-not-verified, stated as one callout so a reader meets the
+    // contradiction as a conclusion, not as two numbers in different sections they have to correlate.
+    private fun BODY.contradiction(summary: CheckSummary) {
+        val c = summary.contradiction ?: return
+        section("contradiction") {
+            h2 { +"Covered but not verified" }
+            p {
+                +("The lines this change touched are ${"%.0f".format(c.coveragePercent)}% covered — tests " +
+                    "execute them — yet only ${"%.0f".format(c.mutationPercent)}% of the mutants on those " +
+                    "lines are killed, so the tests would not notice if the changed behaviour broke.")
+            }
+        }
+    }
+
+    // The surviving mutants behind the changed-line mutation gate, worst-first, so a reader can jump
+    // to the specific lines whose changed behaviour no test pins down. Rendered only when a diff was
+    // measured and something it changed has a surviving mutant.
+    private fun BODY.changedMutation(summary: CheckSummary) {
+        val measured = summary.changedLineMutation as? ChangedLineMutation.Measured ?: return
+        val survivedFiles = measured.survivedFiles
+        if (survivedFiles.isEmpty()) return
+        section {
+            h2 { +"Surviving mutants on changed lines (${measured.mutantCount - measured.killedCount})" }
+            p("muted") {
+                +"Mutations of the lines this diff changed relative to "
+                code { +measured.baseRef }
+                +(" that no test caught — ${"%.2f".format(measured.percent)}% of ${measured.mutantCount} " +
+                    "mutants on changed lines were killed. A surviving mutant is a changed line a test runs " +
+                    "but does not actually assert on.")
+            }
+            table(classes = "sortable") {
+                thead {
+                    tr { th { +"File" }; th { +"Survived" }; th { +"Killed" }; th { +"Mutants" }; th { +"Lines" } }
+                }
+                tbody {
+                    survivedFiles
+                        .sortedWith(compareByDescending<ChangedFileMutation> { it.survivedCount }.thenBy { it.path })
+                        .forEach { file ->
+                            tr {
+                                td("path") {
+                                    val report = file.toolReport
+                                    if (report != null) a(href = report) {
+                                        title = "Open this file's mutation report"
+                                        +file.path
+                                    } else +file.path
+                                    staleChip(file.reportPath, summary.freshness)
+                                }
+                                td { +file.survivedCount.toString() }
+                                td { +file.killed.toString() }
+                                td { +file.mutants.toString() }
+                                td("path") { +file.survivedLines.joinToString(", ") }
+                            }
+                        }
+                }
+            }
+        }
+    }
+
     private fun BODY.ingested(summary: CheckSummary) {
         val formatCounts = summary.files.groupingBy { it.format }.eachCount()
             .entries.sortedByDescending { it.value }
@@ -536,6 +599,10 @@ class HtmlReport : Renderer {
             "test failures" to "Failed tests must not exceed the configured maximum (0 unless configured).",
             "changed-line coverage" to "Coverage of only the lines added or changed relative to the git " +
                 "base ref. Skipped with a notice when git or a base ref isn't available.",
+            "changed-line mutation" to "Of the mutants PIT generated on the lines this change touched, " +
+                "the fraction killed by the tests — whether the tests actually assert on the changed " +
+                "behaviour, not just execute it. Diff-scoped so it stays fast. Skipped with a notice when " +
+                "git, a base ref, or a mutation report isn't available.",
             "expected reports" to "Every report present when the baseline was snapshotted must still be " +
                 "ingested this run, grouped by origin (module/source). Catches a check silently disabled " +
                 "or a source that stopped emitting its report. Run `buildchecks baseline` to accept an " +

@@ -28,6 +28,7 @@ class ParserContractTest {
         "shelf/detekt.xml" to "checkstyle",
         "shelf/cpdCheck.xml" to "cpd",
         "shelf/jvmTestCoverage.xml" to "jacoco",
+        "mutations.xml" to "pit",
     )
 
     private val unclaimedFixtures = listOf(

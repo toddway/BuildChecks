@@ -10,14 +10,18 @@ import buildchecks.gate.promotedGates
 import buildchecks.git.GitDiff
 import buildchecks.model.ChangeDelta
 import buildchecks.model.ChangedLineCoverage
+import buildchecks.model.ChangedLineMutation
 import buildchecks.model.ChangedLines
 import buildchecks.model.CheckSummary
 import buildchecks.model.FileCoverage
+import buildchecks.model.FileMutations
 import buildchecks.model.Finding
 import buildchecks.model.IngestedFile
 import buildchecks.model.ReportedFinding
 import buildchecks.model.changedLineCoverage
+import buildchecks.model.changedLineMutation
 import buildchecks.model.confidence
+import buildchecks.model.contradiction
 import buildchecks.model.freshness
 import buildchecks.model.matching
 import buildchecks.model.merged
@@ -55,12 +59,17 @@ fun runCheck(
         if (config.gates.minChangedLineCoverage != null) changedLines else null,
         merged.coverage,
     )
+    val changedMutation = changedLineMutation(
+        if (config.gates.minChangedLineMutation != null) changedLines else null,
+        merged.mutation,
+    )
     val presentOrigins = presentManifest(ingestion.files)
     val reportFreshness = freshness(ingestion.files, nowMillis, config.reports.freshnessToleranceMinutes)
     val delta = timed("delta", verbose, echo) {
         changeDelta(git, baseRef, changedLines, ingestion.files, baseline, reportFreshness, config, env)
     }
-    val context = GateContext(fingerprinted, merged.tests, merged.coverage, baseline, changedCoverage, presentOrigins)
+    val context = GateContext(
+        fingerprinted, merged.tests, merged.coverage, baseline, changedCoverage, presentOrigins, changedMutation)
     val results = timed("gates", verbose, echo) {
         val evaluated = gates(config.gates).flatMap { it.evaluate(context) }
         evaluated + promotedGates(config.gates, evaluated, baseRefResolved = baseRef != null, delta = delta)
@@ -102,6 +111,21 @@ fun runCheck(
         })
         else -> changedCoverage
     }
+    // Same identity linking for mutation: each changed file to the copied PIT report that measured it.
+    val mutationReports = IdentityHashMap<FileMutations, String?>()
+    copiedFiles.forEach { file -> file.report.mutation?.files?.forEach { mutationReports[it] = file.toolReport } }
+    val mutationSources = IdentityHashMap<FileMutations, String>()
+    copiedFiles.forEach { file -> file.report.mutation?.files?.forEach { mutationSources[it] = file.path } }
+    val linkedChangedMutation = when (changedMutation) {
+        is ChangedLineMutation.Measured -> changedMutation.copy(files = changedMutation.files.map { changed ->
+            val matches = merged.mutation?.matching(changed.path)
+            changed.copy(
+                toolReport = matches?.firstNotNullOfOrNull { mutationReports[it] },
+                reportPath = matches?.firstNotNullOfOrNull { mutationSources[it] },
+            )
+        })
+        else -> changedMutation
+    }
     val summary = CheckSummary(
         gates = results,
         findings = fingerprinted.map {
@@ -122,6 +146,8 @@ fun runCheck(
         freshness = reportFreshness,
         hasBaseline = baseline != null,
         changedLineCoverage = linkedChangedCoverage,
+        changedLineMutation = linkedChangedMutation,
+        contradiction = contradiction(linkedChangedCoverage, linkedChangedMutation),
         confidence = confidence(results, reportFreshness, ingestion.notUnderstood, newReportLabels, delta),
     )
 

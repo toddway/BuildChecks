@@ -4,6 +4,10 @@ plugins {
     application
     jacoco // core Gradle plugin; enables dogfooding: the CLI gates its own build
     `maven-publish` // core; publishes the thin jar + POM to the GitHub Pages Maven repo
+    // Build-time only (not a CLI runtime dependency): dogfoods mutation testing so the repo can gate
+    // its own mutation score (V4-PLAN.md 4.1) and regenerate the PIT golden fixture. Its `pitest`
+    // task is opt-in — it is not wired into `test`/`check`, so ordinary builds stay fast.
+    id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "com.toddway"
@@ -58,6 +62,24 @@ tasks.test {
 
 tasks.jacocoTestReport {
     reports { xml.required = true }
+}
+
+// Mutation testing (V4-PLAN.md 4.1). Run `./gradlew pitest` to produce build/reports/pitest/*/mutations.xml,
+// which BuildChecks ingests like any other report. Scoped to a few branch-heavy classes so a dogfood run
+// stays quick; widen targetClasses for a fuller local run. No mutationThreshold: BuildChecks does the
+// gating (changed-line mutation), not PIT itself.
+pitest {
+    junit5PluginVersion = "1.2.1"
+    targetClasses = setOf(
+        "buildchecks.render.SummaryText",
+        "buildchecks.gate.CoverageGate",
+        "buildchecks.gate.ChangedLineCoverageGate",
+    )
+    // Without this the default targetTests mirrors targetClasses, so no test runs and every mutant
+    // reports NO_COVERAGE. Let the whole suite run against the mutants.
+    targetTests = setOf("buildchecks.*")
+    outputFormats = setOf("XML", "HTML")
+    timestampedReports = false
 }
 
 // --- Publishing (V4-PLAN.md §7, §11) ---

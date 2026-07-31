@@ -30,5 +30,7 @@ td.pass, td.fail, td.skip { font-weight: 700; text-align: center; width: 4rem; }
 .sev-info { opacity: .75; }
 .path { font-family: ui-monospace, monospace; font-size: .85em; word-break: break-all; }
 .warning { background: #fff8c5; border: 1px solid #d4a72c; border-radius: .4rem; color: #4d3800; margin: 1rem 0; padding: .6rem 1rem; }
+.contradiction { background: color-mix(in srgb, #cf222e 10%, transparent); border: 1px solid #cf222e; border-radius: .4rem; margin: 1.2rem 0; padding: .2rem 1rem 1rem; }
+.contradiction h2 { margin-top: .8rem; }
 .controls { display: flex; flex-wrap: wrap; gap: .6rem; margin: .8rem 0; }
 .controls input[type=search] { flex: 1; min-width: 12rem; padding: .3rem .5rem; }

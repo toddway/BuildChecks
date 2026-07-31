@@ -22,6 +22,15 @@ class MarkdownSummary : Renderer {
             appendLine()
         }
 
+        // The named finding (4.1): stated up top so a reviewer reads it before the gate table.
+        summary.contradiction?.let {
+            appendLine("> 🕳️ **Covered but not verified:** changed lines are " +
+                "${"%.0f%%".format(it.coveragePercent)} covered yet only " +
+                "${"%.0f%%".format(it.mutationPercent)} of their mutants are killed — the tests run this " +
+                "change without asserting on it.")
+            appendLine()
+        }
+
         summary.freshness?.takeIf { it.stale }?.let {
             appendLine("> ⚠️ Ingested reports differ in age by ${it.spreadMinutes} minutes " +
                 "(tolerance ${it.toleranceMinutes}) — possible orphaned reports.")

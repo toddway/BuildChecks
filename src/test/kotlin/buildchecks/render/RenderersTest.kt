@@ -2,8 +2,11 @@ package buildchecks.render
 
 import buildchecks.Fixtures
 import buildchecks.model.ChangedFileCoverage
+import buildchecks.model.ChangedFileMutation
 import buildchecks.model.ChangedLineCoverage
+import buildchecks.model.ChangedLineMutation
 import buildchecks.model.CheckSummary
+import buildchecks.model.Contradiction
 import buildchecks.model.confidence
 import buildchecks.model.CoverageData
 import buildchecks.model.FileCoverage
@@ -373,18 +376,78 @@ class RenderersTest {
     }
 
     @Test
-    fun `changed-line coverage renders above tests and whole-project coverage`() {
+    fun `sections render whole-project coverage, then changed-line coverage, then tests`() {
         val measured = ChangedLineCoverage.Measured(
             "origin/main",
             listOf(ChangedFileCoverage("a.kt", covered = emptyList(), uncovered = listOf(1))),
             filesWithoutData = 0,
         )
         val html = HtmlReport().render(summary.copy(changedLineCoverage = measured))
+        val coverage = html.indexOf("Coverage 93.24%")
         val changed = html.indexOf("Changed lines not covered")
         val tests = html.indexOf("Tests (")
-        val coverage = html.indexOf("Coverage 93.24%")
-        assertTrue(changed in 0 until tests, "changed-coverage should precede Tests")
-        assertTrue(tests < coverage, "Tests should precede whole-project Coverage")
+        assertTrue(coverage in 0 until changed, "whole-project Coverage should precede changed-line coverage")
+        assertTrue(changed < tests, "changed-line sections should precede Tests")
+    }
+
+    @Test
+    fun `the contradiction is a named finding in console, markdown, and html`() {
+        val s = summary.copy(contradiction = Contradiction(coveragePercent = 92.0, mutationPercent = 45.0))
+        val console = ConsoleSummary().render(s)
+        assertTrue(console.contains("CONTRADICTION: changed lines are 92% covered but only 45% mutation-killed"))
+        val markdown = MarkdownSummary().render(s)
+        assertTrue(markdown.contains("Covered but not verified"))
+        assertTrue(markdown.contains("92% covered"))
+        val html = HtmlReport().render(s)
+        assertTrue(html.contains("<section class=\"contradiction\">"))
+        assertTrue(html.contains("Covered but not verified"))
+        // absent by default: no contradiction, no callout
+        assertFalse(ConsoleSummary().render(summary).contains("CONTRADICTION"))
+        assertFalse(HtmlReport().render(summary).contains("class=\"contradiction\""))
+    }
+
+    @Test
+    fun `html lists surviving mutants on changed lines worst-first and links files with a report`() {
+        val measured = ChangedLineMutation.Measured(
+            baseRef = "origin/main",
+            files = listOf(
+                // fewer survivors, listed first in the input — must sort BELOW Shelf.kt in output
+                ChangedFileMutation("web/App.kt", mutants = 2, killed = 1, survivedLines = listOf(9)),
+                ChangedFileMutation("src/main/kotlin/Shelf.kt", mutants = 5, killed = 2,
+                    survivedLines = listOf(3, 7, 8), toolReport = "tools/pit/index.html"),
+            ),
+            filesWithoutData = 0,
+        )
+        val html = HtmlReport().render(summary.copy(changedLineMutation = measured))
+        assertTrue(html.contains("Surviving mutants on changed lines (4)")) // (2+5) - (1+2) survived
+        assertTrue(html.contains("origin/main"))
+        assertTrue(html.contains("<a href=\"tools/pit/index.html\""))
+        assertTrue(html.indexOf("Shelf.kt") < html.indexOf("web/App.kt")) // 3 survivors before 1
+    }
+
+    @Test
+    fun `html omits the surviving-mutants section when nothing changed survived`() {
+        assertFalse(HtmlReport().render(summary).contains("Surviving mutants on changed lines"))
+        val allKilled = ChangedLineMutation.Measured(
+            "origin/main",
+            listOf(ChangedFileMutation("a.kt", mutants = 3, killed = 3, survivedLines = emptyList())),
+            filesWithoutData = 0,
+        )
+        assertFalse(HtmlReport().render(summary.copy(changedLineMutation = allKilled))
+            .contains("Surviving mutants on changed lines"))
+    }
+
+    @Test
+    fun `summary text names the changed-line mutation gate with its kill rate`() {
+        val gates = listOf(GateResult("changed-line mutation", GateStatus.FAILED,
+            "40.00% of 10 changed-line mutants killed vs main (min 80%)"))
+        val s = summary.copy(
+            gates = gates,
+            changedLineMutation = ChangedLineMutation.Measured(
+                "main", listOf(ChangedFileMutation("a.kt", mutants = 10, killed = 4, survivedLines = listOf(1))), 0),
+            confidence = confidence(gates, null, emptyList(), emptyList()),
+        )
+        assertTrue(SummaryText().render(s).contains("40.00% changed-line mutation (FAIL)"))
     }
 
     @Test
