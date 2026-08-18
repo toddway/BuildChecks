@@ -77,6 +77,65 @@ class GitDiffTest {
         assertTrue(notARepo is ChangedLines.Unavailable, notARepo.toString())
     }
 
+    @Test
+    fun `prefers the remote ref when the local one already contains HEAD`() {
+        // Bitrise's PR builds merge the change into its target branch before building, so the local
+        // `dev` sits at HEAD and `git diff dev...HEAD` exits 0 with no output. That read as "no
+        // changed lines", silently skipping every gate built on the diff.
+        val upstream = File(dir, "upstream")
+        git(dir, "init", "-q", "upstream")
+        File(upstream, "app.txt").writeText("one\ntwo\n")
+        git(upstream, "add", "-A")
+        commit(upstream, "base")
+        git(upstream, "branch", "dev")
+
+        git(dir, "clone", "-q", upstream.absolutePath, "clone")
+        val clone = File(dir, "clone")
+        File(clone, "app.txt").writeText("one\ntwo changed\n")
+        git(clone, "add", "-A")
+        commit(clone, "feature")
+        git(clone, "branch", "dev", "HEAD") // the merged-in target ref, sitting at HEAD
+
+        val diff = GitDiff(clone).changedLines("dev") as ChangedLines.Diff
+        assertEquals("origin/dev", diff.baseRef, "must not settle for the vacuous local diff")
+        assertEquals(mapOf("app.txt" to setOf(2)), diff.files)
+    }
+
+    @Test
+    fun `a base ref containing HEAD with no remote fallback says so`() {
+        // Same shape, but nothing better to fall back to: the result must name the cause rather than
+        // claim nothing changed, since a benign skip is indistinguishable from a pass.
+        git(dir, "init", "-q")
+        File(dir, "app.txt").writeText("one\n")
+        git(dir, "add", "-A")
+        commit(dir, "base")
+        git(dir, "branch", "merged-target", "HEAD")
+
+        val result = GitDiff(dir).changedLines("merged-target")
+        assertTrue(result is ChangedLines.Unavailable, result.toString())
+        val reason = (result as ChangedLines.Unavailable).reason
+        assertTrue(reason.contains("already contains HEAD"), reason)
+        assertTrue(reason.contains("merged-target"), reason)
+    }
+
+    @Test
+    fun `an empty diff that is not a contained base ref still reports no changed lines`() {
+        // The retry must not turn a legitimately empty diff into an error. HEAD is ahead of the base
+        // here (so it is not an ancestor of it) but carries no tree change, which is what a revert or
+        // an empty commit looks like.
+        git(dir, "init", "-q")
+        File(dir, "app.txt").writeText("one\n")
+        git(dir, "add", "-A")
+        commit(dir, "base")
+        git(dir, "branch", "base")
+        commit(dir, "empty commit on top") // --allow-empty, so the tree is unchanged
+
+        val result = GitDiff(dir).changedLines("base")
+        assertTrue(result is ChangedLines.Diff, result.toString())
+        assertEquals(emptyMap<String, Set<Int>>(), (result as ChangedLines.Diff).files)
+        assertEquals("base", result.baseRef)
+    }
+
     private fun git(workDir: File, vararg args: String) {
         val process = ProcessBuilder("git", *args).directory(workDir).redirectErrorStream(true).start()
         val output = process.inputStream.bufferedReader().readText()

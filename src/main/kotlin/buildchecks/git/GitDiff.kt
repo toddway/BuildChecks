@@ -12,15 +12,46 @@ import java.util.concurrent.TimeUnit
 class GitDiff(private val root: File) {
 
     /**
-     * Diffs the merge base (`<ref>...HEAD`). A bare branch name that doesn't resolve retries
-     * as `origin/<ref>`, because GITHUB_BASE_REF carries names like `main` while CI checkouts
-     * usually only have the remote-tracking ref.
+     * Diffs the merge base (`<ref>...HEAD`). A bare branch name retries as `origin/<ref>`, because
+     * GITHUB_BASE_REF carries names like `main` while CI checkouts usually only have the
+     * remote-tracking ref.
+     *
+     * The retry fires on an *empty* diff as well as a failed one. A PR build that merges the change
+     * into its target branch before building leaves the bare local ref at the same commit as HEAD
+     * (Bitrise does this), and `git diff dev...HEAD` then exits 0 with no output — indistinguishable
+     * from "nothing changed" unless we look further. Preferring whichever candidate actually found
+     * changes keeps the auto-detected target branch correct for every base, instead of making each
+     * repo hard-code a remote ref.
      */
     fun changedLines(baseRef: String): ChangedLines {
-        val direct = diff(baseRef)
-        if (direct is ChangedLines.Diff || "/" in baseRef) return direct
-        return diff("origin/$baseRef").takeIf { it is ChangedLines.Diff } ?: direct
+        val candidates = if ("/" in baseRef) listOf(baseRef) else listOf(baseRef, "origin/$baseRef")
+        val attempts = candidates.map { it to diff(it) }
+
+        attempts.firstOrNull { (_, result) -> result.hasChanges() }?.let { return it.second }
+
+        // Nothing found changes. If a candidate already contains HEAD, the diff was vacuous rather
+        // than empty — report that, because "no changed lines" reads as a clean bill of health and
+        // silently disables every gate built on the diff.
+        attempts.firstOrNull { (ref, result) -> result is ChangedLines.Diff && containsHead(ref) }
+            ?.let { (ref, _) ->
+                return ChangedLines.Unavailable(
+                    "base ref $ref already contains HEAD, so there is nothing to diff against " +
+                        "(a CI build that merges the change into its target branch before building " +
+                        "leaves the target ref at HEAD); point git.base_ref at the pre-merge ref",
+                )
+            }
+
+        // A genuinely empty diff, else the first failure reason.
+        return attempts.firstOrNull { (_, result) -> result is ChangedLines.Diff }?.second
+            ?: attempts.first().second
     }
+
+    private fun ChangedLines.hasChanges() =
+        this is ChangedLines.Diff && files.values.any { it.isNotEmpty() }
+
+    /** True when HEAD is an ancestor of [ref], i.e. diffing against it can only ever be empty. */
+    private fun containsHead(ref: String): Boolean =
+        capture("git", "merge-base", "--is-ancestor", "HEAD", ref) != null
 
     /**
      * The remote's default branch as `origin/<name>` (e.g. `origin/main`), read from the
