@@ -88,11 +88,24 @@ private fun measure(diff: ChangedLines.Diff, coverage: CoverageData?): ChangedLi
  * Git paths are repo-relative; report paths vary by tool (JaCoCo emits package paths, LCOV can be
  * absolute). Segment-aligned suffix matching bridges them; used both to find a file's coverage
  * entries (for links) and, folded into [hitsByLine], to combine merged reports by max hits/line.
+ *
+ * Matched exactly first, then retried case-insensitively, because JaCoCo builds its path from the
+ * *package declaration* while git records the *directory*, and the two need not agree in case — a
+ * file in `…/productdetailpage/viewModel/` declaring `package …productdetailpage.viewmodel` is legal
+ * Kotlin, and a case-insensitive filesystem lets the drift go unnoticed. Compared case-sensitively
+ * only, such a file matches nothing and is reported as having no coverage data at all, so its
+ * changed lines silently leave the changed-line measurement (a file covered 87% read as 0%). The
+ * exact pass runs first so a genuine same-name-different-case pair still resolves to itself.
  */
 fun CoverageData.matching(gitPath: String): List<FileCoverage> {
-    val gitSegments = gitPath.split('/')
+    val exact = matchingSuffix(gitPath) { it }
+    return exact.ifEmpty { matchingSuffix(gitPath) { it.lowercase() } }
+}
+
+private fun CoverageData.matchingSuffix(gitPath: String, fold: (String) -> String): List<FileCoverage> {
+    val gitSegments = gitPath.split('/').map(fold)
     return files.filter { file ->
-        val segments = file.path.split('/').filter { it.isNotEmpty() && it != "." }
+        val segments = file.path.split('/').filter { it.isNotEmpty() && it != "." }.map(fold)
         if (segments.size <= gitSegments.size) gitSegments.takeLast(segments.size) == segments
         else segments.takeLast(gitSegments.size) == gitSegments
     }

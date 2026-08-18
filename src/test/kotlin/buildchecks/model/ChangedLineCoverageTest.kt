@@ -96,3 +96,36 @@ class ChangedLineCoverageTest {
         assertEquals(1, matches.size)
     }
 }
+
+class CoverageMatchingCaseTest {
+
+    private fun coverage(vararg paths: String) =
+        CoverageData(paths.map { FileCoverage(it, listOf(LineCoverage(1, 1))) })
+
+    @Test
+    fun `matches when the report's package case differs from the directory case`() {
+        // JaCoCo derives its path from the package declaration; git records the directory. A file in
+        // …/viewModel/ declaring package …viewmodel is legal Kotlin, and matching case-sensitively
+        // only, it resolved to nothing and read as having no coverage data.
+        val data = coverage("com/sherwin/productdetailpage/viewmodel/ProductDetailPageViewModel.kt")
+        val matched = data.matching(
+            "feature/product-detail-page/src/main/java/com/sherwin/productdetailpage/viewModel/ProductDetailPageViewModel.kt",
+        )
+        assertEquals(1, matched.size)
+    }
+
+    @Test
+    fun `an exact match wins over a case-insensitive one`() {
+        // Two entries differing only in case: the exact pass must resolve each to itself rather than
+        // folding both together.
+        val data = coverage("com/example/viewmodel/Foo.kt", "com/example/viewModel/Foo.kt")
+        val matched = data.matching("src/main/java/com/example/viewModel/Foo.kt")
+        assertEquals(listOf("com/example/viewModel/Foo.kt"), matched.map { it.path })
+    }
+
+    @Test
+    fun `still matches nothing for an unrelated path`() {
+        val data = coverage("com/sherwin/other/Thing.kt")
+        assertEquals(0, data.matching("src/main/java/com/sherwin/nope/Missing.kt").size)
+    }
+}
