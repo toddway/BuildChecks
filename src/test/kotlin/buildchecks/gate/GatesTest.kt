@@ -312,13 +312,32 @@ class GatesTest {
 
     @Test
     fun `expected-reports gate fails naming what stopped being emitted`() {
-        val manifest = setOf(OriginKind(".", "detekt"), OriginKind("services/auth", "jacoco"))
+        val manifest = setOf(
+            OriginKind(".", "detekt"),
+            OriginKind("services/auth", "jacoco"),
+            OriginKind("services/auth", "checkstyle"),
+        )
         val baseline = Baseline(emptySet(), 0, null, manifest = manifest)
-        // services/auth stopped emitting its jacoco report; detekt still present
-        val present = setOf(OriginKind(".", "detekt"))
+        // services/auth stopped emitting jacoco but still emits checkstyle, so the origin is
+        // demonstrably live this run — the kind vanishing under it is a real dropped check.
+        val present = setOf(OriginKind(".", "detekt"), OriginKind("services/auth", "checkstyle"))
         val result = missingReportGate.evaluate(context(baseline = baseline, presentOrigins = present)).single()
         assertEquals(GateStatus.FAILED, result.status)
         assertEquals("1 expected report(s) missing: jacoco in services/auth", result.detail)
+    }
+
+    @Test
+    fun `expected-reports gate does not fail an origin that produced nothing this run`() {
+        // The regression that made a locally-captured baseline unusable on CI: a snapshot taken
+        // from a build that ran one module's tests recorded `junit in common/glassbox`, then failed
+        // every CI build whose task set didn't run them. An origin with no report at all wasn't
+        // measured, so its absence is not evidence a check fell — but it is still reported.
+        val manifest = setOf(OriginKind(".", "detekt"), OriginKind("common/glassbox", "junit"))
+        val baseline = Baseline(emptySet(), 0, null, manifest = manifest)
+        val present = setOf(OriginKind(".", "detekt"))
+        val result = missingReportGate.evaluate(context(baseline = baseline, presentOrigins = present)).single()
+        assertEquals(GateStatus.PASSED, result.status)
+        assertEquals("1 expected report(s) present (1 not built this run: common/glassbox)", result.detail)
     }
 
     @Test

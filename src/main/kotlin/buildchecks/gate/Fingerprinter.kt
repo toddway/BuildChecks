@@ -33,6 +33,14 @@ class Fingerprinter(
 
     fun fingerprint(findings: List<Finding>): List<FingerprintedFinding> {
         val base = findings.map { it to baseFingerprint(it) }
+        // The occurrence index is repo-wide, and deliberately so: it is the only thing keeping two
+        // byte-identical findings apart once the path is excluded from the hash, so scoping it per
+        // file would give every single-occurrence file the same bare hash and silently collapse
+        // distinct findings into one baseline entry (a new one would then match an existing
+        // fingerprint and never be reported). The cost is that fixing one member re-indexes the rest
+        // of its group, so a large group can surface phantom "new findings" in untouched files —
+        // which is why resolving source paths at ingest matters so much (see repoRelativeSource):
+        // real content hashes keep these groups to a handful of genuinely identical snippets.
         val occurrence = mutableMapOf<String, Int>()
         return base
             .sortedWith(compareBy(

@@ -63,3 +63,43 @@ fun freshChangedOrigins(origins: Set<String>, files: List<IngestedFile>, freshne
     origins.filter { o -> files.any { origin(it.path) == o && freshness?.outlier(it.path) != true } }.toSet()
 
 private val markers = setOf("build", "target", "coverage", "lcov.info")
+
+/**
+ * Rebase one finding path onto the repo root, so [buildchecks.gate.Fingerprinter] can find the
+ * violating source and hash it (V4-PLAN.md §5).
+ *
+ * Tools disagree about what a finding's path is relative to. JVM tools invoked per module emit
+ * *module*-relative paths — detekt's SARIF says so outright, tagging every URI
+ * `uriBaseId: "%SRCROOT%"` where SRCROOT is the module dir, not the repo. Others (checkstyle) emit
+ * absolute machine paths. Left as-is, a module-relative path resolves against neither the root nor
+ * the cwd, the fingerprinter finds no source, and it falls back to hashing the *message* — which for
+ * a formatting rule ("Needless blank line(s)") is identical repo-wide, collapsing hundreds of
+ * distinct findings onto one hash that only an occurrence index separates. Absolute paths, meanwhile,
+ * bake the capturing machine's home dir into the baseline.
+ *
+ * [reportOrigin] is the report's own origin ([origin]) — for
+ * `feature/storelocator/build/reports/detekt/detekt.sarif` that is `feature/storelocator`, exactly
+ * the SRCROOT the URIs are relative to. [exists] is the repo-root-relative existence check, injected
+ * so this is testable without a filesystem.
+ */
+fun repoRelativeSource(path: String, reportOrigin: String, rootPrefixes: List<String>, exists: (String) -> Boolean): String {
+    val slashed = path.replace('\\', '/')
+    // Absolute inside this checkout: strip the root so the baseline is machine-independent.
+    rootPrefixes.firstOrNull { slashed.startsWith(it) }?.let { return slashed.removePrefix(it) }
+    // Absolute somewhere else entirely — nothing sound to rebase onto; leave it for the caller.
+    if (slashed.startsWith("/")) return slashed
+    // Already repo-relative.
+    if (exists(slashed)) return slashed
+    // Module-relative (SARIF %SRCROOT%): rebase onto the report's own origin.
+    if (reportOrigin != ROOT_ORIGIN) {
+        val rebased = "$reportOrigin/$slashed"
+        if (exists(rebased)) return rebased
+    }
+    return slashed
+}
+
+/** The checkout-root prefixes to strip from absolute paths — both real and symlink-resolved. */
+fun rootPrefixes(root: java.io.File): List<String> =
+    listOfNotNull(root.absolutePath, runCatching { root.canonicalPath }.getOrNull())
+        .distinct()
+        .map { it.removeSuffix("/") + "/" }

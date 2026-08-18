@@ -114,3 +114,55 @@ class OriginsTest {
         assertEquals(setOf("services/auth"), freshChangedOrigins(touched, files, freshness))
     }
 }
+
+class RepoRelativeSourceTest {
+
+    private val prefixes = listOf("/Users/dev/repo/")
+    private val onDisk = setOf(
+        "feature/storelocator/src/main/java/com/sherwin/Maps.kt",
+        "app/src/main/java/com/sherwin/Signin.java",
+        "tools/script.kt",
+    )
+    private fun rebase(path: String, reportOrigin: String) =
+        repoRelativeSource(path, reportOrigin, prefixes) { it in onDisk }
+
+    @Test
+    fun `rebases a module-relative path onto the report's own origin`() {
+        // detekt's SARIF tags every URI uriBaseId "%SRCROOT%" — the module dir, not the repo root.
+        assertEquals(
+            "feature/storelocator/src/main/java/com/sherwin/Maps.kt",
+            rebase("src/main/java/com/sherwin/Maps.kt", "feature/storelocator"),
+        )
+    }
+
+    @Test
+    fun `strips the checkout root from an absolute path`() {
+        assertEquals(
+            "app/src/main/java/com/sherwin/Signin.java",
+            rebase("/Users/dev/repo/app/src/main/java/com/sherwin/Signin.java", "app"),
+        )
+    }
+
+    @Test
+    fun `leaves an already repo-relative path alone`() {
+        assertEquals("tools/script.kt", rebase("tools/script.kt", "."))
+    }
+
+    @Test
+    fun `leaves a path that resolves nowhere unchanged`() {
+        // A deleted file, or a tool reporting against a path we can't see. Unchanged, so the
+        // fingerprinter still falls back to hashing the message rather than inventing a location.
+        assertEquals("src/Gone.kt", rebase("src/Gone.kt", "feature/storelocator"))
+    }
+
+    @Test
+    fun `leaves an absolute path outside the checkout unchanged`() {
+        assertEquals("/opt/sdk/Other.kt", rebase("/opt/sdk/Other.kt", "app"))
+    }
+
+    @Test
+    fun `does not rebase a root-origin report`() {
+        // Nothing to prefix with, and guessing a module would be wrong.
+        assertEquals("src/main/java/com/sherwin/Maps.kt", rebase("src/main/java/com/sherwin/Maps.kt", "."))
+    }
+}
